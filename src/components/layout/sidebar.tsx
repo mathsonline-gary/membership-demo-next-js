@@ -29,7 +29,9 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
   SidebarRail,
+  useSidebar,
 } from "@/components/ui/sidebar";
+import { cn } from "@/lib/utils";
 
 // This is sample data.
 const data = {
@@ -124,17 +126,32 @@ const data = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { state } = useSidebar();
+
+  const imageProps = {
+    expanded: {
+      src: "/next.svg",
+      width: 180,
+      height: 38,
+    },
+    collapsed: {
+      src: "/globe.svg",
+      width: 32,
+      height: 32,
+    },
+  }[state];
+
   return (
-    <Sidebar collapsible="icon" {...props}>
-      <SidebarHeader>
-        <SidebarGroup className="py-0 group-data-[collapsible=icon]:hidden">
+    <Sidebar collapsible="icon" variant="sidebar" {...props}>
+      <SidebarHeader className="h-14 flex items-center justify-center">
+        <SidebarGroup className={cn("py-0", state === "collapsed" && "px-0")}>
           <SidebarGroupContent>
             <Image
-              className="dark:invert w-auto h-auto"
-              src="/next.svg"
+              className="dark:invert"
+              src={imageProps.src}
               alt="Logo"
-              width={180}
-              height={38}
+              width={imageProps.width}
+              height={imageProps.height}
               priority
             />
           </SidebarGroupContent>
