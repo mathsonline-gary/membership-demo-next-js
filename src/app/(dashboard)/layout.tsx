@@ -1,6 +1,5 @@
 "use client";
 
-import { ModeSwitcher } from "@/components/layout/mode-switcher";
 import { AppSidebar } from "@/components/layout/sidebar";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -30,14 +29,7 @@ export default function DashboardLayout({
               />
               <Breadcrumb />
               <div className="ml-auto flex items-center gap-2">
-                <ModeSwitcher />
-                <NavUser
-                  user={{
-                    name: "John Doe",
-                    email: "john@example.com",
-                    avatar: "/avatars/01.png",
-                  }}
-                />
+                <NavUser />
               </div>
             </div>
           </header>

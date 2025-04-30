@@ -3,12 +3,9 @@
 import * as React from "react";
 import Image from "next/image";
 import {
-  AudioWaveform,
   BookOpen,
   Bot,
   ChevronRightIcon,
-  Command,
-  GalleryVerticalEnd,
   Settings2,
   SquareTerminal,
 } from "lucide-react";
@@ -36,28 +33,6 @@ import {
 
 // This is sample data.
 const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/vercel.svg",
-  },
-  teams: [
-    {
-      name: "Acme Inc",
-      logo: GalleryVerticalEnd,
-      plan: "Enterprise",
-    },
-    {
-      name: "Acme Corp.",
-      logo: AudioWaveform,
-      plan: "Startup",
-    },
-    {
-      name: "Evil Corp.",
-      logo: Command,
-      plan: "Free",
-    },
-  ],
   navMain: [
     {
       title: "Playground",
@@ -155,9 +130,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarGroup className="py-0 group-data-[collapsible=icon]:hidden">
           <SidebarGroupContent>
             <Image
-              className="dark:invert"
+              className="dark:invert w-auto h-auto"
               src="/next.svg"
-              alt="Next.js logo"
+              alt="Logo"
               width={180}
               height={38}
               priority
@@ -211,14 +186,14 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <SidebarMenuItem key="1">
               <SidebarMenuButton asChild>
                 <a href={`/#1`}>
-                  <span>1</span>
+                  <span>Component 1</span>
                 </a>
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem key="2">
               <SidebarMenuButton asChild>
                 <a href={`/#2`}>
-                  <span>2</span>
+                  <span>Component 2</span>
                 </a>
               </SidebarMenuButton>
             </SidebarMenuItem>
