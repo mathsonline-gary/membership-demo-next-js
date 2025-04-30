@@ -7,8 +7,6 @@ import {
   ChevronsUpDown,
   CreditCard,
   LogOut,
-  MoonIcon,
-  SunIcon,
 } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -26,10 +24,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { useTheme } from "next-themes";
-import { META_THEME_COLORS, useMetaColor } from "@/hooks/use-meta-color";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
+import { ModeSwitcher } from "@/components/layout/mode-switcher";
 
 export function NavUser() {
   const user = {
@@ -37,8 +32,6 @@ export function NavUser() {
     email: "john.doe@example.com",
     avatar: "",
   };
-  const { setTheme, resolvedTheme } = useTheme();
-  const { setMetaColor } = useMetaColor();
 
   return (
     <SidebarMenu>
@@ -79,25 +72,8 @@ export function NavUser() {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  {resolvedTheme === "dark" ? (
-                    <MoonIcon className="size-4" />
-                  ) : (
-                    <SunIcon className="size-4" />
-                  )}
-                  <Label htmlFor="dark-mode">Dark Mode</Label>
-                </div>
-                <Switch
-                  id="dark-mode"
-                  checked={resolvedTheme === "dark"}
-                  onCheckedChange={(checked: boolean) => {
-                    setTheme(checked ? "dark" : "light");
-                    setMetaColor(
-                      checked ? META_THEME_COLORS.dark : META_THEME_COLORS.light
-                    );
-                  }}
-                />
+              <DropdownMenuItem>
+                <ModeSwitcher />
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
