@@ -10,6 +10,12 @@ import {
   Settings,
   SquareTerminal,
   ClipboardList,
+  Home,
+  Users,
+  Wrench,
+  ClipboardCheck,
+  BookOpenCheck,
+  PiggyBank,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -45,88 +51,162 @@ import {
 import { ModeSwitcher } from "./mode-switcher";
 
 // This is sample data.
-const data = {
-  navMain: [
-    {
-      title: "Playground",
-      url: "#playground",
-      icon: SquareTerminal,
-      isActive: true,
-      items: [
-        {
-          title: "History",
-          url: "#history",
-          isActive: true,
-        },
-        {
-          title: "Starred",
-          url: "#starred",
-        },
-        {
-          title: "Settings",
-          url: "#settings",
-        },
-      ],
-    },
-    {
-      title: "Models",
-      url: "#models",
-      icon: Bot,
-      items: [
-        {
-          title: "Genesis",
-          url: "#genesis",
-        },
-        {
-          title: "Explorer",
-          url: "#explorer",
-        },
-        {
-          title: "Quantum",
-          url: "#quantum",
-        },
-      ],
-    },
-    {
-      title: "Documentation",
-      url: "#documentation",
-      icon: BookOpen,
-      items: [
-        {
-          title: "Introduction",
-          url: "#introduction",
-        },
-        {
-          title: "Get Started",
-          url: "#get-started",
-        },
-        {
-          title: "Tutorials",
-          url: "#tutorials",
-        },
-        {
-          title: "Changelog",
-          url: "#changelog",
-        },
-      ],
-    },
-    {
-      title: "Tasks",
-      url: "#tasks",
-      icon: ClipboardList,
-      items: [
-        {
-          title: "General",
-          url: "#general",
-        },
-        {
-          title: "Team",
-          url: "#team",
-        },
-      ],
-    },
-  ],
+const MENU_1_ITEMS: AppSidebarMenu[] = [
+  {
+    title: "Home",
+    url: "/dashboard",
+    icon: Home,
+    isActive: true,
+  },
+  {
+    title: "Tasks",
+    url: "#tasks",
+    icon: ClipboardCheck,
+    isActive: true,
+    items: [
+      {
+        title: "Overview",
+        url: "#overview",
+        isActive: true,
+      },
+      {
+        title: "Course Plans",
+        url: "#course-plans",
+      },
+      {
+        title: "Weekly Revisions",
+        url: "#weekly-revisions",
+      },
+    ],
+  },
+  {
+    title: "Exams",
+    url: "#exams",
+    icon: BookOpenCheck,
+  },
+  {
+    title: "Question Bank",
+    url: "#question-bank",
+    icon: PiggyBank,
+  },
+];
+
+const MENU_2_ITEMS: AppSidebarMenu[] = [
+  {
+    title: "People",
+    url: "#people",
+    icon: Users,
+    items: [
+      {
+        title: "Classes",
+        url: "#classes",
+      },
+      {
+        title: "Teachers",
+        url: "#teachers",
+      },
+      {
+        title: "Students",
+        url: "#students",
+      },
+    ],
+  },
+  {
+    title: "Tools",
+    url: "#tools",
+    icon: Wrench,
+  },
+];
+
+type AppSidebarMenu = {
+  title: string;
+  url: string;
+  icon?: React.ElementType;
+  isActive?: boolean;
+  items?: AppSidebarMenu[];
 };
+
+function AppSidebarMenu({ menu }: { menu: AppSidebarMenu[] }) {
+  const { state } = useSidebar();
+
+  return (
+    <SidebarMenu>
+      {menu.map((item) => (
+        <React.Fragment key={item.title}>
+          {item.items ? (
+            state === "collapsed" ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <SidebarMenuButton
+                    tooltip={item.title}
+                    isActive={item.isActive || false}
+                  >
+                    {item.icon && <item.icon />}
+                    <span className="sr-only">{item.title}</span>
+                  </SidebarMenuButton>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  side="right"
+                  align="start"
+                  className="w-48"
+                >
+                  {item.items?.map((subItem) => (
+                    <DropdownMenuItem key={subItem.title} asChild>
+                      <a href={subItem.url}>
+                        <span>{subItem.title}</span>
+                      </a>
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Collapsible
+                asChild
+                defaultOpen={item.isActive}
+                className="group/collapsible"
+              >
+                <SidebarMenuItem>
+                  <CollapsibleTrigger asChild>
+                    <SidebarMenuButton
+                      tooltip={item.title}
+                      isActive={item.isActive || false}
+                    >
+                      {item.icon && <item.icon />}
+                      <span>{item.title}</span>
+                      <ChevronRightIcon className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                    </SidebarMenuButton>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent>
+                    <SidebarMenuSub>
+                      {item.items?.map((subItem) => (
+                        <SidebarMenuSubItem key={subItem.title}>
+                          <SidebarMenuSubButton asChild>
+                            <Link href={subItem.url}>
+                              <span>{subItem.title}</span>
+                            </Link>
+                          </SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                      ))}
+                    </SidebarMenuSub>
+                  </CollapsibleContent>
+                </SidebarMenuItem>
+              </Collapsible>
+            )
+          ) : (
+            <SidebarMenuItem key={item.title}>
+              <SidebarMenuButton asChild>
+                <Link href={item.url} className="flex items-center gap-2">
+                  {item.icon && <item.icon />}
+                  <span>{item.title}</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          )}
+        </React.Fragment>
+      ))}
+    </SidebarMenu>
+  );
+}
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { state } = useSidebar();
@@ -165,89 +245,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Platform</SidebarGroupLabel>
-          <SidebarMenu>
-            {data.navMain.map((item) => (
-              <React.Fragment key={item.title}>
-                {state === "collapsed" ? (
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <SidebarMenuButton
-                        tooltip={item.title}
-                        isActive={item.isActive || false}
-                      >
-                        {item.icon && <item.icon />}
-                        <span className="sr-only">{item.title}</span>
-                      </SidebarMenuButton>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent
-                      side="right"
-                      align="start"
-                      className="w-48"
-                    >
-                      {item.items?.map((subItem) => (
-                        <DropdownMenuItem key={subItem.title} asChild>
-                          <a href={subItem.url}>
-                            <span>{subItem.title}</span>
-                          </a>
-                        </DropdownMenuItem>
-                      ))}
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                ) : (
-                  <Collapsible
-                    asChild
-                    defaultOpen={item.isActive}
-                    className="group/collapsible"
-                  >
-                    <SidebarMenuItem>
-                      <CollapsibleTrigger asChild>
-                        <SidebarMenuButton
-                          tooltip={item.title}
-                          isActive={item.isActive || false}
-                        >
-                          {item.icon && <item.icon />}
-                          <span>{item.title}</span>
-                          <ChevronRightIcon className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
-                        </SidebarMenuButton>
-                      </CollapsibleTrigger>
-                      <CollapsibleContent>
-                        <SidebarMenuSub>
-                          {item.items?.map((subItem) => (
-                            <SidebarMenuSubItem key={subItem.title}>
-                              <SidebarMenuSubButton asChild>
-                                <a href={subItem.url}>
-                                  <span>{subItem.title}</span>
-                                </a>
-                              </SidebarMenuSubButton>
-                            </SidebarMenuSubItem>
-                          ))}
-                        </SidebarMenuSub>
-                      </CollapsibleContent>
-                    </SidebarMenuItem>
-                  </Collapsible>
-                )}
-              </React.Fragment>
-            ))}
-          </SidebarMenu>
+          <AppSidebarMenu menu={MENU_1_ITEMS} />
         </SidebarGroup>
         <SidebarGroup className="group-data-[collapsible=icon]:hidden">
           <SidebarGroupLabel>Components</SidebarGroupLabel>
-          <SidebarMenu>
-            <SidebarMenuItem key="1">
-              <SidebarMenuButton asChild>
-                <a href={`/#1`}>
-                  <span>Component 1</span>
-                </a>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-            <SidebarMenuItem key="2">
-              <SidebarMenuButton asChild>
-                <a href={`/#2`}>
-                  <span>Component 2</span>
-                </a>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          </SidebarMenu>
+          <AppSidebarMenu menu={MENU_2_ITEMS} />
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter className="pb-24">
