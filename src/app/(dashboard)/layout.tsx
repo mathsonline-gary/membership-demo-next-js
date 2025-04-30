@@ -9,6 +9,7 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { Breadcrumb, BreadcrumbProvider } from "@/components/layout/breadcrumb";
+import { NavUser } from "@/components/layout/nav-user";
 
 export default function DashboardLayout({
   children,
@@ -30,6 +31,13 @@ export default function DashboardLayout({
               <Breadcrumb />
               <div className="ml-auto flex items-center gap-2">
                 <ModeSwitcher />
+                <NavUser
+                  user={{
+                    name: "John Doe",
+                    email: "john@example.com",
+                    avatar: "/avatars/01.png",
+                  }}
+                />
               </div>
             </div>
           </header>

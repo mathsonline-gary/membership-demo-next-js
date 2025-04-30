@@ -13,7 +13,6 @@ import {
   SquareTerminal,
 } from "lucide-react";
 
-import { NavUser } from "@/components/layout/nav-user";
 import {
   Collapsible,
   CollapsibleContent,
@@ -22,7 +21,6 @@ import {
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -227,9 +225,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter>
-        <NavUser user={data.user} />
-      </SidebarFooter>
       <SidebarRail />
     </Sidebar>
   );
