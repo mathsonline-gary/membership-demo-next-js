@@ -3,13 +3,9 @@
 import * as React from "react";
 import Image from "next/image";
 import {
-  BookOpen,
-  Bot,
   ChevronRightIcon,
   HelpCircle,
   Settings,
-  SquareTerminal,
-  ClipboardList,
   Home,
   Users,
   Wrench,
