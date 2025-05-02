@@ -15,12 +15,11 @@ import Link from "next/link";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { api } from "@/lib/api";
 import { useRouter } from "next/navigation";
-import { ApiError } from "@/lib/api/client";
-import { useState } from "react";
+import { useEffect } from "react";
 import { toast } from "sonner";
 import { GoogleAuthButton } from "@/app/(auth)/google-auth-button";
+import { useAuthStore } from "@/stores/useAuthStore";
 
 const formSchema = z.object({
   email: z.string().email({
@@ -33,8 +32,7 @@ const formSchema = z.object({
 
 export default function LoginPage() {
   const router = useRouter();
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitError, setSubmitError] = useState<string | null>(null);
+  const { login, isLoggingIn, loginError, clearLoginError } = useAuthStore();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -44,52 +42,24 @@ export default function LoginPage() {
     },
   });
 
+  // Clear any previous errors when unmounting
+  useEffect(() => {
+    return () => {
+      clearLoginError();
+    };
+  }, [clearLoginError]);
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    setIsSubmitting(true);
-    setSubmitError(null);
-
-    // Login
     try {
-      const response = await api.auth.login(values);
-      api.setAuthToken(response.data.token);
-    } catch (error) {
-      if (!(error instanceof ApiError)) {
-        setSubmitError("An unexpected error occurred. Please try again.");
-        return;
-      }
-
-      if (error.status === 422) {
-        const errors = error.data as { field?: string; message: string }[];
-        if (!Array.isArray(errors)) {
-          setSubmitError(error.message);
-          return;
-        }
-
-        errors.forEach((err) => {
-          if (err.field) {
-            form.setError(err.field as keyof z.infer<typeof formSchema>, {
-              type: "server",
-              message: err.message,
-            });
-          } else {
-            setSubmitError(err.message);
-          }
-        });
-        return;
-      }
-
-      setSubmitError(error.message);
-    } finally {
-      setIsSubmitting(false);
-    }
-
-    // Get authenticated user
-    try {
-      const response = await api.auth.getAuthenticatedUser();
+      await login(values);
+      toast.success(
+        "Welcome back, " + useAuthStore.getState().user?.first_name + "!"
+      );
+      console.log("redirecting to dashboard");
       router.push("/dashboard");
-      toast.success("Welcome back, " + response.data.user.first_name + "!");
     } catch (error) {
-      console.error("Failed to get authenticated user:", error);
+      // Error handling is done in the store
+      console.error("Login failed:", error);
     }
   }
 
@@ -106,9 +76,9 @@ export default function LoginPage() {
                     Login and start your maths journey
                   </p>
                 </div>
-                {submitError && (
-                  <div className="text-destructive text-sm text-center">
-                    {submitError}
+                {loginError && (
+                  <div className="rounded-md bg-destructive/10 p-2 text-sm text-center text-destructive">
+                    {loginError}
                   </div>
                 )}
                 <FormField
@@ -121,7 +91,7 @@ export default function LoginPage() {
                         <Input
                           placeholder="m@example.com"
                           {...field}
-                          disabled={isSubmitting}
+                          disabled={isLoggingIn}
                         />
                       </FormControl>
                       <FormMessage />
@@ -146,19 +116,15 @@ export default function LoginPage() {
                         <Input
                           type="password"
                           {...field}
-                          disabled={isSubmitting}
+                          disabled={isLoggingIn}
                         />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-                <Button
-                  type="submit"
-                  className="w-full"
-                  disabled={isSubmitting}
-                >
-                  {isSubmitting ? "Logging in..." : "Login"}
+                <Button type="submit" className="w-full" disabled={isLoggingIn}>
+                  {isLoggingIn ? "Logging in..." : "Login"}
                 </Button>
                 <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
                   <span className="bg-background text-muted-foreground relative z-10 px-2">
@@ -166,7 +132,7 @@ export default function LoginPage() {
                   </span>
                 </div>
                 <div className="grid grid-cols-1 gap-4">
-                  <GoogleAuthButton disabled={isSubmitting} mode="login" />
+                  <GoogleAuthButton disabled={isLoggingIn} mode="login" />
                 </div>
                 <div className="text-center text-sm">
                   Don&apos;t have an account?{" "}
@@ -183,8 +149,9 @@ export default function LoginPage() {
         </CardContent>
       </Card>
       <div className="text-muted-foreground *:[a]:hover:text-primary text-center text-xs text-balance *:[a]:underline *:[a]:underline-offset-4">
-        By clicking continue, you agree to our <a href="#">Terms of Service</a>{" "}
-        and <a href="#">Privacy Policy</a>.
+        By clicking continue, you agree to our{" "}
+        <Link href="#">Terms of Service</Link> and{" "}
+        <Link href="#">Privacy Policy</Link>.
       </div>
     </>
   );
