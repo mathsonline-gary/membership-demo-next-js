@@ -25,6 +25,10 @@ export class ApiClient {
       (response) => response,
       (error: AxiosError) => {
         if (error.response) {
+          if (error.response.status >= 500) {
+            throw new ApiError("An unexpected error occurred", 0);
+          }
+
           const message =
             (error.response.data as { message?: string })?.message ||
             "An error occurred";
@@ -33,11 +37,13 @@ export class ApiClient {
             error.response.status,
             error.response.data
           );
-        } else if (error.request) {
-          throw new ApiError("Network error occurred", 0);
-        } else {
-          throw new ApiError("An unexpected error occurred", 0);
         }
+
+        if (error.request) {
+          throw new ApiError("Network error occurred", 0);
+        }
+
+        throw new ApiError("An unexpected error occurred", 0);
       }
     );
   }

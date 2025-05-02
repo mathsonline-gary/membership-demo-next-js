@@ -7,7 +7,7 @@ interface LoginRequest {
   password: string;
 }
 
-interface SignupRequest extends LoginRequest {
+interface RegisterRequest extends LoginRequest {
   first_name: string;
   last_name: string;
   username: string;
@@ -40,6 +40,12 @@ interface AuthenticatedUserResponse {
   };
 }
 
+interface GoogleAuthResponse {
+  data: {
+    url: string;
+  };
+}
+
 export class AuthService {
   private client: ApiClient;
 
@@ -51,7 +57,7 @@ export class AuthService {
     return this.client.post<AuthResponse>("/auth/login", data);
   }
 
-  async signup(data: SignupRequest): Promise<AuthResponse> {
+  async register(data: RegisterRequest): Promise<AuthResponse> {
     return this.client.post<AuthResponse>("/auth/register", data);
   }
 
@@ -66,5 +72,32 @@ export class AuthService {
 
   async getAuthenticatedUser(): Promise<AuthenticatedUserResponse> {
     return this.client.get<AuthenticatedUserResponse>("/auth/me");
+  }
+
+  async getGoogleRedirectUrl({
+    mode,
+  }: {
+    mode: "login" | "register";
+  }): Promise<GoogleAuthResponse> {
+    return this.client.get<GoogleAuthResponse>("/oauth/google", {
+      params: {
+        mode,
+        brand_id: process.env.NEXT_PUBLIC_APP_BRAND_ID,
+      },
+    });
+  }
+
+  async googleLogin(code: string): Promise<AuthResponse> {
+    return this.client.post<AuthResponse>("/oauth/google/login", {
+      code,
+      brand_id: process.env.NEXT_PUBLIC_APP_BRAND_ID,
+    });
+  }
+
+  async googleRegister(code: string): Promise<AuthResponse> {
+    return this.client.post<AuthResponse>("/oauth/google/register", {
+      code,
+      brand_id: process.env.NEXT_PUBLIC_APP_BRAND_ID,
+    });
   }
 }
