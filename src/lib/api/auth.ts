@@ -54,11 +54,18 @@ export class AuthService {
   }
 
   async login(data: LoginRequest): Promise<AuthResponse> {
-    return this.client.post<AuthResponse>("/auth/login", data);
+    const response = await this.client.post<AuthResponse>("/auth/login", data);
+    this.client.setAuthToken(response.data.token);
+    return response;
   }
 
   async register(data: RegisterRequest): Promise<AuthResponse> {
-    return this.client.post<AuthResponse>("/auth/register", data);
+    const response = await this.client.post<AuthResponse>(
+      "/auth/register",
+      data
+    );
+    this.client.setAuthToken(response.data.token);
+    return response;
   }
 
   async logout(): Promise<void> {
@@ -67,7 +74,9 @@ export class AuthService {
   }
 
   async refreshToken(): Promise<AuthResponse> {
-    return this.client.post<AuthResponse>("/auth/refresh", {});
+    const response = await this.client.post<AuthResponse>("/auth/refresh", {});
+    this.client.setAuthToken(response.data.token);
+    return response;
   }
 
   async getAuthenticatedUser(): Promise<AuthenticatedUserResponse> {
@@ -88,16 +97,26 @@ export class AuthService {
   }
 
   async googleLogin(code: string): Promise<AuthResponse> {
-    return this.client.post<AuthResponse>("/oauth/google/login", {
-      code,
-      brand_id: process.env.NEXT_PUBLIC_APP_BRAND_ID,
-    });
+    const response = await this.client.post<AuthResponse>(
+      "/oauth/google/login",
+      {
+        code,
+        brand_id: process.env.NEXT_PUBLIC_APP_BRAND_ID,
+      }
+    );
+    this.client.setAuthToken(response.data.token);
+    return response;
   }
 
   async googleRegister(code: string): Promise<AuthResponse> {
-    return this.client.post<AuthResponse>("/oauth/google/register", {
-      code,
-      brand_id: process.env.NEXT_PUBLIC_APP_BRAND_ID,
-    });
+    const response = await this.client.post<AuthResponse>(
+      "/oauth/google/register",
+      {
+        code,
+        brand_id: process.env.NEXT_PUBLIC_APP_BRAND_ID,
+      }
+    );
+    this.client.setAuthToken(response.data.token);
+    return response;
   }
 }

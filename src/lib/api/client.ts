@@ -1,6 +1,7 @@
 "use client";
 
 import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from "axios";
+import { useAuthStore } from "@/stores/useAuthStore";
 
 export class ApiError extends Error {
   constructor(message: string, public status: number, public data?: unknown) {
@@ -18,6 +19,15 @@ export class ApiClient {
       headers: {
         "Content-Type": "application/json",
       },
+      withCredentials: true,
+    });
+
+    this.axiosInstance.interceptors.request.use((config) => {
+      const token = useAuthStore.getState().token;
+      if (token) {
+        config.headers["Authorization"] = `Bearer ${token}`;
+      }
+      return config;
     });
 
     // Add response interceptor for error handling
@@ -25,6 +35,11 @@ export class ApiClient {
       (response) => response,
       (error: AxiosError) => {
         if (error.response) {
+          // Handle 401 Unauthorized
+          if (error.response.status === 401) {
+            useAuthStore.getState().reset();
+          }
+
           if (error.response.status >= 500) {
             throw new ApiError("An unexpected error occurred", 0);
           }

@@ -35,7 +35,8 @@ type AuthActions = {
   getAuthenticatedUser: () => Promise<void>;
   login: (credentials: LoginCredentials) => Promise<void>;
   clearLoginError: () => void;
-  logout: () => void;
+  logout: () => Promise<void>;
+  reset: () => void;
 };
 
 const initialState: AuthState = {
@@ -56,19 +57,21 @@ export const useAuthStore = create<AuthState & AuthActions>()(
         set({ isAuthenticated });
       const setUser = (user: User | null) => set({ user });
       const setToken = (token: string | null) => set({ token });
-      const clearAuthentication = () => {
-        setIsAuthenticated(false);
-        setUser(null);
-        setToken(null);
-      };
       const setLoginError = (loginError: string | null) => set({ loginError });
       const setIsLoggingIn = (isLoggingIn: boolean) => set({ isLoggingIn });
       const setIsLoggingOut = (isLoggingOut: boolean) => set({ isLoggingOut });
-      const setLogoutError = (logoutError: string | null) =>
-        set({ logoutError });
+
+      const reset = () => {
+        set((state) => ({
+          ...initialState,
+          isLoggingIn: state.isLoggingIn,
+          isLoggingOut: state.isLoggingOut,
+        }));
+      };
 
       return {
         ...initialState,
+        reset,
 
         getAuthenticatedUser: async () => {
           try {
@@ -76,21 +79,19 @@ export const useAuthStore = create<AuthState & AuthActions>()(
             setUser(userResponse.data.user);
             setIsAuthenticated(true);
           } catch (error) {
-            clearAuthentication();
+            reset();
             return Promise.reject(error);
           }
         },
 
         login: async (credentials) => {
           try {
-            clearAuthentication();
+            reset();
             setIsLoggingIn(true);
             setLoginError(null);
 
-            // Login request
             const loginResponse = await api.auth.login(credentials);
             const token = loginResponse.data.token;
-            api.setAuthToken(token);
             setToken(token);
             setIsAuthenticated(true);
           } catch (error) {
@@ -98,7 +99,6 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 
             if (error instanceof ApiError) {
               if (error.data && Array.isArray(error.data)) {
-                // Handle validation errors
                 const firstError = error.data[0];
                 errorMessage = firstError.message || errorMessage;
               } else if (error.message) {
@@ -107,8 +107,7 @@ export const useAuthStore = create<AuthState & AuthActions>()(
             }
 
             setLoginError(errorMessage);
-            setIsLoggingIn(false);
-            clearAuthentication();
+            reset();
             return Promise.reject(error);
           } finally {
             setIsLoggingIn(false);
@@ -116,16 +115,16 @@ export const useAuthStore = create<AuthState & AuthActions>()(
         },
 
         clearLoginError: () => {
-          setLoginError(null);
+          set({ loginError: null });
         },
 
-        logout: () => {
+        logout: async () => {
           try {
             setIsLoggingOut(true);
-            setLogoutError(null);
-
-            api.clearAuthToken();
-            clearAuthentication();
+            await api.auth.logout(); // This will clear the token
+            reset();
+          } catch (error) {
+            console.error(error);
           } finally {
             setIsLoggingOut(false);
           }

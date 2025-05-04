@@ -9,7 +9,6 @@ import {
   LogOut,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -27,11 +26,11 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { ModeSwitcher } from "@/components/layout/mode-switcher";
-import { api } from "@/lib/api";
+import { useAuthStore } from "@/stores/useAuthStore";
 
 export function NavUser() {
   const router = useRouter();
-  const [isLoggingOut, setIsLoggingOut] = React.useState(false);
+  const { logout, isLoggingOut } = useAuthStore();
 
   const user = {
     name: "John Doe",
@@ -40,17 +39,8 @@ export function NavUser() {
   };
 
   const handleLogout = async () => {
-    try {
-      setIsLoggingOut(true);
-      await api.auth.logout();
-      api.clearAuthToken();
-      router.push("/login");
-    } catch (error) {
-      console.error(error);
-      toast.error("Failed to logout. Please try again.");
-    } finally {
-      setIsLoggingOut(false);
-    }
+    await logout();
+    router.replace("/login");
   };
 
   return (
