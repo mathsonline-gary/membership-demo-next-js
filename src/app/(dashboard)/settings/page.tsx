@@ -6,11 +6,15 @@ import { useEffect } from "react";
 const BREADCRUMB_ITEMS = [{ label: "Settings" }];
 
 export default function SettingsPage() {
-  const { setItems } = useBreadcrumb();
+  const { setItems, clearBreadcrumbs } = useBreadcrumb();
 
   useEffect(() => {
     setItems(BREADCRUMB_ITEMS);
-  }, [setItems]);
+
+    return () => {
+      clearBreadcrumbs();
+    };
+  }, [setItems, clearBreadcrumbs]);
 
   return <div>Settings Page</div>;
 }

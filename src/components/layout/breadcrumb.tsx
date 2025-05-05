@@ -1,8 +1,8 @@
 "use client";
 
 import * as React from "react";
+import { useState } from "react";
 import Link from "next/link";
-import { createContext, useContext, ReactNode, useState } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -31,6 +31,8 @@ import {
   DrawerTrigger,
 } from "../ui/drawer";
 
+const ITEMS_TO_DISPLAY = 3;
+
 type BreadcrumbItem = {
   label: string;
   href?: string;
@@ -39,30 +41,42 @@ type BreadcrumbItem = {
 type BreadcrumbContextType = {
   items: BreadcrumbItem[];
   setItems: (items: BreadcrumbItem[]) => void;
+  clearBreadcrumbs: () => void;
 };
 
-const ITEMS_TO_DISPLAY = 3;
-
-const BreadcrumbContext = createContext<BreadcrumbContextType | undefined>(
-  undefined
-);
-
-function BreadcrumbProvider({ children }: { children: ReactNode }) {
-  const [items, setItems] = useState<BreadcrumbItem[]>([]);
-
-  return (
-    <BreadcrumbContext.Provider value={{ items, setItems }}>
-      {children}
-    </BreadcrumbContext.Provider>
-  );
-}
+const BreadcrumbContext = React.createContext<
+  BreadcrumbContextType | undefined
+>(undefined);
 
 function useBreadcrumb() {
-  const context = useContext(BreadcrumbContext);
+  const context = React.useContext(BreadcrumbContext);
   if (!context) {
     throw new Error("useBreadcrumb must be used within a BreadcrumbProvider");
   }
   return context;
+}
+
+function BreadcrumbProvider({ children }: { children: React.ReactNode }) {
+  const [items, setItems] = React.useState<BreadcrumbItem[]>([]);
+
+  const clearBreadcrumbs = React.useCallback(() => {
+    setItems([]);
+  }, []);
+
+  const value = React.useMemo(
+    () => ({
+      items,
+      setItems,
+      clearBreadcrumbs,
+    }),
+    [items, clearBreadcrumbs]
+  );
+
+  return (
+    <BreadcrumbContext.Provider value={value}>
+      {children}
+    </BreadcrumbContext.Provider>
+  );
 }
 
 function Breadcrumb() {
@@ -100,15 +114,13 @@ function Breadcrumb() {
                           <BreadcrumbEllipsis className="h-4 w-4" />
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="start">
-                          {hiddenItems.map(
-                            (item: BreadcrumbItem, index: number) => (
-                              <DropdownMenuItem key={index}>
-                                <Link href={item.href ? item.href : "#"}>
-                                  {item.label}
-                                </Link>
-                              </DropdownMenuItem>
-                            )
-                          )}
+                          {hiddenItems.map((item, index) => (
+                            <DropdownMenuItem key={index}>
+                              <Link href={item.href ? item.href : "#"}>
+                                {item.label}
+                              </Link>
+                            </DropdownMenuItem>
+                          ))}
                         </DropdownMenuContent>
                       </DropdownMenu>
                     ) : (
@@ -169,4 +181,4 @@ function Breadcrumb() {
   );
 }
 
-export { BreadcrumbProvider, Breadcrumb, useBreadcrumb };
+export { Breadcrumb, BreadcrumbProvider, useBreadcrumb };

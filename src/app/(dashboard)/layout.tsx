@@ -7,7 +7,8 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { Breadcrumb, BreadcrumbProvider } from "@/components/layout/breadcrumb";
+import { Breadcrumb } from "@/components/layout/breadcrumb";
+import { BreadcrumbProvider } from "@/components/layout/breadcrumb";
 import { NavUser } from "@/components/layout/nav-user";
 import { Tooltip, TooltipTrigger } from "@/components/ui/tooltip";
 import { TooltipProvider } from "@/components/ui/tooltip";

@@ -6,11 +6,15 @@ import { useEffect } from "react";
 const BREADCRUMB_ITEMS = [{ label: "Dashboard" }];
 
 export default function DashboardPage() {
-  const { setItems } = useBreadcrumb();
+  const { setItems, clearBreadcrumbs } = useBreadcrumb();
 
   useEffect(() => {
     setItems(BREADCRUMB_ITEMS);
-  }, [setItems]);
+
+    return () => {
+      clearBreadcrumbs();
+    };
+  }, [setItems, clearBreadcrumbs]);
 
   return <div>This is the Dashboard</div>;
 }
