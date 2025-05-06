@@ -3,6 +3,7 @@
 import * as React from "react";
 import { useState } from "react";
 import Link from "next/link";
+import { HomeIcon } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -31,9 +32,7 @@ import {
   DrawerTrigger,
 } from "../ui/drawer";
 
-const ITEMS_TO_DISPLAY = 3;
-
-type BreadcrumbItem = {
+export type BreadcrumbItem = {
   label: string;
   href?: string;
 };
@@ -48,7 +47,7 @@ const BreadcrumbContext = React.createContext<
   BreadcrumbContextType | undefined
 >(undefined);
 
-function useBreadcrumb() {
+export function useBreadcrumb() {
   const context = React.useContext(BreadcrumbContext);
   if (!context) {
     throw new Error("useBreadcrumb must be used within a BreadcrumbProvider");
@@ -56,7 +55,11 @@ function useBreadcrumb() {
   return context;
 }
 
-function BreadcrumbProvider({ children }: { children: React.ReactNode }) {
+export function BreadcrumbProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const [items, setItems] = React.useState<BreadcrumbItem[]>([]);
 
   const clearBreadcrumbs = React.useCallback(() => {
@@ -79,85 +82,95 @@ function BreadcrumbProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
-function Breadcrumb() {
+export function Breadcrumb() {
   const [open, setOpen] = useState(false);
   const isDesktop = !useIsMobile();
   const { items } = useBreadcrumb();
 
   if (items.length === 0) return null;
 
-  // Calculate which items to show and which to hide
-  const shouldShowEllipsis = items.length > ITEMS_TO_DISPLAY;
-  const visibleItems = shouldShowEllipsis
-    ? [items[0], ...items.slice(-2)]
-    : items;
-  const hiddenItems = shouldShowEllipsis ? items.slice(1, -2) : [];
+  // Show ellipsis if we have more than 2 items (not counting home)
+  const shouldShowEllipsis = items.length > 2;
+  // Get the last two items
+  const lastTwoItems = items.slice(-2);
+  // Get all items except the last two for the ellipsis menu
+  const hiddenItems = shouldShowEllipsis ? items.slice(0, -2) : [];
 
   return (
     <BreadcrumbComponent>
       <BreadcrumbList>
-        {visibleItems.map((item, index) => {
-          const isLast = index === visibleItems.length - 1;
-          const showEllipsis = shouldShowEllipsis && index === 1;
+        {/* Home item */}
+        <BreadcrumbItem>
+          <Link href="/dashboard">
+            <HomeIcon className="h-4 w-4" />
+          </Link>
+        </BreadcrumbItem>
+        <BreadcrumbSeparator />
+
+        {/* Ellipsis for hidden items */}
+        {shouldShowEllipsis && (
+          <>
+            <BreadcrumbItem>
+              {isDesktop ? (
+                <DropdownMenu open={open} onOpenChange={setOpen}>
+                  <DropdownMenuTrigger
+                    className="flex items-center gap-1"
+                    aria-label="Toggle menu"
+                  >
+                    <BreadcrumbEllipsis className="h-4 w-4" />
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start">
+                    {hiddenItems.map((item, index) => (
+                      <DropdownMenuItem key={index}>
+                        <Link href={item.href ? item.href : "#"}>
+                          {item.label}
+                        </Link>
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : (
+                <Drawer open={open} onOpenChange={setOpen}>
+                  <DrawerTrigger className="flex items-center gap-1">
+                    <BreadcrumbEllipsis className="h-4 w-4" />
+                  </DrawerTrigger>
+                  <DrawerContent>
+                    <DrawerHeader className="text-left">
+                      <DrawerTitle>Navigate to</DrawerTitle>
+                      <DrawerDescription>
+                        Select a page to navigate to.
+                      </DrawerDescription>
+                    </DrawerHeader>
+                    <div className="grid gap-1 px-4">
+                      {hiddenItems.map((item, index) => (
+                        <Link
+                          key={index}
+                          href={item.href ? item.href : "#"}
+                          className="py-1 text-sm"
+                        >
+                          {item.label}
+                        </Link>
+                      ))}
+                    </div>
+                    <DrawerFooter className="pt-4">
+                      <DrawerClose asChild>
+                        <Button variant="outline">Close</Button>
+                      </DrawerClose>
+                    </DrawerFooter>
+                  </DrawerContent>
+                </Drawer>
+              )}
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+          </>
+        )}
+
+        {/* Last two items */}
+        {lastTwoItems.map((item, index) => {
+          const isLast = index === lastTwoItems.length - 1;
 
           return (
             <React.Fragment key={index}>
-              {showEllipsis && (
-                <>
-                  <BreadcrumbItem>
-                    {isDesktop ? (
-                      <DropdownMenu open={open} onOpenChange={setOpen}>
-                        <DropdownMenuTrigger
-                          className="flex items-center gap-1"
-                          aria-label="Toggle menu"
-                        >
-                          <BreadcrumbEllipsis className="h-4 w-4" />
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="start">
-                          {hiddenItems.map((item, index) => (
-                            <DropdownMenuItem key={index}>
-                              <Link href={item.href ? item.href : "#"}>
-                                {item.label}
-                              </Link>
-                            </DropdownMenuItem>
-                          ))}
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    ) : (
-                      <Drawer open={open} onOpenChange={setOpen}>
-                        <DrawerTrigger className="flex items-center gap-1">
-                          <BreadcrumbEllipsis className="h-4 w-4" />
-                        </DrawerTrigger>
-                        <DrawerContent>
-                          <DrawerHeader className="text-left">
-                            <DrawerTitle>Navigate to</DrawerTitle>
-                            <DrawerDescription>
-                              Select a page to navigate to.
-                            </DrawerDescription>
-                          </DrawerHeader>
-                          <div className="grid gap-1 px-4">
-                            {hiddenItems.map((item, index) => (
-                              <Link
-                                key={index}
-                                href={item.href ? item.href : "#"}
-                                className="py-1 text-sm"
-                              >
-                                {item.label}
-                              </Link>
-                            ))}
-                          </div>
-                          <DrawerFooter className="pt-4">
-                            <DrawerClose asChild>
-                              <Button variant="outline">Close</Button>
-                            </DrawerClose>
-                          </DrawerFooter>
-                        </DrawerContent>
-                      </Drawer>
-                    )}
-                  </BreadcrumbItem>
-                  <BreadcrumbSeparator />
-                </>
-              )}
               <BreadcrumbItem>
                 {!isLast ? (
                   <BreadcrumbLink
@@ -181,4 +194,4 @@ function Breadcrumb() {
   );
 }
 
-export { Breadcrumb, BreadcrumbProvider, useBreadcrumb };
+
