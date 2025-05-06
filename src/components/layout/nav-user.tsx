@@ -27,14 +27,24 @@ import {
 } from "@/components/ui/sidebar";
 import { ModeSwitcher } from "@/components/layout/mode-switcher";
 import { useAuthStore } from "@/stores/useAuthStore";
+import { toast } from "sonner";
 
 export function NavUser() {
   const router = useRouter();
-  const { logout, isLoggingOut, user } = useAuthStore();
+  const { logout, user } = useAuthStore();
+  const [isLoggingOut, setIsLoggingOut] = React.useState(false);
 
   const handleLogout = async () => {
-    await logout();
-    router.replace("/login");
+    try {
+      setIsLoggingOut(true);
+      await logout();
+      router.replace("/login");
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to log out");
+    } finally {
+      setIsLoggingOut(false);
+    }
   };
 
   return (

@@ -15,8 +15,9 @@ import Link from "next/link";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { useEffect } from "react";
-import { toast } from "sonner";
+import React from "react";
+import { useSearchParams } from "next/navigation";
+import { ApiError } from "@/lib/api/client";
 import { GoogleAuthButton } from "@/app/(auth)/google-auth-button";
 import { useAuthStore } from "@/stores/useAuthStore";
 
@@ -30,33 +31,32 @@ const formSchema = z.object({
 });
 
 export default function LoginPage() {
-  const { login, isLoggingIn, loginError, clearLoginError } = useAuthStore();
+  const searchParams = useSearchParams();
+
+  const { login } = useAuthStore();
+  const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  const [error, setError] = React.useState<string | null>(null);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: "",
+      email: searchParams.get("email") ?? "",
       password: "",
     },
   });
 
-  // Clear any previous errors when unmounting
-  useEffect(() => {
-    return () => {
-      clearLoginError();
-    };
-  }, [clearLoginError]);
-
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
+      setIsLoading(true);
       await login(values);
-      toast.success(
-        "Welcome back, " + useAuthStore.getState().user?.first_name + "!"
-      );
-      // Redirection will be handled by the useEffect above
     } catch (error) {
-      // Error handling is done in the store
-      console.error("Login failed:", error);
+      if (error instanceof ApiError) {
+        setError(error.message);
+      } else {
+        setError("Failed to login, please try again.");
+      }
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -73,9 +73,9 @@ export default function LoginPage() {
                     Login and start your maths journey
                   </p>
                 </div>
-                {loginError && (
+                {error && (
                   <div className="rounded-md bg-destructive/10 p-2 text-sm text-center text-destructive">
-                    {loginError}
+                    {error}
                   </div>
                 )}
                 <FormField
@@ -88,7 +88,7 @@ export default function LoginPage() {
                         <Input
                           placeholder="m@example.com"
                           {...field}
-                          disabled={isLoggingIn}
+                          disabled={isLoading}
                         />
                       </FormControl>
                       <FormMessage />
@@ -113,15 +113,15 @@ export default function LoginPage() {
                         <Input
                           type="password"
                           {...field}
-                          disabled={isLoggingIn}
+                          disabled={isLoading}
                         />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-                <Button type="submit" className="w-full" disabled={isLoggingIn}>
-                  {isLoggingIn ? "Logging in..." : "Login"}
+                <Button type="submit" className="w-full" disabled={isLoading}>
+                  {isLoading ? "Logging in..." : "Login"}
                 </Button>
                 <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
                   <span className="bg-background text-muted-foreground relative z-10 px-2">
@@ -129,7 +129,7 @@ export default function LoginPage() {
                   </span>
                 </div>
                 <div className="grid grid-cols-1 gap-4">
-                  <GoogleAuthButton disabled={isLoggingIn} mode="login" />
+                  <GoogleAuthButton disabled={isLoading} mode="login" />
                 </div>
                 <div className="text-center text-sm">
                   Don&apos;t have an account?{" "}
