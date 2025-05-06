@@ -228,6 +228,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <Link href="/dashboard">
               <Image
                 className="dark:invert"
+                style={{
+                  width: `${imageProps.width}px`,
+                  height: `${imageProps.height}px`,
+                }}
                 src={imageProps.src}
                 alt="Logo"
                 width={imageProps.width}
@@ -243,7 +247,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarGroupLabel>Platform</SidebarGroupLabel>
           <AppSidebarMenu menu={MENU_1_ITEMS} />
         </SidebarGroup>
-        <SidebarGroup className="group-data-[collapsible=icon]:hidden">
+        <SidebarGroup>
           <SidebarGroupLabel>Components</SidebarGroupLabel>
           <AppSidebarMenu menu={MENU_2_ITEMS} />
         </SidebarGroup>

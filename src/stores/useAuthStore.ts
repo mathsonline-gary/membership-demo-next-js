@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { devtools, persist } from "zustand/middleware";
 import { api } from "@/lib/api";
 import { ApiError } from "@/lib/api/client";
 
@@ -8,6 +8,7 @@ type User = {
   email: string;
   first_name: string;
   last_name: string;
+  avatar: string | null;
   // add other user fields as needed
 };
 
@@ -36,7 +37,7 @@ type AuthActions = {
   login: (credentials: LoginCredentials) => Promise<void>;
   clearLoginError: () => void;
   logout: () => Promise<void>;
-  reset: () => void;
+  clear: () => void;
 };
 
 const initialState: AuthState = {
@@ -50,50 +51,45 @@ const initialState: AuthState = {
 };
 
 export const useAuthStore = create<AuthState & AuthActions>()(
-  persist(
-    (set) => {
-      // Private actions
-      const setIsAuthenticated = (isAuthenticated: boolean) =>
-        set({ isAuthenticated });
-      const setUser = (user: User | null) => set({ user });
-      const setToken = (token: string | null) => set({ token });
-      const setLoginError = (loginError: string | null) => set({ loginError });
-      const setIsLoggingIn = (isLoggingIn: boolean) => set({ isLoggingIn });
-      const setIsLoggingOut = (isLoggingOut: boolean) => set({ isLoggingOut });
-
-      const reset = () => {
-        set((state) => ({
-          ...initialState,
-          isLoggingIn: state.isLoggingIn,
-          isLoggingOut: state.isLoggingOut,
-        }));
-      };
-
-      return {
+  devtools(
+    persist(
+      (set) => ({
         ...initialState,
-        reset,
+
+        clear: () => {
+          set((state) => ({
+            ...initialState,
+            isLoggingIn: state.isLoggingIn,
+            isLoggingOut: state.isLoggingOut,
+          }));
+        },
 
         getAuthenticatedUser: async () => {
           try {
             const userResponse = await api.auth.getAuthenticatedUser();
-            setUser(userResponse.data.user);
-            setIsAuthenticated(true);
+            set({
+              user: userResponse.data.user,
+              isAuthenticated: true,
+            });
           } catch (error) {
-            reset();
+            set(initialState);
             return Promise.reject(error);
           }
         },
 
         login: async (credentials) => {
           try {
-            reset();
-            setIsLoggingIn(true);
-            setLoginError(null);
+            set({
+              ...initialState,
+              isLoggingIn: true,
+            });
 
             const loginResponse = await api.auth.login(credentials);
-            const token = loginResponse.data.token;
-            setToken(token);
-            setIsAuthenticated(true);
+            set({
+              token: loginResponse.data.token,
+              isAuthenticated: true,
+              isLoggingIn: false,
+            });
           } catch (error) {
             let errorMessage = "An unexpected error occurred";
 
@@ -106,38 +102,36 @@ export const useAuthStore = create<AuthState & AuthActions>()(
               }
             }
 
-            setLoginError(errorMessage);
-            reset();
+            set({
+              ...initialState,
+              loginError: errorMessage,
+            });
             return Promise.reject(error);
-          } finally {
-            setIsLoggingIn(false);
           }
         },
 
-        clearLoginError: () => {
-          set({ loginError: null });
-        },
+        clearLoginError: () => set({ loginError: null }),
 
         logout: async () => {
           try {
-            setIsLoggingOut(true);
-            await api.auth.logout(); // This will clear the token
-            reset();
+            set({ isLoggingOut: true });
+            await api.auth.logout();
+            set(initialState);
           } catch (error) {
             console.error(error);
           } finally {
-            setIsLoggingOut(false);
+            set({ isLoggingOut: false });
           }
         },
-      };
-    },
-    {
-      name: "auth-storage",
-      partialize: (state) => ({
-        isAuthenticated: state.isAuthenticated,
-        token: state.token,
-        user: state.user,
       }),
-    }
+      {
+        name: "auth-storage",
+        partialize: (state) => ({
+          isAuthenticated: state.isAuthenticated,
+          token: state.token,
+          user: state.user,
+        }),
+      }
+    )
   )
 );

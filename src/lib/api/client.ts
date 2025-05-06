@@ -19,7 +19,7 @@ export class ApiClient {
       headers: {
         "Content-Type": "application/json",
       },
-      withCredentials: true,
+      withCredentials: false,
     });
 
     this.axiosInstance.interceptors.request.use((config) => {
@@ -37,7 +37,7 @@ export class ApiClient {
         if (error.response) {
           // Handle 401 Unauthorized
           if (error.response.status === 401) {
-            useAuthStore.getState().reset();
+            useAuthStore.getState().clear();
           }
 
           if (error.response.status >= 500) {

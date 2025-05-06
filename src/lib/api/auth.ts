@@ -36,6 +36,7 @@ interface AuthenticatedUserResponse {
       ip_address: string;
       created_at: string;
       updated_at: string;
+      avatar: string | null;
     };
   };
 }
