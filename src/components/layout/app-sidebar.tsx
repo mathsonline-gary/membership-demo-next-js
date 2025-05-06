@@ -61,8 +61,8 @@ const MENU_1_ITEMS: AppSidebarMenu[] = [
     isActive: true,
     items: [
       {
-        title: "Overview",
-        url: "#overview",
+        title: "All Tasks",
+        url: "/tasks",
         isActive: true,
       },
       {

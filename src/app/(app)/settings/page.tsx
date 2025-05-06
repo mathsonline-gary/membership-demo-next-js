@@ -1,11 +1,15 @@
 "use client";
 
-import { useBreadcrumbItems } from "@/hooks/use-breadcrumb-items";
+import { Breadcrumb, BreadcrumbItem } from "@/components/layout/breadcrumb";
 
-const BREADCRUMB_ITEMS = [{ label: "Settings" }];
+const BREADCRUMB_ITEMS: BreadcrumbItem[] = [{ label: "Settings" }];
 
 export default function SettingsPage() {
-  useBreadcrumbItems(BREADCRUMB_ITEMS);
-
-  return <div>Settings Page</div>;
+  console.log("settings page");
+  return (
+    <>
+      <Breadcrumb items={BREADCRUMB_ITEMS} />
+      <div>Settings Page</div>
+    </>
+  );
 }

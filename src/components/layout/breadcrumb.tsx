@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import { useState } from "react";
 import Link from "next/link";
 import { HomeIcon } from "lucide-react";
 import {
@@ -37,55 +36,13 @@ export type BreadcrumbItem = {
   href?: string;
 };
 
-type BreadcrumbContextType = {
+interface BreadcrumbProps {
   items: BreadcrumbItem[];
-  setItems: (items: BreadcrumbItem[]) => void;
-  clearBreadcrumbs: () => void;
-};
-
-const BreadcrumbContext = React.createContext<
-  BreadcrumbContextType | undefined
->(undefined);
-
-export function useBreadcrumb() {
-  const context = React.useContext(BreadcrumbContext);
-  if (!context) {
-    throw new Error("useBreadcrumb must be used within a BreadcrumbProvider");
-  }
-  return context;
 }
 
-export function BreadcrumbProvider({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  const [items, setItems] = React.useState<BreadcrumbItem[]>([]);
-
-  const clearBreadcrumbs = React.useCallback(() => {
-    setItems([]);
-  }, []);
-
-  const value = React.useMemo(
-    () => ({
-      items,
-      setItems,
-      clearBreadcrumbs,
-    }),
-    [items, clearBreadcrumbs]
-  );
-
-  return (
-    <BreadcrumbContext.Provider value={value}>
-      {children}
-    </BreadcrumbContext.Provider>
-  );
-}
-
-export function Breadcrumb() {
-  const [open, setOpen] = useState(false);
+export function Breadcrumb({ items }: BreadcrumbProps) {
+  const [open, setOpen] = React.useState(false);
   const isDesktop = !useIsMobile();
-  const { items } = useBreadcrumb();
 
   if (items.length === 0) return null;
 
