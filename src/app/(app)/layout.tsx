@@ -1,13 +1,13 @@
 "use client";
 
-import { AppSidebar } from "@/components/layout/app-sidebar";
+import { AppSidebar } from "@/app/(app)/_components/app-sidebar";
 import { Separator } from "@/components/ui/separator";
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { NavUser } from "@/components/layout/nav-user";
+import { NavUser } from "@/app/(app)/_components/nav-user";
 import { Tooltip, TooltipTrigger } from "@/components/ui/tooltip";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { TooltipContent } from "@/components/ui/tooltip";

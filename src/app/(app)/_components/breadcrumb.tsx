@@ -19,7 +19,7 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
 import {
   Drawer,
   DrawerClose,
@@ -29,7 +29,7 @@ import {
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
-} from "../ui/drawer";
+} from "@/components/ui/drawer";
 
 export type BreadcrumbItem = {
   label: string;
@@ -129,12 +129,12 @@ export function Breadcrumb({ items }: BreadcrumbProps) {
           return (
             <React.Fragment key={index}>
               <BreadcrumbItem>
-                {!isLast ? (
+                {!isLast && item.href ? (
                   <BreadcrumbLink
                     asChild
                     className="max-w-20 truncate md:max-w-none"
                   >
-                    <Link href={item.href ? item.href : "#"}>{item.label}</Link>
+                    <Link href={item.href}>{item.label}</Link>
                   </BreadcrumbLink>
                 ) : (
                   <BreadcrumbPage className="max-w-20 truncate md:max-w-none">
@@ -150,5 +150,3 @@ export function Breadcrumb({ items }: BreadcrumbProps) {
     </BreadcrumbComponent>
   );
 }
-
-

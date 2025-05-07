@@ -10,8 +10,7 @@ import {
   Users,
   Wrench,
   ClipboardCheck,
-  BookOpenCheck,
-  PiggyBank,
+  BookOpen,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -44,98 +43,119 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ModeSwitcher } from "./mode-switcher";
+import { ModeSwitcher } from "@/app/(app)/_components/mode-switcher";
+import { usePathname } from "next/navigation";
 
 // This is sample data.
-const MENU_1_ITEMS: AppSidebarMenu[] = [
+const MENU_1_ITEMS: AppSidebarMenuItem[] = [
   {
     title: "Home",
     url: "/dashboard",
     icon: Home,
-    isActive: true,
   },
   {
     title: "Tasks",
-    url: "#tasks",
+    url: "/tasks",
     icon: ClipboardCheck,
-    isActive: true,
     items: [
       {
         title: "All Tasks",
         url: "/tasks",
-        isActive: true,
       },
       {
         title: "Course Plans",
-        url: "#course-plans",
+        url: "/tasks/course-plans",
       },
       {
         title: "Weekly Revisions",
-        url: "#weekly-revisions",
+        url: "/tasks/weekly-revisions",
       },
     ],
   },
-  {
-    title: "Exams",
-    url: "#exams",
-    icon: BookOpenCheck,
-  },
-  {
-    title: "Question Bank",
-    url: "#question-bank",
-    icon: PiggyBank,
-  },
-];
-
-const MENU_2_ITEMS: AppSidebarMenu[] = [
   {
     title: "People",
     url: "#people",
     icon: Users,
     items: [
       {
-        title: "Classes",
-        url: "#classes",
+        title: "Teams",
+        url: "/people/teams",
       },
       {
-        title: "Teachers",
-        url: "#teachers",
+        title: "Members",
+        url: "/people/members",
       },
       {
-        title: "Students",
-        url: "#students",
+        title: "Admins",
+        url: "/people/admins",
+      },
+    ],
+  },
+];
+
+const MENU_2_ITEMS: AppSidebarMenuItem[] = [
+  {
+    title: "Tools",
+    url: "/tools",
+    icon: Wrench,
+    items: [
+      {
+        title: "Export Data",
+        url: "/tools/export",
+      },
+      {
+        title: "Upload Date",
+        url: "/tools/upload",
       },
     ],
   },
   {
-    title: "Tools",
-    url: "#tools",
-    icon: Wrench,
+    title: "Documentation",
+    url: "/documentation",
+    icon: BookOpen,
+    items: [
+      {
+        title: "Introduction",
+        url: "/documentation/introduction",
+      },
+      {
+        title: "Tutorials",
+        url: "/documentation/tutorials",
+      },
+    ],
   },
 ];
 
-type AppSidebarMenu = {
+type AppSidebarMenuItem = {
   title: string;
   url: string;
   icon?: React.ElementType;
-  isActive?: boolean;
-  items?: AppSidebarMenu[];
+  items?: AppSidebarMenuItem[];
 };
 
-function AppSidebarMenu({ menu }: { menu: AppSidebarMenu[] }) {
+function AppSidebarMenu({
+  menu,
+  isActiveItem,
+}: {
+  menu: AppSidebarMenuItem[];
+  isActiveItem: (item: AppSidebarMenuItem) => boolean;
+}) {
   const { state } = useSidebar();
+  const { isMobile } = useSidebar();
 
   return (
     <SidebarMenu>
       {menu.map((item) => (
         <React.Fragment key={item.title}>
           {item.items ? (
-            state === "collapsed" ? (
+            // Submenu items
+            state === "collapsed" && !isMobile ? (
+              // Collapsed & non-mobile
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <SidebarMenuButton
                     tooltip={item.title}
-                    isActive={item.isActive || false}
+                    isActive={isActiveItem(item)}
                   >
                     {item.icon && <item.icon />}
                     <span className="sr-only">{item.title}</span>
@@ -148,24 +168,25 @@ function AppSidebarMenu({ menu }: { menu: AppSidebarMenu[] }) {
                 >
                   {item.items?.map((subItem) => (
                     <DropdownMenuItem key={subItem.title} asChild>
-                      <a href={subItem.url}>
+                      <SidebarLink href={subItem.url}>
                         <span>{subItem.title}</span>
-                      </a>
+                      </SidebarLink>
                     </DropdownMenuItem>
                   ))}
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
+              // Expanded & non-mobile
               <Collapsible
                 asChild
-                defaultOpen={item.isActive}
+                defaultOpen={isActiveItem(item)}
                 className="group/collapsible"
               >
                 <SidebarMenuItem>
                   <CollapsibleTrigger asChild>
                     <SidebarMenuButton
                       tooltip={item.title}
-                      isActive={item.isActive || false}
+                      isActive={isActiveItem(item)}
                     >
                       {item.icon && <item.icon />}
                       <span>{item.title}</span>
@@ -176,10 +197,16 @@ function AppSidebarMenu({ menu }: { menu: AppSidebarMenu[] }) {
                     <SidebarMenuSub>
                       {item.items?.map((subItem) => (
                         <SidebarMenuSubItem key={subItem.title}>
-                          <SidebarMenuSubButton asChild>
-                            <Link href={subItem.url}>
+                          <SidebarMenuSubButton
+                            asChild
+                            isActive={isActiveItem(subItem)}
+                          >
+                            <SidebarLink
+                              href={subItem.url}
+                              isActive={isActiveItem(subItem)}
+                            >
                               <span>{subItem.title}</span>
-                            </Link>
+                            </SidebarLink>
                           </SidebarMenuSubButton>
                         </SidebarMenuSubItem>
                       ))}
@@ -189,12 +216,13 @@ function AppSidebarMenu({ menu }: { menu: AppSidebarMenu[] }) {
               </Collapsible>
             )
           ) : (
+            // Single item
             <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton asChild>
-                <Link href={item.url} className="flex items-center gap-2">
+              <SidebarMenuButton asChild isActive={isActiveItem(item)}>
+                <SidebarLink href={item.url} isActive={isActiveItem(item)}>
                   {item.icon && <item.icon />}
                   <span>{item.title}</span>
-                </Link>
+                </SidebarLink>
               </SidebarMenuButton>
             </SidebarMenuItem>
           )}
@@ -204,28 +232,81 @@ function AppSidebarMenu({ menu }: { menu: AppSidebarMenu[] }) {
   );
 }
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const { state } = useSidebar();
+function SidebarLink({
+  href,
+  children,
+  isActive,
+  ...props
+}: {
+  href: string;
+  children: React.ReactNode;
+  isActive?: boolean;
+}) {
+  const { isMobile, setOpenMobile } = useSidebar();
 
-  const imageProps = {
-    expanded: {
-      src: "/next.svg",
-      width: 180,
-      height: 38,
-    },
-    collapsed: {
-      src: "/globe.svg",
-      width: 32,
-      height: 32,
-    },
-  }[state];
+  const handleNavigation = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    // Disable navigation if the item is active
+    if (isActive ?? false) {
+      e.preventDefault();
+    }
+
+    if (isMobile) {
+      setOpenMobile(false);
+    }
+  };
+
+  return (
+    <Link
+      href={href}
+      onClick={handleNavigation}
+      className="flex items-center gap-2"
+      {...props}
+    >
+      {children}
+    </Link>
+  );
+}
+
+export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { state, isMobile } = useSidebar();
+  const pathname = usePathname();
+  const imageProps = isMobile
+    ? {
+        src: "/next.svg",
+        width: 180,
+        height: 38,
+      }
+    : {
+        expanded: {
+          src: "/next.svg",
+          width: 180,
+          height: 38,
+        },
+        collapsed: {
+          src: "/globe.svg",
+          width: 32,
+          height: 32,
+        },
+      }[state];
+
+  const isActive = (path: string) => {
+    return pathname === path;
+  };
+
+  const isActiveItem = (item: AppSidebarMenuItem) => {
+    return (
+      item.items?.some((subItem) => isActive(subItem.url)) || isActive(item.url)
+    );
+  };
 
   return (
     <Sidebar collapsible="icon" variant="floating" {...props}>
       <SidebarHeader className="h-14 flex items-center justify-center">
-        <SidebarGroup className={cn("py-0", state === "collapsed" && "px-0")}>
+        <SidebarGroup
+          className={cn("py-0", !isMobile && state === "collapsed" && "px-0")}
+        >
           <SidebarGroupContent>
-            <Link href="/dashboard">
+            <SidebarLink href="/dashboard">
               <Image
                 className="dark:invert"
                 style={{
@@ -238,43 +319,45 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 height={imageProps.height}
                 priority
               />
-            </Link>
+            </SidebarLink>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Platform</SidebarGroupLabel>
-          <AppSidebarMenu menu={MENU_1_ITEMS} />
+          <AppSidebarMenu menu={MENU_1_ITEMS} isActiveItem={isActiveItem} />
         </SidebarGroup>
         <SidebarGroup>
           <SidebarGroupLabel>Components</SidebarGroupLabel>
-          <AppSidebarMenu menu={MENU_2_ITEMS} />
+          <AppSidebarMenu menu={MENU_2_ITEMS} isActiveItem={isActiveItem} />
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter className="pb-24">
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton asChild>
-              <Link href="/settings">
+            <SidebarMenuButton asChild isActive={isActive("/settings")}>
+              <SidebarLink href="/settings" isActive={isActive("/settings")}>
                 <Settings />
                 <span>Settings</span>
-              </Link>
+              </SidebarLink>
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>
             <SidebarMenuButton asChild>
-              <Link href="#get-help">
+              <SidebarLink href="#get-help">
                 <HelpCircle />
                 <span>Get Help</span>
-              </Link>
+              </SidebarLink>
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>
             <SidebarMenuButton asChild>
               <div>
                 <ModeSwitcher
-                  variant={state === "collapsed" ? "icon" : "switch"}
+                  variant={
+                    state === "collapsed" && !isMobile ? "icon" : "switch"
+                  }
                 />
               </div>
             </SidebarMenuButton>

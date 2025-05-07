@@ -25,7 +25,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { ModeSwitcher } from "@/components/layout/mode-switcher";
+import { ModeSwitcher } from "@/app/(app)/_components/mode-switcher";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { toast } from "sonner";
 
