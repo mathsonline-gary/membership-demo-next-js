@@ -1,17 +1,15 @@
-"use client";
-import { Breadcrumb, BreadcrumbItem } from "@/app/(app)/_components/breadcrumb";
+import { BreadcrumbItem } from "@/app/(app)/_components/breadcrumb";
+import { MainContainer } from "@/app/(app)/_components/main-container";
 
 const BREADCRUMB_ITEMS: BreadcrumbItem[] = [
   { label: "Tools", href: "/tools" },
   { label: "Upload Data" },
 ];
 
-export default function UploadPage() {
-  console.log("page: upload data");
+export default function Page() {
   return (
-    <>
-      <Breadcrumb items={BREADCRUMB_ITEMS} />
-      <h1>Upload Data</h1>
-    </>
+    <MainContainer title="Upload Data" breadcrumbItems={BREADCRUMB_ITEMS}>
+      <div>This is the Upload Data page</div>
+    </MainContainer>
   );
 }

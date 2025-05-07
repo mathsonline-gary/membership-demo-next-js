@@ -1,5 +1,3 @@
-"use client";
-
 import { ApiClient } from "./client";
 import { AuthService } from "./auth";
 

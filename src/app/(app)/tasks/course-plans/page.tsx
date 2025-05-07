@@ -1,17 +1,15 @@
-"use client";
-import { Breadcrumb, BreadcrumbItem } from "@/app/(app)/_components/breadcrumb";
+import { BreadcrumbItem } from "@/app/(app)/_components/breadcrumb";
+import { MainContainer } from "@/app/(app)/_components/main-container";
 
 const BREADCRUMB_ITEMS: BreadcrumbItem[] = [
   { label: "Tasks", href: "/tasks" },
   { label: "Course Plans" },
 ];
 
-export default function CoursePlansPage() {
-  console.log("page: course plans");
+export default function Page() {
   return (
-    <>
-      <Breadcrumb items={BREADCRUMB_ITEMS} />
-      <h1>Course Plans</h1>
-    </>
+    <MainContainer title="Course Plans" breadcrumbItems={BREADCRUMB_ITEMS}>
+      <div>This is the Course Plans page</div>
+    </MainContainer>
   );
 }

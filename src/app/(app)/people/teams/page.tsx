@@ -1,14 +1,12 @@
-"use client";
-import { Breadcrumb, BreadcrumbItem } from "@/app/(app)/_components/breadcrumb";
+import { BreadcrumbItem } from "@/app/(app)/_components/breadcrumb";
+import { MainContainer } from "@/app/(app)/_components/main-container";
 
 const BREADCRUMB_ITEMS: BreadcrumbItem[] = [{ label: "Teams" }];
 
-export default function TeamsPage() {
-  console.log("page: teams");
+export default function Page() {
   return (
-    <>
-      <Breadcrumb items={BREADCRUMB_ITEMS} />
-      <h1>Teams</h1>
-    </>
+    <MainContainer title="Teams" breadcrumbItems={BREADCRUMB_ITEMS}>
+      <div>This is the Teams page</div>
+    </MainContainer>
   );
 }

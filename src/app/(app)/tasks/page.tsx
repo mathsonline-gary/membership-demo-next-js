@@ -1,14 +1,12 @@
-"use client";
-import { Breadcrumb, BreadcrumbItem } from "@/app/(app)/_components/breadcrumb";
+import { BreadcrumbItem } from "@/app/(app)/_components/breadcrumb";
+import { MainContainer } from "@/app/(app)/_components/main-container";
 
 const BREADCRUMB_ITEMS: BreadcrumbItem[] = [{ label: "Tasks" }];
 
-export default function TasksPage() {
-  console.log("page: tasks");
+export default function Page() {
   return (
-    <>
-      <Breadcrumb items={BREADCRUMB_ITEMS} />
-      <h1>All Tasks</h1>
-    </>
+    <MainContainer title="All Tasks" breadcrumbItems={BREADCRUMB_ITEMS}>
+      <div>This is the All Tasks page</div>
+    </MainContainer>
   );
 }

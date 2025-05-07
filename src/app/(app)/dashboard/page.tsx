@@ -1,6 +1,9 @@
-"use client";
+import { MainContainer } from "@/app/(app)/_components/main-container";
 
-export default function DashboardPage() {
-  console.log("page: dashboard");
-  return <div>This is the Dashboard</div>;
+export default function Page() {
+  return (
+    <MainContainer title="Dashboard">
+      <div>This is the Dashboard</div>
+    </MainContainer>
+  );
 }

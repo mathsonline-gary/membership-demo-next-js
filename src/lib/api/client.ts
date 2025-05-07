@@ -1,5 +1,3 @@
-"use client";
-
 import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from "axios";
 import { useAuthStore } from "@/stores/useAuthStore";
 

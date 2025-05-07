@@ -1,17 +1,15 @@
-"use client";
-import { Breadcrumb, BreadcrumbItem } from "@/app/(app)/_components/breadcrumb";
+import { BreadcrumbItem } from "@/app/(app)/_components/breadcrumb";
+import { MainContainer } from "@/app/(app)/_components/main-container";
 
 const BREADCRUMB_ITEMS: BreadcrumbItem[] = [
   { label: "Documentation", href: "/documentation" },
   { label: "Tutorials" },
 ];
 
-export default function TutorialsPage() {
-  console.log("page: tutorials");
+export default function Page() {
   return (
-    <>
-      <Breadcrumb items={BREADCRUMB_ITEMS} />
-      <h1>Tutorials</h1>
-    </>
+    <MainContainer title="Tutorials" breadcrumbItems={BREADCRUMB_ITEMS}>
+      <div>This is the Tutorials page</div>
+    </MainContainer>
   );
 }

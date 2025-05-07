@@ -30,7 +30,7 @@ const formSchema = z.object({
   }),
 });
 
-export default function LoginPage() {
+export default function Page() {
   const searchParams = useSearchParams();
 
   const { login } = useAuthStore();

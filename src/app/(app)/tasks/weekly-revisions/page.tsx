@@ -1,17 +1,15 @@
-"use client";
-import { Breadcrumb, BreadcrumbItem } from "@/app/(app)/_components/breadcrumb";
+import { BreadcrumbItem } from "@/app/(app)/_components/breadcrumb";
+import { MainContainer } from "@/app/(app)/_components/main-container";
 
 const BREADCRUMB_ITEMS: BreadcrumbItem[] = [
   { label: "Tasks", href: "/tasks" },
   { label: "Weekly Revisions" },
 ];
 
-export default function WeeklyRevisionsPage() {
-  console.log("page: weekly revisions");
+export default function Page() {
   return (
-    <>
-      <Breadcrumb items={BREADCRUMB_ITEMS} />
-      <h1>Weekly Revisions</h1>
-    </>
+    <MainContainer title="Weekly Revisions" breadcrumbItems={BREADCRUMB_ITEMS}>
+      <div>This is the Weekly Revisions page</div>
+    </MainContainer>
   );
 }

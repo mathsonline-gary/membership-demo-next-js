@@ -18,7 +18,7 @@ interface ErrorState {
   redirectPath: string;
 }
 
-export default function GoogleCallbackPage() {
+export default function Page() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [error, setError] = useState<ErrorState | null>(null);

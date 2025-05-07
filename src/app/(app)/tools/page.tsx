@@ -1,14 +1,32 @@
-"use client";
-import { Breadcrumb, BreadcrumbItem } from "@/app/(app)/_components/breadcrumb";
+import { BreadcrumbItem } from "@/app/(app)/_components/breadcrumb";
+import { MainContainer } from "@/app/(app)/_components/main-container";
+import {
+  SectionOverview,
+  SectionOverviewItem,
+} from "@/app/(app)/_components/section-overview";
+import { Download, Upload } from "lucide-react";
 
 const BREADCRUMB_ITEMS: BreadcrumbItem[] = [{ label: "Tools" }];
 
-export default function ToolsPage() {
-  console.log("page: tools");
+const SECTION_OVERVIEW_ITEMS: SectionOverviewItem[] = [
+  {
+    title: "Export Data",
+    description: "Export data from the app.",
+    href: "/tools/export",
+    icon: Download,
+  },
+  {
+    title: "Upload Data",
+    description: "Upload data to the app.",
+    href: "/tools/upload",
+    icon: Upload,
+  },
+];
+
+export default function Page() {
   return (
-    <>
-      <Breadcrumb items={BREADCRUMB_ITEMS} />
-      <h1>Tools</h1>
-    </>
+    <MainContainer title="Tools" breadcrumbItems={BREADCRUMB_ITEMS}>
+      <SectionOverview items={SECTION_OVERVIEW_ITEMS} />
+    </MainContainer>
   );
 }

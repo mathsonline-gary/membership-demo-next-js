@@ -1,14 +1,12 @@
-"use client";
-import { Breadcrumb, BreadcrumbItem } from "@/app/(app)/_components/breadcrumb";
+import { BreadcrumbItem } from "@/app/(app)/_components/breadcrumb";
+import { MainContainer } from "@/app/(app)/_components/main-container";
 
 const BREADCRUMB_ITEMS: BreadcrumbItem[] = [{ label: "Admins" }];
 
-export default function AdminsPage() {
-  console.log("page: admins");
+export default function Page() {
   return (
-    <>
-      <Breadcrumb items={BREADCRUMB_ITEMS} />
-      <h1>All Admins</h1>
-    </>
+    <MainContainer title="All Admins" breadcrumbItems={BREADCRUMB_ITEMS}>
+      <div>This is the All Admins page</div>
+    </MainContainer>
   );
 }

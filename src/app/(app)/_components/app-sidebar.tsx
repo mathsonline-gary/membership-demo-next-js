@@ -13,7 +13,6 @@ import {
   BookOpen,
 } from "lucide-react";
 import Link from "next/link";
-
 import {
   Collapsible,
   CollapsibleContent,
@@ -46,7 +45,6 @@ import {
 import { ModeSwitcher } from "@/app/(app)/_components/mode-switcher";
 import { usePathname } from "next/navigation";
 
-// This is sample data.
 const MENU_1_ITEMS: AppSidebarMenuItem[] = [
   {
     title: "Home",
@@ -115,8 +113,8 @@ const MENU_2_ITEMS: AppSidebarMenuItem[] = [
     icon: BookOpen,
     items: [
       {
-        title: "Introduction",
-        url: "/documentation/introduction",
+        title: "Get Started",
+        url: "/documentation/get-started",
       },
       {
         title: "Tutorials",

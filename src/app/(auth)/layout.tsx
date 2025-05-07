@@ -1,5 +1,3 @@
-"use client";
-
 import { AuthProvider } from "@/providers/auth-provider";
 import Image from "next/image";
 

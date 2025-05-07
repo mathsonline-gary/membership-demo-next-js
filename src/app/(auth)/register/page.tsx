@@ -46,7 +46,7 @@ const formSchema = z
     path: ["password_confirmation"],
   });
 
-export default function SignupPage() {
+export default function Page() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [submitError, setSubmitError] = React.useState<string | null>(null);
