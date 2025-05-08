@@ -18,7 +18,7 @@ import * as z from "zod";
 import { useRouter } from "next/navigation";
 import * as React from "react";
 import { api } from "@/lib/api";
-import { ApiError } from "@/lib/api/client";
+import { ApiError } from "@/lib/api/error";
 import { toast } from "sonner";
 import { GoogleAuthButton } from "../google-auth-button";
 
@@ -83,7 +83,7 @@ export default function Page() {
       }
 
       if (error.status === 422) {
-        const errors = error.data as { field?: string; message: string }[];
+        const errors = error.errors;
         if (!Array.isArray(errors)) {
           setSubmitError(error.message);
           return;
@@ -243,7 +243,7 @@ export default function Page() {
                   </span>
                 </div>
                 <div className="grid grid-cols-1 gap-4">
-                  <GoogleAuthButton disabled={isSubmitting} mode="register" />
+                  <GoogleAuthButton mode="register" />
                 </div>
                 <div className="text-center text-sm">
                   Already have an account?{" "}

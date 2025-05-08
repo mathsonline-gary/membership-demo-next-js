@@ -11,6 +11,8 @@ interface RetryableRequestConfig extends InternalAxiosRequestConfig {
   _retry?: boolean;
 }
 
+type HttpMethod = "get" | "post" | "put" | "delete";
+
 export class ApiClient {
   private axiosInstance: AxiosInstance;
   private isRefreshing = false;
@@ -101,13 +103,25 @@ export class ApiClient {
     );
   }
 
-  async get<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
+  private async request<T>(
+    method: HttpMethod,
+    url: string,
+    data?: unknown,
+    config?: AxiosRequestConfig
+  ): Promise<T> {
     try {
-      const response = await this.axiosInstance.get<T>(url, config);
+      const response = await this.axiosInstance[method]<T>(url, data, config);
       return response.data;
     } catch (error) {
-      throw ApiError.fromAxiosError(error as AxiosError<ApiErrorResponse>);
+      if (error instanceof AxiosError) {
+        throw ApiError.fromAxiosError(error as AxiosError<ApiErrorResponse>);
+      }
+      throw error;
     }
+  }
+
+  async get<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
+    return this.request<T>("get", url, undefined, config);
   }
 
   async post<T>(
@@ -115,12 +129,7 @@ export class ApiClient {
     data?: unknown,
     config?: AxiosRequestConfig
   ): Promise<T> {
-    try {
-      const response = await this.axiosInstance.post<T>(url, data, config);
-      return response.data;
-    } catch (error) {
-      throw ApiError.fromAxiosError(error as AxiosError<ApiErrorResponse>);
-    }
+    return this.request<T>("post", url, data, config);
   }
 
   async put<T>(
@@ -128,21 +137,11 @@ export class ApiClient {
     data?: unknown,
     config?: AxiosRequestConfig
   ): Promise<T> {
-    try {
-      const response = await this.axiosInstance.put<T>(url, data, config);
-      return response.data;
-    } catch (error) {
-      throw ApiError.fromAxiosError(error as AxiosError<ApiErrorResponse>);
-    }
+    return this.request<T>("put", url, data, config);
   }
 
   async delete<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
-    try {
-      const response = await this.axiosInstance.delete<T>(url, config);
-      return response.data;
-    } catch (error) {
-      throw ApiError.fromAxiosError(error as AxiosError<ApiErrorResponse>);
-    }
+    return this.request<T>("delete", url, undefined, config);
   }
 
   setAuthToken(token: string): void {

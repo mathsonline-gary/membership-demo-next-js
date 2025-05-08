@@ -23,18 +23,25 @@ export class ApiError extends Error {
   }
 
   static fromAxiosError(error: AxiosError<ApiErrorResponse>): ApiError {
-    if (error.response?.status === 422) {
+    const responseData = error.response?.data;
+    const status = error.response?.status || 0;
+
+    // If we have a response with data, use it
+    if (responseData) {
       return new ApiError(
-        error.response?.data?.message || "Invalid request",
-        error.response?.status || 0,
-        error.response?.data?.errors
+        responseData.message || "Invalid request",
+        status,
+        responseData.errors
       );
     }
 
-    return new ApiError(
-      error.response?.data?.message || "Invalid request",
-      error.response?.status || 0
-    );
+    // If we have a response but no data, use the status text
+    if (error.response?.statusText) {
+      return new ApiError(error.response.statusText, status);
+    }
+
+    // If we have no response at all, it's likely a network error
+    return new ApiError("Network error occurred", status);
   }
 
   isNetworkError(): boolean {

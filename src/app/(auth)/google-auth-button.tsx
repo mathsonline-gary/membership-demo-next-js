@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { api } from "@/lib/api";
@@ -6,12 +8,11 @@ import React from "react";
 import { LoaderCircle } from "lucide-react";
 
 interface GoogleAuthButtonProps {
-  disabled?: boolean;
   className?: string;
   mode: "login" | "register";
 }
 
-export function GoogleAuthButton({ disabled, mode }: GoogleAuthButtonProps) {
+export function GoogleAuthButton({ mode }: GoogleAuthButtonProps) {
   const [isLoading, setIsLoading] = React.useState(false);
 
   const handleGoogleLogin = async () => {
@@ -31,7 +32,7 @@ export function GoogleAuthButton({ disabled, mode }: GoogleAuthButtonProps) {
       type="button"
       variant="outline"
       className="w-full"
-      disabled={disabled || isLoading}
+      disabled={isLoading}
       onClick={handleGoogleLogin}
     >
       {isLoading ? (

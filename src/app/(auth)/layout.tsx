@@ -15,12 +15,12 @@ export default function AuthLayout({
               alt="Logo"
               width={180}
               height={38}
-              className="mx-auto dark:invert w-auto"
+              className="mx-auto dark:invert w-auto mb-18"
               priority
             />
           </div>
-          <div className="flex flex-1 flex-col items-center justify-center p-6 md:p-10">
-            <div className="w-full max-w-sm md:max-w-xl">
+          <div className="flex flex-1 flex-col items-center justify-center">
+            <div className="w-full md:max-w-xl">
               <div className="flex flex-col gap-6">{children}</div>
             </div>
           </div>
