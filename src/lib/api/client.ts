@@ -110,7 +110,12 @@ export class ApiClient {
     config?: AxiosRequestConfig
   ): Promise<T> {
     try {
-      const response = await this.axiosInstance[method]<T>(url, data, config);
+      const response = await this.axiosInstance.request<T>({
+        method,
+        url,
+        data,
+        ...config,
+      });
       return response.data;
     } catch (error) {
       if (error instanceof AxiosError) {
@@ -121,7 +126,7 @@ export class ApiClient {
   }
 
   async get<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
-    return this.request<T>("get", url, undefined, config);
+    return this.request<T>("get", url, null, config);
   }
 
   async post<T>(

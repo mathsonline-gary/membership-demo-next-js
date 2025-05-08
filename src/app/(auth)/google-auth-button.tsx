@@ -15,14 +15,14 @@ interface GoogleAuthButtonProps {
 export function GoogleAuthButton({ mode }: GoogleAuthButtonProps) {
   const [isLoading, setIsLoading] = React.useState(false);
 
-  const handleGoogleLogin = async () => {
+  const handleClick = async () => {
     try {
       setIsLoading(true);
       const response = await api.auth.getGoogleRedirectUrl({ mode });
       window.location.href = response.data.url;
     } catch (error) {
+      void error;
       setIsLoading(false);
-      console.error("Failed to continue with Google:", error);
       toast.error("Failed to continue with Google. Please try again.");
     }
   };
@@ -33,7 +33,7 @@ export function GoogleAuthButton({ mode }: GoogleAuthButtonProps) {
       variant="outline"
       className="w-full"
       disabled={isLoading}
-      onClick={handleGoogleLogin}
+      onClick={handleClick}
     >
       {isLoading ? (
         <LoaderCircle className="animate-spin" />

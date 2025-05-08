@@ -59,7 +59,6 @@ export class AuthService {
       "/auth/register",
       data
     );
-    this.client.setAuthToken(response.data.token);
     return response;
   }
 

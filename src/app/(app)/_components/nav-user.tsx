@@ -27,6 +27,7 @@ import {
 import { ModeSwitcher } from "@/app/(app)/_components/mode-switcher";
 import { useAuth } from "@/hooks/use-auth";
 import { toast } from "sonner";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export function NavUser() {
   const router = useRouter();
@@ -66,9 +67,13 @@ export function NavUser() {
                 </AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-semibold">
-                  {user?.first_name} {user?.last_name}
-                </span>
+                {user?.first_name ? (
+                  <span className="truncate font-semibold">
+                    {user?.first_name}
+                  </span>
+                ) : (
+                  <Skeleton className="h-4 w-18" />
+                )}
               </div>
               <ChevronsUpDown className="ml-auto size-4" />
             </SidebarMenuButton>

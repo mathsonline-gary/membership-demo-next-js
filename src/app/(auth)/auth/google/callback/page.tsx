@@ -13,6 +13,7 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 import { AxiosError } from "axios";
+import { useAuthStore } from "@/stores/useAuthStore";
 
 interface ErrorState {
   message?: string;
@@ -23,6 +24,7 @@ export default function Page() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [error, setError] = useState<ErrorState | null>(null);
+  const { setUser } = useAuthStore();
 
   async function googleLogin(code: string): Promise<boolean> {
     try {
@@ -94,7 +96,7 @@ export default function Page() {
         ...params,
         code,
       });
-      setError({ redirectPath: "/login" });
+      setError({ redirectPath: `/${mode}` });
       return;
     }
 
@@ -113,18 +115,20 @@ export default function Page() {
 
       try {
         const userResponse = await api.auth.getAuthenticatedUser();
+        setUser(userResponse.data.user);
+
         router.push("/dashboard");
         toast.success(`Welcome, ${userResponse.data.user.first_name}!`);
       } catch (error) {
-        console.error("Failed to get authenticated user:", error);
+        void error;
         setError({
           redirectPath: mode === "register" ? "/register" : "/login",
         });
       }
     };
 
-    handleCallback();
-  }, [searchParams, router]);
+    void handleCallback();
+  }, [searchParams, router, setUser]);
 
   if (error) {
     return (
