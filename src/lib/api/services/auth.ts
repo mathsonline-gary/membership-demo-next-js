@@ -1,11 +1,11 @@
-import { ApiClient } from "./client";
+import { ApiClient } from "../client";
 
-interface LoginRequest {
+export interface LoginRequest {
   email: string;
   password: string;
 }
 
-interface RegisterRequest extends LoginRequest {
+export interface RegisterRequest extends LoginRequest {
   first_name: string;
   last_name: string;
   username: string;
@@ -14,13 +14,13 @@ interface RegisterRequest extends LoginRequest {
   password_confirmation: string;
 }
 
-interface AuthResponse {
+export interface AuthResponse {
   data: {
     token: string;
   };
 }
 
-interface AuthenticatedUserResponse {
+export interface AuthenticatedUserResponse {
   data: {
     user: {
       id: number;
@@ -39,18 +39,14 @@ interface AuthenticatedUserResponse {
   };
 }
 
-interface GoogleAuthResponse {
+export interface GoogleAuthResponse {
   data: {
     url: string;
   };
 }
 
 export class AuthService {
-  private client: ApiClient;
-
-  constructor(client: ApiClient) {
-    this.client = client;
-  }
+  constructor(private readonly client: ApiClient) {}
 
   async login(data: LoginRequest): Promise<AuthResponse> {
     const response = await this.client.post<AuthResponse>("/auth/login", data);

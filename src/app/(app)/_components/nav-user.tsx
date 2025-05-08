@@ -25,12 +25,12 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { ModeSwitcher } from "@/app/(app)/_components/mode-switcher";
-import { useAuthStore } from "@/stores/useAuthStore";
+import { useAuth } from "@/hooks/use-auth";
 import { toast } from "sonner";
 
 export function NavUser() {
   const router = useRouter();
-  const { logout, user } = useAuthStore();
+  const { user, logout } = useAuth();
   const [isLoggingOut, setIsLoggingOut] = React.useState(false);
 
   const handleLogout = async () => {
@@ -39,7 +39,7 @@ export function NavUser() {
       await logout();
       router.replace("/login");
     } catch (error) {
-      console.error(error);
+      void error;
       toast.error("Failed to log out");
     } finally {
       setIsLoggingOut(false);

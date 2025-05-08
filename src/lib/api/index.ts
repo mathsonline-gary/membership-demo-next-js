@@ -1,12 +1,12 @@
 import { ApiClient } from "./client";
-import { AuthService } from "./auth";
+import { AuthService } from "./services/auth";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "";
 
 class ApiService {
   private static instance: ApiService;
-  private client: ApiClient;
-  public auth: AuthService;
+  private readonly client: ApiClient;
+  public readonly auth: AuthService;
 
   private constructor() {
     this.client = new ApiClient(API_BASE_URL);

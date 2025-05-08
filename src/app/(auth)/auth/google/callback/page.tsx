@@ -6,13 +6,14 @@ import { api } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { AlertCircle, LoaderCircle } from "lucide-react";
 import { toast } from "sonner";
-import { ApiError } from "@/lib/api/client";
 import {
   Card,
   CardContent,
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
+import { AxiosError } from "axios";
+
 interface ErrorState {
   message?: string;
   redirectPath: string;
@@ -25,13 +26,18 @@ export default function Page() {
 
   async function googleLogin(code: string): Promise<boolean> {
     try {
-      const response = await api.auth.googleLogin(code);
-      api.setAuthToken(response.data.token);
+      await api.auth.googleLogin(code);
       return true;
-    } catch (error) {
+    } catch (err) {
+      const errorMessage =
+        err instanceof AxiosError
+          ? err.response?.data?.message ||
+            "Failed to login with Google, please try again."
+          : "Failed to login with Google, please try again.";
+
       setError({
         redirectPath: "/login",
-        message: error instanceof ApiError ? error.message : undefined,
+        message: errorMessage,
       });
       return false;
     }
@@ -42,10 +48,16 @@ export default function Page() {
       const response = await api.auth.googleRegister(code);
       api.setAuthToken(response.data.token);
       return true;
-    } catch (error: unknown) {
+    } catch (err) {
+      const errorMessage =
+        err instanceof AxiosError
+          ? err.response?.data?.message ||
+            "Failed to register with Google, please try again."
+          : "Failed to register with Google, please try again.";
+
       setError({
         redirectPath: "/register",
-        message: error instanceof ApiError ? error.message : undefined,
+        message: errorMessage,
       });
       return false;
     }

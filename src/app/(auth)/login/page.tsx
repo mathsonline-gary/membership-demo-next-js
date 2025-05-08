@@ -17,10 +17,10 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 import React from "react";
 import { useSearchParams } from "next/navigation";
-import { ApiError } from "@/lib/api/client";
+import { ApiError } from "@/lib/api/error";
 import { GoogleAuthButton } from "@/app/(auth)/google-auth-button";
-import { useAuthStore } from "@/stores/useAuthStore";
-
+import { useAuth } from "@/hooks/use-auth";
+import { Checkbox } from "@/components/ui/checkbox";
 const formSchema = z.object({
   email: z.string().email({
     message: "Please enter a valid email address.",
@@ -28,12 +28,13 @@ const formSchema = z.object({
   password: z.string().min(8, {
     message: "Password must be at least 8 characters.",
   }),
+  remember: z.boolean(),
 });
 
 export default function Page() {
   const searchParams = useSearchParams();
 
-  const { login } = useAuthStore();
+  const { login } = useAuth();
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const [error, setError] = React.useState<string | null>(null);
 
@@ -42,13 +43,18 @@ export default function Page() {
     defaultValues: {
       email: searchParams.get("email") ?? "",
       password: "",
+      remember: false,
     },
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
       setIsLoading(true);
-      await login(values);
+      await login({
+        email: values.email,
+        password: values.password,
+        remember: values.remember,
+      });
     } catch (error) {
       if (error instanceof ApiError) {
         setError(error.message);
@@ -117,6 +123,21 @@ export default function Page() {
                         />
                       </FormControl>
                       <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="remember"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-center">
+                      <FormControl>
+                        <Checkbox
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                      <FormLabel>Remember me</FormLabel>
                     </FormItem>
                   )}
                 />

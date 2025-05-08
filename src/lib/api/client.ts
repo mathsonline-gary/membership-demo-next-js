@@ -1,15 +1,23 @@
-import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from "axios";
+import axios, {
+  AxiosError,
+  AxiosInstance,
+  AxiosRequestConfig,
+  InternalAxiosRequestConfig,
+} from "axios";
 import { useAuthStore } from "@/stores/useAuthStore";
+import { ApiError, ApiErrorResponse } from "./error";
 
-export class ApiError extends Error {
-  constructor(message: string, public status: number, public data?: unknown) {
-    super(message);
-    this.name = "ApiError";
-  }
+interface RetryableRequestConfig extends InternalAxiosRequestConfig {
+  _retry?: boolean;
 }
 
 export class ApiClient {
   private axiosInstance: AxiosInstance;
+  private isRefreshing = false;
+  private failedQueue: Array<{
+    resolve: (value: unknown) => void;
+    reject: (reason: unknown) => void;
+  }> = [];
 
   constructor(baseUrl: string) {
     this.axiosInstance = axios.create({
@@ -17,85 +25,131 @@ export class ApiClient {
       headers: {
         "Content-Type": "application/json",
       },
-      withCredentials: false,
+      withCredentials: true,
     });
 
+    this.setupInterceptors();
+  }
+
+  private setupInterceptors(): void {
     this.axiosInstance.interceptors.request.use((config) => {
-      const token = useAuthStore.getState().token;
+      const token = useAuthStore.getState().accessToken;
       if (token) {
         config.headers["Authorization"] = `Bearer ${token}`;
       }
       return config;
     });
 
-    // Add response interceptor for error handling
     this.axiosInstance.interceptors.response.use(
       (response) => response,
-      (error: AxiosError) => {
-        if (error.response) {
-          // Handle 401 Unauthorized
-          if (error.response.status === 401) {
+      async (error: AxiosError<ApiErrorResponse>) => {
+        const originalRequest = error.config as RetryableRequestConfig;
+
+        if (error.response?.status === 401 && !originalRequest?._retry) {
+          if (this.isRefreshing) {
+            return new Promise((resolve, reject) => {
+              this.failedQueue.push({ resolve, reject });
+            })
+              .then((token) => {
+                if (originalRequest) {
+                  originalRequest.headers["Authorization"] = `Bearer ${token}`;
+                  return this.axiosInstance(originalRequest);
+                }
+              })
+              .catch((err) => Promise.reject(err));
+          }
+
+          originalRequest._retry = true;
+          this.isRefreshing = true;
+
+          try {
+            const response = await this.axiosInstance.post("/auth/refresh");
+            const newToken = response.data.data.token;
+
+            useAuthStore.getState().setAccessToken(newToken);
+
+            this.failedQueue.forEach((prom) => {
+              prom.resolve(newToken);
+            });
+
+            if (originalRequest) {
+              originalRequest.headers["Authorization"] = `Bearer ${newToken}`;
+              return this.axiosInstance(originalRequest);
+            }
+          } catch (refreshError) {
+            this.failedQueue.forEach((prom) => {
+              prom.reject(refreshError);
+            });
+
             useAuthStore.getState().clear();
+            window.location.href = "/login";
+            return Promise.reject(
+              ApiError.fromAxiosError(
+                refreshError as AxiosError<ApiErrorResponse>
+              )
+            );
+          } finally {
+            this.isRefreshing = false;
+            this.failedQueue = [];
           }
-
-          if (error.response.status >= 500) {
-            throw new ApiError("An unexpected error occurred", 0);
-          }
-
-          const message =
-            (error.response.data as { message?: string })?.message ||
-            "An error occurred";
-          throw new ApiError(
-            message,
-            error.response.status,
-            error.response.data
-          );
         }
 
-        if (error.request) {
-          throw new ApiError("Network error occurred", 0);
-        }
-
-        throw new ApiError("An unexpected error occurred", 0);
+        return Promise.reject(
+          ApiError.fromAxiosError(error as AxiosError<ApiErrorResponse>)
+        );
       }
     );
   }
 
-  async get<T>(endpoint: string, config?: AxiosRequestConfig): Promise<T> {
-    const response = await this.axiosInstance.get<T>(endpoint, config);
-    return response.data;
+  async get<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
+    try {
+      const response = await this.axiosInstance.get<T>(url, config);
+      return response.data;
+    } catch (error) {
+      throw ApiError.fromAxiosError(error as AxiosError<ApiErrorResponse>);
+    }
   }
 
   async post<T>(
-    endpoint: string,
+    url: string,
     data?: unknown,
     config?: AxiosRequestConfig
   ): Promise<T> {
-    const response = await this.axiosInstance.post<T>(endpoint, data, config);
-    return response.data;
+    try {
+      const response = await this.axiosInstance.post<T>(url, data, config);
+      return response.data;
+    } catch (error) {
+      throw ApiError.fromAxiosError(error as AxiosError<ApiErrorResponse>);
+    }
   }
 
   async put<T>(
-    endpoint: string,
+    url: string,
     data?: unknown,
     config?: AxiosRequestConfig
   ): Promise<T> {
-    const response = await this.axiosInstance.put<T>(endpoint, data, config);
-    return response.data;
+    try {
+      const response = await this.axiosInstance.put<T>(url, data, config);
+      return response.data;
+    } catch (error) {
+      throw ApiError.fromAxiosError(error as AxiosError<ApiErrorResponse>);
+    }
   }
 
-  async delete<T>(endpoint: string, config?: AxiosRequestConfig): Promise<T> {
-    const response = await this.axiosInstance.delete<T>(endpoint, config);
-    return response.data;
+  async delete<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
+    try {
+      const response = await this.axiosInstance.delete<T>(url, config);
+      return response.data;
+    } catch (error) {
+      throw ApiError.fromAxiosError(error as AxiosError<ApiErrorResponse>);
+    }
   }
 
-  setAuthToken(token: string) {
-    this.axiosInstance.defaults.headers.common[
-      "Authorization"
-    ] = `Bearer ${token}`;
+  setAuthToken(token: string): void {
+    useAuthStore.getState().setAccessToken(token);
   }
 
-  clearAuthToken() {
-    delete this.axiosInstance.defaults.headers.common["Authorization"];
+  clearAuthToken(): void {
+    useAuthStore.getState().clear();
   }
 }
