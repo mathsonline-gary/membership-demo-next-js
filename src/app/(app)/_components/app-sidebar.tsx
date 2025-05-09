@@ -9,8 +9,8 @@ import {
   Home,
   Users,
   Wrench,
-  ClipboardCheck,
   BookOpen,
+  BookCheck,
 } from "lucide-react";
 import Link from "next/link";
 import {
@@ -52,42 +52,29 @@ const MENU_1_ITEMS: AppSidebarMenuItem[] = [
     icon: Home,
   },
   {
-    title: "Tasks",
-    url: "/tasks",
-    icon: ClipboardCheck,
-    items: [
-      {
-        title: "All Tasks",
-        url: "/tasks",
-      },
-      {
-        title: "Course Plans",
-        url: "/tasks/course-plans",
-      },
-      {
-        title: "Weekly Revisions",
-        url: "/tasks/weekly-revisions",
-      },
-    ],
-  },
-  {
     title: "People",
     url: "#people",
     icon: Users,
     items: [
       {
         title: "Teams",
-        url: "/people/teams",
+        url: "/teams",
       },
       {
-        title: "Members",
-        url: "/people/members",
-      },
-      {
-        title: "Admins",
-        url: "/people/admins",
+        title: "Students",
+        url: "/students",
       },
     ],
+  },
+  {
+    title: "Courses",
+    url: "/courses",
+    icon: BookOpen,
+  },
+  {
+    title: "Lessons",
+    url: "/lessons",
+    icon: BookCheck,
   },
 ];
 
@@ -270,20 +257,20 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname();
   const imageProps = isMobile
     ? {
-        src: "/next.svg",
+        src: "/logo-icon-text.png",
         width: 180,
-        height: 38,
+        height: 43,
       }
     : {
         expanded: {
-          src: "/next.svg",
+          src: "/logo-icon-text.png",
           width: 180,
-          height: 38,
+          height: 43,
         },
         collapsed: {
-          src: "/globe.svg",
+          src: "/logo-icon.png",
           width: 32,
-          height: 32,
+          height: 28,
         },
       }[state];
 

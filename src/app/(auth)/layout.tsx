@@ -11,10 +11,10 @@ export default function AuthLayout({
         <div className="space-y-8">
           <div className="max-w-sm mx-auto">
             <Image
-              src="/next.svg"
+              src="/logo-icon-text.png"
               alt="Logo"
               width={180}
-              height={38}
+              height={43}
               className="mx-auto dark:invert w-auto mb-18"
               priority
             />

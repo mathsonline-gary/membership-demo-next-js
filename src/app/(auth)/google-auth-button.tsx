@@ -39,7 +39,7 @@ export function GoogleAuthButton({ mode }: GoogleAuthButtonProps) {
         <LoaderCircle className="animate-spin" />
       ) : (
         <Image
-          src="/google.svg"
+          src="/google-icon.svg"
           alt="Continue with Google"
           width={16}
           height={16}
