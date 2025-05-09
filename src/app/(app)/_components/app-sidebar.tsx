@@ -6,11 +6,11 @@ import {
   ChevronRightIcon,
   HelpCircle,
   Settings,
-  Home,
   Users,
   Wrench,
   BookOpen,
   BookCheck,
+  LayoutDashboard,
 } from "lucide-react";
 import Link from "next/link";
 import {
@@ -47,9 +47,9 @@ import { usePathname } from "next/navigation";
 
 const MENU_1_ITEMS: AppSidebarMenuItem[] = [
   {
-    title: "Home",
+    title: "Dashboard",
     url: "/dashboard",
-    icon: Home,
+    icon: LayoutDashboard,
   },
   {
     title: "People",

@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { HomeIcon } from "lucide-react";
+import { LayoutDashboard } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -59,7 +59,7 @@ export function Breadcrumb({ items }: BreadcrumbProps) {
         {/* Home item */}
         <BreadcrumbItem>
           <Link href="/dashboard">
-            <HomeIcon className="h-4 w-4" />
+            <LayoutDashboard className="h-4 w-4" />
           </Link>
         </BreadcrumbItem>
         <BreadcrumbSeparator />
