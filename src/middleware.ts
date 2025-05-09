@@ -3,7 +3,7 @@ import type { NextRequest } from "next/server";
 
 // Define paths
 const PROTECTED_PATHS = [
-  "/email/verify",
+  "/verify-email",
   "/dashboard",
   "/documentation",
   "/people",
@@ -58,6 +58,6 @@ export const config = {
     "/tasks/:path*",
     "/login",
     "/register",
-    "/email/verify",
+    "/verify-email",
   ],
 };

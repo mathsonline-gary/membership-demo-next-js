@@ -15,9 +15,8 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { useRouter } from "next/navigation";
 import * as React from "react";
-import { api } from "@/lib/api";
 import { ApiError } from "@/lib/api/error";
-import { toast } from "sonner";
+import { useAuth } from "@/hooks/use-auth";
 
 const formSchema = z
   .object({
@@ -49,6 +48,7 @@ export function RegisterForm() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
+  const { register, getAuthenticatedUser } = useAuth();
 
   const form = useForm<RegisterFormValues>({
     resolver: zodResolver(formSchema),
@@ -67,14 +67,15 @@ export function RegisterForm() {
     setError(null);
 
     try {
-      await api.auth.register({
+      await register({
         ...values,
         type: "customer",
         brand_id: Number(process.env.NEXT_PUBLIC_APP_BRAND_ID),
       });
 
-      toast.success("Account created successfully! Please login.");
-      router.push("/login");
+      await getAuthenticatedUser();
+
+      router.push("/verify-email");
       return;
     } catch (err) {
       if (!(err instanceof ApiError)) {

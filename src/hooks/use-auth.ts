@@ -1,5 +1,5 @@
 import { api } from "@/lib/api";
-import { LoginRequest } from "@/lib/api/services/auth";
+import { LoginRequest, RegisterRequest } from "@/lib/api/services/auth";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { useRouter } from "next/navigation";
 
@@ -14,6 +14,11 @@ export function useAuth() {
     }
 
     return user;
+  };
+
+  const register = async (data: RegisterRequest) => {
+    const response = await api.auth.register(data);
+    setAccessToken(response.data.token);
   };
 
   const login = async (data: LoginRequest) => {
@@ -36,5 +41,6 @@ export function useAuth() {
     getAuthenticatedUser,
     login,
     logout,
+    register,
   };
 }

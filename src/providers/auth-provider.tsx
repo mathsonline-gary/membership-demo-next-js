@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/stores/useAuthStore";
-import { Loader2 } from "lucide-react";
+import Image from "next/image";
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -11,18 +11,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isHydrated, setIsHydrated] = useState(false);
 
   useEffect(() => {
-    const unsubHydrate = useAuthStore.persist.onHydrate(() =>
-      setIsHydrated(false)
-    );
-    const unsubFinishHydration = useAuthStore.persist.onFinishHydration(() =>
-      setIsHydrated(true)
-    );
+    // Check if store is already hydrated
+    if (useAuthStore.persist.hasHydrated()) {
+      setIsHydrated(true);
+      return;
+    }
 
-    setIsHydrated(useAuthStore.persist.hasHydrated());
+    // Subscribe to hydration completion
+    const unsubHydration = useAuthStore.persist.onFinishHydration(() => {
+      setIsHydrated(true);
+    });
 
     return () => {
-      unsubHydrate();
-      unsubFinishHydration();
+      unsubHydration();
     };
   }, []);
 
@@ -35,7 +36,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   if (!isHydrated || !user) {
     return (
       <div className="flex h-screen w-screen items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <Image
+          src="/logo-icon-text.png"
+          alt="Loading..."
+          width={180}
+          height={43}
+          className="mx-auto dark:invert w-auto animate-pulse"
+          priority
+        />
       </div>
     );
   }
