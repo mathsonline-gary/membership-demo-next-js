@@ -3,6 +3,7 @@ import type { NextRequest } from "next/server";
 
 // Define paths
 const PROTECTED_PATHS = [
+  "/email/verify",
   "/dashboard",
   "/documentation",
   "/people",
@@ -20,7 +21,6 @@ export function middleware(request: NextRequest) {
   // Check for refresh token cookie
   const refreshToken = request.cookies.get("refresh_token")?.value;
   const isAuthenticated = !!refreshToken;
-  console.log("refreshToken", refreshToken);
 
   // Check path types
   const isProtected = PROTECTED_PATHS.some((path) => pathname.startsWith(path));
@@ -58,5 +58,6 @@ export const config = {
     "/tasks/:path*",
     "/login",
     "/register",
+    "/email/verify",
   ],
 };

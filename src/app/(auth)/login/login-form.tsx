@@ -16,11 +16,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { useState } from "react";
-import { api } from "@/lib/api";
-import { useAuthStore } from "@/stores/useAuthStore";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ApiError } from "@/lib/api/error";
 import { toast } from "sonner";
+import { useAuth } from "@/hooks/use-auth";
+
 const formSchema = z.object({
   email: z.string().email({
     message: "Please enter a valid email address.",
@@ -36,7 +36,7 @@ type LoginFormValues = z.infer<typeof formSchema>;
 export function LoginForm() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const { setUser, setAccessToken } = useAuthStore();
+  const { getAuthenticatedUser, login } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -52,14 +52,10 @@ export function LoginForm() {
   const handleSubmit = async (values: LoginFormValues) => {
     try {
       setIsSubmitting(true);
-      const response = await api.auth.login(values);
-      setAccessToken(response.data.token);
-
-      const userResponse = await api.auth.getAuthenticatedUser();
-      setUser(userResponse.data.user);
-
+      await login(values);
+      const user = await getAuthenticatedUser();
       router.push(searchParams.get("redirect") ?? "/dashboard");
-      toast.success(`Welcome, ${userResponse.data.user.first_name}!`);
+      toast.success(`Welcome, ${user?.first_name}!`);
     } catch (err) {
       let errorMessage: string | null = "Failed to login, please try again.";
 

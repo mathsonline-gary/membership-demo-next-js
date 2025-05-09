@@ -3,10 +3,13 @@ import { devtools, persist } from "zustand/middleware";
 
 type User = {
   id: number;
+  brand_id: number;
+  role_id: number;
   email: string;
   first_name: string;
   last_name: string;
   avatar: string | null;
+  email_verified_at: string | null;
 };
 
 type AuthState = {
