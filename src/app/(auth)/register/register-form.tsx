@@ -29,9 +29,6 @@ const formSchema = z
     last_name: z.string().min(1, {
       message: "Last name is required.",
     }),
-    username: z.string().min(1, {
-      message: "Username is required.",
-    }),
     password: z.string().min(8, {
       message: "Password must be at least 8 characters.",
     }),
@@ -48,7 +45,7 @@ export function RegisterForm() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
-  const { register, getAuthenticatedUser } = useAuth();
+  const { register, user } = useAuth();
 
   const form = useForm<RegisterFormValues>({
     resolver: zodResolver(formSchema),
@@ -56,7 +53,6 @@ export function RegisterForm() {
       email: "",
       first_name: "",
       last_name: "",
-      username: "",
       password: "",
       password_confirmation: "",
     },
@@ -69,8 +65,7 @@ export function RegisterForm() {
     try {
       await register({
         ...values,
-        type: "customer",
-        brand_id: Number(process.env.NEXT_PUBLIC_APP_BRAND_ID),
+        role: "teacher",
       });
 
       await getAuthenticatedUser();

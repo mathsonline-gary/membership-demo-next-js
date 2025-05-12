@@ -1,39 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { useAuthStore } from "@/stores/useAuthStore";
+import { useAuth } from "@/hooks/use-auth";
 import Image from "next/image";
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const router = useRouter();
-  const user = useAuthStore((state) => state.user);
-  const [isHydrated, setIsHydrated] = useState(false);
+  const { user } = useAuth();
 
-  useEffect(() => {
-    // Check if store is already hydrated
-    if (useAuthStore.persist.hasHydrated()) {
-      setIsHydrated(true);
-      return;
-    }
-
-    // Subscribe to hydration completion
-    const unsubHydration = useAuthStore.persist.onFinishHydration(() => {
-      setIsHydrated(true);
-    });
-
-    return () => {
-      unsubHydration();
-    };
-  }, []);
-
-  useEffect(() => {
-    if (isHydrated && !user) {
-      router.replace("/login");
-    }
-  }, [user, isHydrated, router]);
-
-  if (!isHydrated || !user) {
+  if (!user) {
     return (
       <div className="flex h-screen w-screen items-center justify-center">
         <Image

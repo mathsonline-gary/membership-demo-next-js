@@ -17,7 +17,6 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ApiError } from "@/lib/api/error";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/use-auth";
 
@@ -35,8 +34,14 @@ type LoginFormValues = z.infer<typeof formSchema>;
 
 export function LoginForm() {
   const searchParams = useSearchParams();
+
   const router = useRouter();
-  const { getAuthenticatedUser, login } = useAuth();
+
+  const { login, user } = useAuth({
+    middleware: "guest",
+    redirectIfAuthenticated: "/dashboard",
+  });
+
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -50,29 +55,26 @@ export function LoginForm() {
   });
 
   const handleSubmit = async (values: LoginFormValues) => {
-    try {
-      setIsSubmitting(true);
-      await login(values);
-      const user = await getAuthenticatedUser();
-      router.push(searchParams.get("redirect") ?? "/dashboard");
-      toast.success(`Welcome, ${user?.first_name}!`);
-    } catch (err) {
-      let errorMessage: string | null = "Failed to login, please try again.";
+    setIsSubmitting(true);
 
-      if (err instanceof ApiError && err.isValidationError() && err.errors) {
-        errorMessage = null;
-        Object.entries(err.errors).forEach(([field, messages]) => {
+    await login({
+      email: values.email,
+      password: values.password,
+      remember: values.remember,
+      setError: (message, errors) => {
+        setError(message);
+        Object.entries(errors).forEach(([field, messages]) => {
           form.setError(field as keyof LoginFormValues, {
             type: "server",
             message: messages[0],
           });
         });
-      }
+      },
+    });
 
-      setError(errorMessage);
-    } finally {
-      setIsSubmitting(false);
-    }
+    router.push(searchParams.get("redirect") ?? "/dashboard");
+    toast.success(`Welcome, ${user?.first_name}!`);
+    setIsSubmitting(false);
   };
 
   return (
