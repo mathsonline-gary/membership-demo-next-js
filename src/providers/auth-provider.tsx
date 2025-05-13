@@ -4,7 +4,7 @@ import { useAuth } from "@/hooks/use-auth";
 import Image from "next/image";
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const { user } = useAuth();
+  const { user } = useAuth({ middleware: "auth" });
 
   if (!user) {
     return (

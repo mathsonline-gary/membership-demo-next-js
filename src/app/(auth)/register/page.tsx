@@ -2,10 +2,16 @@
 
 import { Card, CardContent } from "@/components/ui/card";
 import { RegisterForm } from "./register-form";
-import { GoogleAuthButton } from "../google-auth-button";
+import { OAuthButton } from "../oauth-button";
 import Link from "next/link";
+import { useAuth } from "@/hooks/use-auth";
 
 export default function Page() {
+  useAuth({
+    middleware: "guest",
+    redirectIfAuthenticated: "/dashboard",
+  });
+
   return (
     <>
       <Card className="overflow-hidden">
@@ -25,7 +31,7 @@ export default function Page() {
             </span>
           </div>
           <div className="grid grid-cols-1 gap-4">
-            <GoogleAuthButton mode="register" />
+            <OAuthButton provider="google" intent="register" />
           </div>
           <div className="text-center text-sm">
             Already have an account?{" "}

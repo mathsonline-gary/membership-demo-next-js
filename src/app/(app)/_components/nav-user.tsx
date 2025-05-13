@@ -8,7 +8,6 @@ import {
   CreditCard,
   LogOut,
 } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -26,11 +25,9 @@ import {
 } from "@/components/ui/sidebar";
 import { ModeSwitcher } from "@/app/(app)/_components/mode-switcher";
 import { useAuth } from "@/hooks/use-auth";
-import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export function NavUser() {
-  const router = useRouter();
   const { user, logout } = useAuth();
   const [isLoggingOut, setIsLoggingOut] = React.useState(false);
 
@@ -38,10 +35,6 @@ export function NavUser() {
     try {
       setIsLoggingOut(true);
       await logout();
-      router.replace("/login");
-    } catch (error) {
-      void error;
-      toast.error("Failed to log out");
     } finally {
       setIsLoggingOut(false);
     }

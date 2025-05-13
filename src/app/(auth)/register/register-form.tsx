@@ -13,9 +13,7 @@ import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { useRouter } from "next/navigation";
 import * as React from "react";
-import { ApiError } from "@/lib/api/error";
 import { useAuth } from "@/hooks/use-auth";
 
 const formSchema = z
@@ -42,10 +40,9 @@ const formSchema = z
 type RegisterFormValues = z.infer<typeof formSchema>;
 
 export function RegisterForm() {
-  const router = useRouter();
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
-  const { register, user } = useAuth();
+  const { register } = useAuth();
 
   const form = useForm<RegisterFormValues>({
     resolver: zodResolver(formSchema),
@@ -59,44 +56,22 @@ export function RegisterForm() {
   });
 
   async function onSubmit(values: RegisterFormValues) {
-    setIsSubmitting(true);
-    setError(null);
-
     try {
+      setIsSubmitting(true);
+
       await register({
         ...values,
         role: "teacher",
-      });
-
-      await getAuthenticatedUser();
-
-      router.push("/verify-email");
-      return;
-    } catch (err) {
-      if (!(err instanceof ApiError)) {
-        setError("Failed to create the account, please try again.");
-        return;
-      }
-
-      if (err.isValidationError() && err.errors) {
-        Object.entries(err.errors).forEach(([field, messages]) => {
-          form.setError(field as keyof RegisterFormValues, {
-            type: "server",
-            message: messages[0],
+        setError: (message, errors) => {
+          setError(message);
+          Object.entries(errors).forEach(([field, messages]) => {
+            form.setError(field as keyof RegisterFormValues, {
+              type: "server",
+              message: messages[0],
+            });
           });
-        });
-        return;
-      }
-
-      if (err.isConflict()) {
-        form.setError("email", {
-          type: "server",
-          message: "Email already in use, please use a different email.",
-        });
-        return;
-      }
-
-      setError("Failed to create the account, please try again.");
+        },
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -147,23 +122,6 @@ export function RegisterForm() {
               )}
             />
           </div>
-          <FormField
-            control={form.control}
-            name="username"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Username</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="john_doe"
-                    {...field}
-                    disabled={isSubmitting}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
           <FormField
             control={form.control}
             name="email"

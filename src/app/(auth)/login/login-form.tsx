@@ -16,8 +16,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { toast } from "sonner";
+import { useSearchParams } from "next/navigation";
 import { useAuth } from "@/hooks/use-auth";
 
 const formSchema = z.object({
@@ -34,14 +33,7 @@ type LoginFormValues = z.infer<typeof formSchema>;
 
 export function LoginForm() {
   const searchParams = useSearchParams();
-
-  const router = useRouter();
-
-  const { login, user } = useAuth({
-    middleware: "guest",
-    redirectIfAuthenticated: "/dashboard",
-  });
-
+  const { login } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -55,26 +47,26 @@ export function LoginForm() {
   });
 
   const handleSubmit = async (values: LoginFormValues) => {
-    setIsSubmitting(true);
+    try {
+      setIsSubmitting(true);
 
-    await login({
-      email: values.email,
-      password: values.password,
-      remember: values.remember,
-      setError: (message, errors) => {
-        setError(message);
-        Object.entries(errors).forEach(([field, messages]) => {
-          form.setError(field as keyof LoginFormValues, {
-            type: "server",
-            message: messages[0],
+      await login({
+        email: values.email,
+        password: values.password,
+        remember: values.remember,
+        setError: (message, errors) => {
+          setError(message);
+          Object.entries(errors).forEach(([field, messages]) => {
+            form.setError(field as keyof LoginFormValues, {
+              type: "server",
+              message: messages[0],
+            });
           });
-        });
-      },
-    });
-
-    router.push(searchParams.get("redirect") ?? "/dashboard");
-    toast.success(`Welcome, ${user?.first_name}!`);
-    setIsSubmitting(false);
+        },
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (

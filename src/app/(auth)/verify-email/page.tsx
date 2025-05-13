@@ -11,13 +11,14 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useAuth } from "@/hooks/use-auth";
-import { useRouter } from "next/navigation";
 
-export default function ValidateEmailPage() {
+export default function Page() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { logout } = useAuth();
-  const router = useRouter();
+  const { logout } = useAuth({
+    middleware: "auth",
+    redirectIfAuthenticated: "/dashboard",
+  });
 
   const handleResendVerification = async () => {
     try {
@@ -38,7 +39,6 @@ export default function ValidateEmailPage() {
 
   const handleLogout = async () => {
     await logout();
-    router.push("/login");
   };
 
   return (

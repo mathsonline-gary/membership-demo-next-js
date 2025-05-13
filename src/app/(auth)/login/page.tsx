@@ -1,9 +1,19 @@
+"use client";
+
 import { Card, CardContent } from "@/components/ui/card";
 import Link from "next/link";
 import { LoginForm } from "./login-form";
-import { GoogleAuthButton } from "@/app/(auth)/google-auth-button";
+import { OAuthButton } from "@/app/(auth)/oauth-button";
+import { useAuth } from "@/hooks/use-auth";
+import { useSearchParams } from "next/navigation";
 
 export default function Page() {
+  const searchParams = useSearchParams();
+  useAuth({
+    middleware: "guest",
+    redirectIfAuthenticated: searchParams.get("redirect") ?? "/dashboard",
+  });
+
   return (
     <>
       <Card className="overflow-hidden">
@@ -23,7 +33,7 @@ export default function Page() {
               </span>
             </div>
             <div className="grid grid-cols-1 gap-4 mt-6">
-              <GoogleAuthButton mode="login" />
+              <OAuthButton provider="google" intent="login" />
             </div>
           </div>
 

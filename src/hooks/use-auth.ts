@@ -68,19 +68,17 @@ export const useAuth = ({
     } catch (error) {
       if (error instanceof ApiError && error.isConflict()) {
         router.push("/verify-email");
-        return null;
       }
-      return null;
+      throw error;
     }
   });
 
   const register = useCallback(
     async ({ setError, ...props }: RegisterProps) => {
-      await api.csrf();
-      setError(null, {});
-
       try {
-        await api.post("/register", props);
+        await api.csrf();
+        setError(null, {});
+        await api.post("/auth/register", { ...props, role: "teacher" });
         await mutate();
       } catch (error) {
         if (error instanceof ApiError && error.isUnprocessableEntity()) {
@@ -98,13 +96,13 @@ export const useAuth = ({
       try {
         await api.csrf();
         setError(null, {});
-        await api.post("/login", props);
+
+        await api.post("/auth/login", { ...props, role: "teacher" });
         await mutate();
       } catch (error) {
         if (error instanceof ApiError) {
           setError(error.message, error.getErrors());
         }
-
         throw error;
       }
     },
@@ -113,11 +111,10 @@ export const useAuth = ({
 
   const forgotPassword = useCallback(
     async ({ setError, email }: ForgotPasswordProps) => {
-      await api.csrf();
-      setError(null, {});
-
       try {
-        await api.post("/forgot-password", { email });
+        await api.csrf();
+        setError(null, {});
+        await api.post("/auth/forgot-password", { email });
       } catch (error) {
         if (error instanceof ApiError && error.isUnprocessableEntity()) {
           setError(error.message, error.getErrors());
@@ -131,11 +128,13 @@ export const useAuth = ({
 
   const resetPassword = useCallback(
     async ({ setError, ...props }: ResetPasswordProps) => {
-      await api.csrf();
-      setError(null, {});
-
       try {
-        await api.post("/reset-password", { token: params.token, ...props });
+        await api.csrf();
+        setError(null, {});
+        await api.post("/auth/reset-password", {
+          token: params.token,
+          ...props,
+        });
       } catch (error) {
         if (error instanceof ApiError && error.isUnprocessableEntity()) {
           setError(error.message, error.getErrors());
@@ -149,7 +148,7 @@ export const useAuth = ({
 
   const resendEmailVerification = useCallback(async () => {
     try {
-      await api.post("/email/verification-notification");
+      await api.post("/auth/email/verification-notification");
     } catch (error) {
       console.error("Failed to resend verification email:", error);
     }
@@ -157,11 +156,17 @@ export const useAuth = ({
 
   const logout = useCallback(async () => {
     if (!error) {
-      await api.post("/logout");
-      await mutate();
+      //! Only logout if there's no error, this prevents the API call cascade between "logout" and "useSWR"
+      try {
+        await api.post("/auth/logout");
+        await mutate();
+      } catch (error) {
+        if (!(error instanceof ApiError && error.isUnauthorized())) {
+          throw error;
+        }
+      }
     }
-
-    window.location.pathname = "/login";
+    window.location.href = "/login";
   }, [error, mutate]);
 
   useEffect(() => {

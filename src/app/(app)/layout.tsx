@@ -1,3 +1,5 @@
+"use client";
+
 import { AppSidebar } from "@/app/(app)/_components/app-sidebar";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -11,14 +13,9 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { TooltipContent } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/providers/auth-provider";
 
-export default function DashboardLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <AuthProvider>
-      {/* <EmailVerificationProvider> */}
       <SidebarProvider defaultOpen={true}>
         <AppSidebar />
         <SidebarInset>
@@ -44,7 +41,6 @@ export default function DashboardLayout({
           <div className="@container grid gap-4 p-4">{children}</div>
         </SidebarInset>
       </SidebarProvider>
-      {/* </EmailVerificationProvider> */}
     </AuthProvider>
   );
 }
