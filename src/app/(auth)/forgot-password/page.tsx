@@ -19,7 +19,7 @@ export default function Page() {
   });
 
   const [isPasswordResetEmailSent, setIsPasswordResetEmailSent] =
-    React.useState(true);
+    React.useState(false);
   const [email, setEmail] = React.useState("");
   const onPasswordResetEmailSent = (email: string) => {
     setIsPasswordResetEmailSent(true);

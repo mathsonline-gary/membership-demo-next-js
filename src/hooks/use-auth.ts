@@ -1,6 +1,6 @@
 import useSWR from "swr";
 import { useEffect, useCallback } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { api, ApiResponse } from "@/lib/api";
 import { ApiError } from "@/lib/api/error";
 
@@ -43,6 +43,7 @@ type ForgotPasswordProps = ErrorSetter & {
 };
 
 type ResetPasswordProps = ErrorSetter & {
+  token: string;
   email: string;
   password: string;
   password_confirmation: string;
@@ -53,7 +54,6 @@ export const useAuth = ({
   redirectIfAuthenticated,
 }: AuthConfig = {}) => {
   const router = useRouter();
-  const params = useParams();
 
   const {
     data: user,
@@ -129,18 +129,19 @@ export const useAuth = ({
         } else {
           setError("Failed to send reset link, please try again.", {});
         }
+        throw error;
       }
     },
     []
   );
 
   const resetPassword = useCallback(
-    async ({ setError, ...props }: ResetPasswordProps) => {
+    async ({ token, setError, ...props }: ResetPasswordProps) => {
       try {
         await api.csrf();
         setError(null, {});
         await api.post("/auth/reset-password", {
-          token: params.token,
+          token,
           ...props,
         });
       } catch (error) {
@@ -149,9 +150,10 @@ export const useAuth = ({
         } else {
           setError("Failed to reset password, please try again.", {});
         }
+        throw error;
       }
     },
-    [params.token]
+    []
   );
 
   const resendEmailVerification = useCallback(async () => {
