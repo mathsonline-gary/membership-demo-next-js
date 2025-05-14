@@ -20,7 +20,7 @@ export function OAuthButton({ provider, intent, className }: OAuthButtonProps) {
       asChild
     >
       <Link
-        href={`${process.env.NEXT_PUBLIC_BACKEND_URL}/oauth/${provider}/redirect?client=teacher_dashboard&intent=${intent}`}
+        href={`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/oauth/${provider}/redirect?client=teacher_dashboard&intent=${intent}`}
         target="_self"
       >
         <Image
