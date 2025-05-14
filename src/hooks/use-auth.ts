@@ -59,19 +59,27 @@ export const useAuth = ({
     data: user,
     error,
     mutate,
-  } = useSWR("/api/user", async () => {
-    try {
-      const response: ApiResponse<AuthenticatedUser> = await api.get(
-        "/api/user"
-      );
-      return response.data;
-    } catch (error) {
-      if (error instanceof ApiError && error.isConflict()) {
-        router.push("/verify-email");
+  } = useSWR(
+    "/api/user",
+    async () => {
+      try {
+        const response: ApiResponse<AuthenticatedUser> = await api.get(
+          "/api/user"
+        );
+        return response.data;
+      } catch (error) {
+        if (error instanceof ApiError && error.isConflict()) {
+          router.push("/verify-email");
+        }
+        throw error;
       }
-      throw error;
+    },
+    {
+      shouldRetryOnError: (error) => {
+        return !(error instanceof ApiError && error.isUnauthorized());
+      },
     }
-  });
+  );
 
   const register = useCallback(
     async ({ setError, ...props }: RegisterProps) => {
