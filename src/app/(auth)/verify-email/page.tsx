@@ -13,27 +13,25 @@ import {
 import { useAuth } from "@/hooks/use-auth";
 
 export default function Page() {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isResending, setIsResending] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { logout } = useAuth({
+  const [isResent, setIsResent] = useState<boolean>(false);
+  const { logout, resendEmailVerification } = useAuth({
     middleware: "auth",
     redirectIfAuthenticated: "/dashboard",
   });
 
   const handleResendVerification = async () => {
     try {
-      setIsLoading(true);
+      setIsResending(true);
       setError(null);
-      // TODO: Implement resend verification email API call
-      // const response = await fetch("/api/auth/resend-verification", {
-      //   method: "POST",
-      // });
-      // if (!response.ok) throw new Error("Failed to resend verification email");
+      await resendEmailVerification({ setError });
+      setIsResent(true);
     } catch (err) {
       void err;
       setError("Failed to resend verification email. Please try again.");
     } finally {
-      setIsLoading(false);
+      setIsResending(false);
     }
   };
 
@@ -51,20 +49,29 @@ export default function Page() {
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          <p className="text-muted-foreground">
-            We&apos;ve sent a verification link to your email address. Please
-            click the link to verify your account.
-          </p>
+          {isResent ? (
+            <p className="text-muted-foreground">
+              A new verification link has been sent to the email address you
+              provided during registration.
+            </p>
+          ) : (
+            <p className="text-muted-foreground">
+              Thanks for signing up! Before getting started, could you verify
+              your email address by clicking on the link we just emailed to you?
+              If you didn&apos;t receive the email, we will gladly send you
+              another.
+            </p>
+          )}
           {error && <p className="text-red-500">{error}</p>}
         </div>
       </CardContent>
       <CardFooter className="grid gap-2">
         <Button
           onClick={handleResendVerification}
-          disabled={isLoading}
+          disabled={isResending}
           className="w-full"
         >
-          {isLoading ? "Sending..." : "Resend verification email"}
+          {isResending ? "Sending..." : "Resend verification email"}
         </Button>
         <div className="text-center">
           <span

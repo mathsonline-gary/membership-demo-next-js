@@ -156,13 +156,24 @@ export const useAuth = ({
     []
   );
 
-  const resendEmailVerification = useCallback(async () => {
-    try {
-      await api.post("/auth/email/verification-notification");
-    } catch (error) {
-      console.error("Failed to resend verification email:", error);
-    }
-  }, []);
+  const resendEmailVerification = useCallback(
+    async ({ setError }: ErrorSetter) => {
+      try {
+        await api.post("/auth/email/verification-notification");
+      } catch (error) {
+        if (error instanceof ApiError && error.isUnprocessableEntity()) {
+          setError(error.message, error.getErrors());
+        } else {
+          setError(
+            "Failed to resend verification email, please try again.",
+            {}
+          );
+        }
+        throw error;
+      }
+    },
+    []
+  );
 
   const logout = useCallback(async () => {
     if (!error) {
