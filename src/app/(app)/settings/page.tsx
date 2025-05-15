@@ -4,7 +4,7 @@ import {
   SectionOverview,
   SectionOverviewItem,
 } from "@/app/(app)/_components/section-overview";
-import { Settings, User, CreditCard } from "lucide-react";
+import { Settings, User, CreditCard, Lock } from "lucide-react";
 
 const BREADCRUMB_ITEMS: BreadcrumbItem[] = [{ label: "Settings" }];
 
@@ -26,6 +26,12 @@ const SECTION_OVERVIEW_ITEMS: SectionOverviewItem[] = [
     description: "Manage billing.",
     href: "#billing",
     icon: CreditCard,
+  },
+  {
+    title: "Security",
+    description: "Manage password and device access.",
+    href: "/settings/security",
+    icon: Lock,
   },
 ];
 
