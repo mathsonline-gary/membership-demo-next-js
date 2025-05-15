@@ -1,5 +1,5 @@
 import useSWR from "swr";
-import { useEffect, useCallback } from "react";
+import * as React from "react";
 import { useRouter } from "next/navigation";
 import { api, ApiResponse } from "@/lib/api";
 import { ApiError } from "@/lib/api/error";
@@ -81,103 +81,87 @@ export const useAuth = ({
     }
   );
 
-  const register = useCallback(
-    async ({ setError, ...props }: RegisterProps) => {
-      try {
-        await api.csrf();
-        setError(null, {});
-        await api.post("/auth/register", { ...props, role: "teacher" });
-        await mutate();
-      } catch (error) {
-        if (error instanceof ApiError && error.isUnprocessableEntity()) {
-          setError(error.message, error.getErrors());
-        } else {
-          setError("Failed to register, please try again.", {});
-        }
+  const register = async ({ setError, ...props }: RegisterProps) => {
+    try {
+      await api.csrf();
+      setError(null, {});
+      await api.post("/auth/register", { ...props, role: "teacher" });
+      await mutate();
+    } catch (error) {
+      if (error instanceof ApiError && error.isUnprocessableEntity()) {
+        setError(error.message, error.getErrors());
+      } else {
+        setError("Failed to register, please try again.", {});
       }
-    },
-    [mutate]
-  );
+    }
+  };
 
-  const login = useCallback(
-    async ({ setError, ...props }: LoginProps) => {
-      try {
-        await api.csrf();
-        setError(null, {});
-
-        await api.post("/auth/login", { ...props, role: "teacher" });
-        await mutate();
-      } catch (error) {
-        if (error instanceof ApiError) {
-          setError(error.message, error.getErrors());
-        }
-        throw error;
+  const login = async ({ setError, ...props }: LoginProps) => {
+    try {
+      await api.csrf();
+      setError(null, {});
+      await api.post("/auth/login", { ...props, role: "teacher" });
+      await mutate();
+    } catch (error) {
+      if (error instanceof ApiError) {
+        setError(error.message, error.getErrors());
       }
-    },
-    [mutate]
-  );
+      throw error;
+    }
+  };
 
-  const forgotPassword = useCallback(
-    async ({ setError, email }: ForgotPasswordProps) => {
-      try {
-        await api.csrf();
-        setError(null, {});
-        await api.post("/auth/forgot-password", { email });
-      } catch (error) {
-        if (error instanceof ApiError && error.isUnprocessableEntity()) {
-          setError(error.message, error.getErrors());
-        } else {
-          setError("Failed to send reset link, please try again.", {});
-        }
-        throw error;
+  const forgotPassword = async ({ setError, email }: ForgotPasswordProps) => {
+    try {
+      await api.csrf();
+      setError(null, {});
+      await api.post("/auth/forgot-password", { email });
+    } catch (error) {
+      if (error instanceof ApiError && error.isUnprocessableEntity()) {
+        setError(error.message, error.getErrors());
+      } else {
+        setError("Failed to send reset link, please try again.", {});
       }
-    },
-    []
-  );
+      throw error;
+    }
+  };
 
-  const resetPassword = useCallback(
-    async ({ token, setError, ...props }: ResetPasswordProps) => {
-      try {
-        await api.csrf();
-        setError(null, {});
-        await api.post("/auth/reset-password", {
-          token,
-          ...props,
-        });
-      } catch (error) {
-        if (error instanceof ApiError && error.isUnprocessableEntity()) {
-          setError(error.message, error.getErrors());
-        } else {
-          setError("Failed to reset password, please try again.", {});
-        }
-        throw error;
+  const resetPassword = async ({
+    token,
+    setError,
+    ...props
+  }: ResetPasswordProps) => {
+    try {
+      await api.csrf();
+      setError(null, {});
+      await api.post("/auth/reset-password", {
+        token,
+        ...props,
+      });
+    } catch (error) {
+      if (error instanceof ApiError && error.isUnprocessableEntity()) {
+        setError(error.message, error.getErrors());
+      } else {
+        setError("Failed to reset password, please try again.", {});
       }
-    },
-    []
-  );
+      throw error;
+    }
+  };
 
-  const resendEmailVerification = useCallback(
-    async ({ setError }: ErrorSetter) => {
-      try {
-        await api.post("/auth/email/verification-notification");
-      } catch (error) {
-        if (error instanceof ApiError && error.isUnprocessableEntity()) {
-          setError(error.message, error.getErrors());
-        } else {
-          setError(
-            "Failed to resend verification email, please try again.",
-            {}
-          );
-        }
-        throw error;
+  const resendEmailVerification = async ({ setError }: ErrorSetter) => {
+    try {
+      await api.post("/auth/email/verification-notification");
+    } catch (error) {
+      if (error instanceof ApiError && error.isUnprocessableEntity()) {
+        setError(error.message, error.getErrors());
+      } else {
+        setError("Failed to resend verification email, please try again.", {});
       }
-    },
-    []
-  );
+      throw error;
+    }
+  };
 
-  const logout = useCallback(async () => {
+  const logout = React.useCallback(async () => {
     if (!error) {
-      //! Only logout if there's no error, this prevents the API call cascade between "logout" and "useSWR"
       try {
         await api.post("/auth/logout");
         await mutate();
@@ -190,7 +174,7 @@ export const useAuth = ({
     window.location.href = "/login";
   }, [error, mutate]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (middleware === "guest" && redirectIfAuthenticated && user)
       router.push(redirectIfAuthenticated);
 

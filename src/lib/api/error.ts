@@ -9,9 +9,10 @@ export class ApiError extends Error {
   constructor(
     public status: number,
     message: string,
-    errors: Record<string, string[]>
+    errors: Record<string, string[]>,
+    cause?: unknown
   ) {
-    super(message);
+    super(message, { cause });
     this.name = "ApiError";
     this.errors = errors;
   }
