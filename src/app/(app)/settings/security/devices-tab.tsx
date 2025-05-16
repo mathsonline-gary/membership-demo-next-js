@@ -24,6 +24,8 @@ import {
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Loader } from "@/app/(app)/_components/loader";
+import { Badge } from "@/components/ui/badge";
+
 const DeviceItem = ({ device }: { device: Device }) => {
   const queryClient = useQueryClient();
   const { mutate: revokeDevice, isPending } = useMutation({
@@ -60,19 +62,23 @@ const DeviceItem = ({ device }: { device: Device }) => {
           <div className="flex items-center gap-2">
             {getDeviceIcon()}
             <div>
-              <p className="font-medium">
-                {device.is_robot
-                  ? device.robot_name || "Unknown Bot"
-                  : device.device_name || "Unknown Device"}{" "}
+              <p className="flex items-center gap-2 font-medium">
+                {device.is_robot ? (
+                  <span className="font-bold">
+                    {device.robot_name || "Unknown Bot"}
+                  </span>
+                ) : (
+                  <span className="font-bold">
+                    {device.device_name || "Unknown Device"}
+                  </span>
+                )}
                 {device.platform && (
                   <span className="text-xs text-muted-foreground">
                     ({device.platform})
                   </span>
                 )}
                 {device.is_current && (
-                  <span className="ml-2 rounded-full bg-muted px-2 py-1 text-xs text-muted-foreground font-bold">
-                    Current Device
-                  </span>
+                  <Badge variant="outline">Current Device</Badge>
                 )}
               </p>
             </div>
