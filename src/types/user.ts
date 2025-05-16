@@ -10,7 +10,7 @@ export type AuthUser = {
 };
 
 export type Device = {
-  id: number;
+  uuid: string;
   user_id: number;
   ip_address: string;
   browser: string | null;
@@ -20,4 +20,5 @@ export type Device = {
   is_robot: boolean;
   robot_name: string | null;
   last_used_at: string | null;
+  is_current: boolean;
 };

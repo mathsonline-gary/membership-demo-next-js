@@ -4,12 +4,14 @@ import ApiClient from "../client";
 class UserService {
   constructor(private readonly client: ApiClient) {}
 
-  getDevices = async (id: number): Promise<Device[]> => {
-    const response = await this.client.get<Device[]>(
-      `/api/users/${id}/devices`
-    );
+  async getDevices(): Promise<Device[]> {
+    const response = await this.client.get<Device[]>(`/api/devices`);
     return response.data || [];
-  };
+  }
+
+  async revokeDevice(uuid: string): Promise<void> {
+    await this.client.delete(`/api/devices/${uuid}`);
+  }
 }
 
 export default UserService;
