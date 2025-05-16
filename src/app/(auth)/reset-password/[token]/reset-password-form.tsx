@@ -16,6 +16,7 @@ import * as z from "zod";
 import * as React from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 const formSchema = z
   .object({
@@ -31,12 +32,7 @@ const formSchema = z
 
 type ResetPasswordFormValues = z.infer<typeof formSchema>;
 
-type ResetPasswordFormProps = {
-  email: string | null;
-  token: string;
-};
-
-export function ResetPasswordForm({ email, token }: ResetPasswordFormProps) {
+export function ResetPasswordForm() {
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
   const { resetPassword } = useAuth();
@@ -51,16 +47,9 @@ export function ResetPasswordForm({ email, token }: ResetPasswordFormProps) {
   });
 
   async function onSubmit(values: ResetPasswordFormValues) {
-    if (!email) {
-      setError("Email is required");
-      return;
-    }
-
     try {
       setIsSubmitting(true);
       await resetPassword({
-        token,
-        email,
         ...values,
         setError: (message, errors) => {
           setError(message);
@@ -72,6 +61,7 @@ export function ResetPasswordForm({ email, token }: ResetPasswordFormProps) {
           });
         },
       });
+      toast.success("Password reset successfully, please login.");
       router.push("/login");
     } finally {
       setIsSubmitting(false);

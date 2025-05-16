@@ -1,8 +1,3 @@
-export type ApiErrorResponse = {
-  message?: string;
-  errors?: Record<string, string[]>;
-};
-
 export class ApiError extends Error {
   private errors: Record<string, string[]>;
 

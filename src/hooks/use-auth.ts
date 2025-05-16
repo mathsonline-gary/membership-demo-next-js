@@ -1,18 +1,13 @@
 import useSWR from "swr";
 import * as React from "react";
-import { useRouter } from "next/navigation";
-import { api, ApiResponse } from "@/lib/api";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
+import { api } from "@/lib/api";
 import { ApiError } from "@/lib/api/error";
-
-type AuthenticatedUser = {
-  email_verified_at: string | null;
-  email: string;
-  first_name: string;
-  last_name: string;
-  avatar: string | null;
-  created_at: string;
-  updated_at: string;
-};
+import {
+  RegisterRequest,
+  LoginRequest,
+  ForgotPasswordRequest,
+} from "@/types/api/auth";
 
 type AuthConfig = {
   middleware?: "guest" | "auth";
@@ -23,28 +18,13 @@ type ErrorSetter = {
   setError: (message: string | null, errors: Record<string, string[]>) => void;
 };
 
-type RegisterProps = ErrorSetter & {
-  email: string;
-  password: string;
-  password_confirmation: string;
-  first_name: string;
-  last_name: string;
-  role: string;
-};
+type RegisterProps = ErrorSetter & RegisterRequest;
 
-type LoginProps = ErrorSetter & {
-  email: string;
-  password: string;
-  remember?: boolean;
-};
+type LoginProps = ErrorSetter & LoginRequest;
 
-type ForgotPasswordProps = ErrorSetter & {
-  email: string;
-};
+type ForgotPasswordProps = ErrorSetter & ForgotPasswordRequest;
 
 type ResetPasswordProps = ErrorSetter & {
-  token: string;
-  email: string;
   password: string;
   password_confirmation: string;
 };
@@ -54,6 +34,8 @@ export const useAuth = ({
   redirectIfAuthenticated,
 }: AuthConfig = {}) => {
   const router = useRouter();
+  const params = useParams();
+  const searchParams = useSearchParams();
 
   const {
     data: user,
@@ -63,10 +45,7 @@ export const useAuth = ({
     "/api/user",
     async () => {
       try {
-        const response: ApiResponse<AuthenticatedUser> = await api.get(
-          "/api/user"
-        );
-        return response.data;
+        return await api.auth.user();
       } catch (error) {
         if (error instanceof ApiError && error.isConflict()) {
           router.push("/verify-email");
@@ -83,9 +62,9 @@ export const useAuth = ({
 
   const register = async ({ setError, ...props }: RegisterProps) => {
     try {
-      await api.csrf();
+      await api.auth.csrf();
       setError(null, {});
-      await api.post("/auth/register", { ...props, role: "teacher" });
+      await api.auth.register(props);
       await mutate();
     } catch (error) {
       if (error instanceof ApiError && error.isUnprocessableEntity()) {
@@ -98,13 +77,15 @@ export const useAuth = ({
 
   const login = async ({ setError, ...props }: LoginProps) => {
     try {
-      await api.csrf();
+      await api.auth.csrf();
       setError(null, {});
-      await api.post("/auth/login", { ...props, role: "teacher" });
+      await api.auth.login({ ...props, role: "teacher" });
       await mutate();
     } catch (error) {
-      if (error instanceof ApiError) {
-        setError(error.message, error.getErrors());
+      if (error instanceof ApiError && error.isUnprocessableEntity()) {
+        setError(null, error.getErrors());
+      } else {
+        setError("Failed to login, please try again.", {});
       }
       throw error;
     }
@@ -112,12 +93,12 @@ export const useAuth = ({
 
   const forgotPassword = async ({ setError, email }: ForgotPasswordProps) => {
     try {
-      await api.csrf();
+      await api.auth.csrf();
       setError(null, {});
-      await api.post("/auth/forgot-password", { email });
+      await api.auth.forgotPassword({ email });
     } catch (error) {
       if (error instanceof ApiError && error.isUnprocessableEntity()) {
-        setError(error.message, error.getErrors());
+        setError(null, error.getErrors());
       } else {
         setError("Failed to send reset link, please try again.", {});
       }
@@ -125,16 +106,21 @@ export const useAuth = ({
     }
   };
 
-  const resetPassword = async ({
-    token,
-    setError,
-    ...props
-  }: ResetPasswordProps) => {
+  const resetPassword = async ({ setError, ...props }: ResetPasswordProps) => {
+    const token = params.token as string;
+    const email = searchParams.get("email");
+
+    if (!token || !email) {
+      setError("The password reset link is invalid.", {});
+      return;
+    }
+
     try {
-      await api.csrf();
+      await api.auth.csrf();
       setError(null, {});
-      await api.post("/auth/reset-password", {
+      await api.auth.resetPassword({
         token,
+        email,
         ...props,
       });
     } catch (error) {
@@ -149,13 +135,9 @@ export const useAuth = ({
 
   const resendEmailVerification = async ({ setError }: ErrorSetter) => {
     try {
-      await api.post("/auth/email/verification-notification");
+      await api.auth.resendEmailVerification();
     } catch (error) {
-      if (error instanceof ApiError && error.isUnprocessableEntity()) {
-        setError(error.message, error.getErrors());
-      } else {
-        setError("Failed to resend verification email, please try again.", {});
-      }
+      setError("Failed to resend verification email, please try again.", {});
       throw error;
     }
   };
@@ -163,7 +145,7 @@ export const useAuth = ({
   const logout = React.useCallback(async () => {
     if (!error) {
       try {
-        await api.post("/auth/logout");
+        await api.auth.logout();
         await mutate();
       } catch (error) {
         if (!(error instanceof ApiError && error.isUnauthorized())) {
