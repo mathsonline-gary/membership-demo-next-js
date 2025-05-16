@@ -20,11 +20,10 @@ import {
   Laptop,
   Bot,
   AppWindow,
-  LoaderCircle,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
-
+import { Loader } from "@/app/(app)/_components/loader";
 const DeviceItem = ({ device }: { device: Device }) => {
   const queryClient = useQueryClient();
   const { mutate: revokeDevice, isPending } = useMutation({
@@ -103,11 +102,7 @@ const DeviceItem = ({ device }: { device: Device }) => {
         </div>
         {!device.is_current && (
           <Button size="sm" onClick={() => revokeDevice()} disabled={isPending}>
-            {isPending ? (
-              <LoaderCircle className="h-3 w-3 animate-spin" />
-            ) : (
-              "Revoke Access"
-            )}
+            {isPending ? <Loader /> : "Revoke Access"}
           </Button>
         )}
       </div>
@@ -157,7 +152,10 @@ export function DevicesTab() {
       </CardHeader>
       <CardContent className="grid gap-4">
         {isLoading ? (
-          <DeviceItemSkeleton />
+          <>
+            <DeviceItemSkeleton />
+            <DeviceItemSkeleton />
+          </>
         ) : devices?.length === 0 ? (
           <p className="text-muted-foreground">No devices found</p>
         ) : (

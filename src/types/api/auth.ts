@@ -10,7 +10,6 @@ export type LoginRequest = {
   email: string;
   password: string;
   remember?: boolean;
-  role: "teacher";
 };
 
 export type ForgotPasswordRequest = {

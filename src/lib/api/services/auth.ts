@@ -15,11 +15,14 @@ class AuthService {
   }
 
   async register(data: RegisterRequest): Promise<void> {
-    await this.client.post<void>("/auth/register", data);
+    await this.client.post<void>("/auth/register", {
+      ...data,
+      role: "teacher",
+    });
   }
 
   async login(data: LoginRequest): Promise<void> {
-    await this.client.post<void>("/auth/login", data);
+    await this.client.post<void>("/auth/login", { ...data, role: "teacher" });
   }
 
   async logout(): Promise<void> {

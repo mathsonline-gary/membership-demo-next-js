@@ -18,6 +18,7 @@ import * as z from "zod";
 import { useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useAuth } from "@/hooks/use-auth";
+import { Loader } from "@/app/(app)/_components/loader";
 
 const formSchema = z.object({
   email: z.string().email({
@@ -132,7 +133,7 @@ export function LoginForm() {
             )}
           />
           <Button type="submit" className="w-full" disabled={isSubmitting}>
-            {isSubmitting ? "Logging in..." : "Login"}
+            {isSubmitting ? <Loader /> : "Login"}
           </Button>
         </div>
       </form>

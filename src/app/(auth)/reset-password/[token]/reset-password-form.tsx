@@ -17,6 +17,7 @@ import * as React from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { Loader } from "@/app/(app)/_components/loader";
 
 const formSchema = z
   .object({
@@ -104,7 +105,7 @@ export function ResetPasswordForm() {
             )}
           />
           <Button type="submit" className="w-full" disabled={isSubmitting}>
-            {isSubmitting ? "Resetting password..." : "Reset password"}
+            {isSubmitting ? <Loader /> : "Reset password"}
           </Button>
         </div>
       </form>

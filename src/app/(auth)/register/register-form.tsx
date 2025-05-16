@@ -15,7 +15,7 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 import * as React from "react";
 import { useAuth } from "@/hooks/use-auth";
-
+import { Loader } from "@/app/(app)/_components/loader";
 const formSchema = z
   .object({
     email: z.string().email({
@@ -61,7 +61,6 @@ export function RegisterForm() {
 
       await register({
         ...values,
-        role: "teacher",
         setError: (message, errors) => {
           setError(message);
           Object.entries(errors).forEach(([field, messages]) => {
@@ -166,7 +165,7 @@ export function RegisterForm() {
             )}
           />
           <Button type="submit" className="w-full" disabled={isSubmitting}>
-            {isSubmitting ? "Creating account..." : "Create account"}
+            {isSubmitting ? <Loader /> : "Create account"}
           </Button>
         </div>
       </form>

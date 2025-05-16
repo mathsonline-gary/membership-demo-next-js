@@ -11,6 +11,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useAuth } from "@/hooks/use-auth";
+import { Loader } from "@/app/(app)/_components/loader";
 
 export default function Page() {
   const [isResending, setIsResending] = useState(false);
@@ -71,7 +72,7 @@ export default function Page() {
           disabled={isResending}
           className="w-full"
         >
-          {isResending ? "Sending..." : "Resend verification email"}
+          {isResending ? <Loader /> : "Resend verification email"}
         </Button>
         <div className="text-center">
           <span

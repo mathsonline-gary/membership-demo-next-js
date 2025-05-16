@@ -4,9 +4,9 @@ import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { api } from "@/lib/api";
 import { ApiError } from "@/lib/api/error";
 import {
-  RegisterRequest,
-  LoginRequest,
   ForgotPasswordRequest,
+  LoginRequest,
+  RegisterRequest,
 } from "@/types/api/auth";
 
 type AuthConfig = {
@@ -79,7 +79,7 @@ export const useAuth = ({
     try {
       await api.auth.csrf();
       setError(null, {});
-      await api.auth.login({ ...props, role: "teacher" });
+      await api.auth.login({ ...props });
       await mutate();
     } catch (error) {
       if (error instanceof ApiError && error.isUnprocessableEntity()) {

@@ -15,6 +15,7 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 import * as React from "react";
 import { useAuth } from "@/hooks/use-auth";
+import { Loader } from "@/app/(app)/_components/loader";
 
 const formSchema = z.object({
   email: z.string().email({
@@ -88,7 +89,7 @@ export function ForgotPasswordForm({
             )}
           />
           <Button type="submit" className="w-full" disabled={isSubmitting}>
-            {isSubmitting ? "Sending reset link..." : "Send reset link"}
+            {isSubmitting ? <Loader /> : "Send reset link"}
           </Button>
         </div>
       </form>
