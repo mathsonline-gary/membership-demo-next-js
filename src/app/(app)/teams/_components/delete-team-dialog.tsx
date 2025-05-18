@@ -9,6 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Loader } from "@/app/(app)/_components/loader";
 import { Team } from "@/types/user";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -47,8 +48,8 @@ export function DeleteTeamDialog({
         <DialogHeader>
           <DialogTitle>Delete Team</DialogTitle>
           <DialogDescription>
-            Are you sure you want to delete {team.name}? This action cannot be
-            undone.
+            Are you sure you want to delete <strong>{team.name}</strong>? This
+            action cannot be undone.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
@@ -65,7 +66,7 @@ export function DeleteTeamDialog({
             onClick={handleDelete}
             disabled={isDeleting}
           >
-            {isDeleting ? "Deleting..." : "Delete Team"}
+            {isDeleting ? <Loader /> : "Delete Team"}
           </Button>
         </DialogFooter>
       </DialogContent>

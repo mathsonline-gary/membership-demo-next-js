@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
-import { TeamsList } from "./_components/teams-list";
+import { TeamList } from "./_components/team-list";
 import { CreateTeamDialog } from "./_components/create-team-dialog";
 import { useState } from "react";
 import { BreadcrumbItem } from "@/app/(app)/_components/breadcrumb";
@@ -147,12 +147,12 @@ export default function TeamsPage() {
             />
           </div>
           <Button onClick={() => setIsCreateDialogOpen(true)}>
-            <Plus className="mr-2 h-4 w-4" />
-            Create Team
+            <Plus className="h-4 w-4" />
+            New Team
           </Button>
         </div>
 
-        <TeamsList teams={filteredTeams} />
+        <TeamList teams={filteredTeams} />
 
         <CreateTeamDialog
           open={isCreateDialogOpen}

@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Loader } from "@/app/(app)/_components/loader";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -74,7 +75,7 @@ export function CreateTeamDialog({
               Cancel
             </Button>
             <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "Creating..." : "Create Team"}
+              {isSubmitting ? <Loader /> : "Create Team"}
             </Button>
           </DialogFooter>
         </form>
