@@ -11,20 +11,20 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Loader } from "@/components/loader";
 import { useState } from "react";
 import { toast } from "sonner";
+import { Loader } from "@/components/loader";
 
-interface CreateTeamDialogProps {
+interface InviteStudentDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
-export function CreateTeamDialog({
+export function InviteStudentDialog({
   open,
   onOpenChange,
-}: CreateTeamDialogProps) {
-  const [name, setName] = useState("");
+}: InviteStudentDialogProps) {
+  const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -32,13 +32,14 @@ export function CreateTeamDialog({
     setIsSubmitting(true);
 
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      toast.success("Team created successfully");
+      // TODO: Implement API call
+      await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate API call
+
+      toast.success("Invitation sent successfully.");
+      setEmail("");
       onOpenChange(false);
-      setName("");
     } catch (error) {
-      toast.error("Failed to create team");
+      toast.error("Failed to send invitation. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -47,21 +48,22 @@ export function CreateTeamDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Invite Student</DialogTitle>
+          <DialogDescription>
+            Send an invitation to a student to join your organization.
+          </DialogDescription>
+        </DialogHeader>
         <form onSubmit={handleSubmit}>
-          <DialogHeader>
-            <DialogTitle>Create Team</DialogTitle>
-            <DialogDescription>
-              Create a new team to collaborate with others
-            </DialogDescription>
-          </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
-              <Label htmlFor="name">Team Name</Label>
+              <Label htmlFor="email">Email</Label>
               <Input
-                id="name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Enter team name"
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="student@example.com"
                 required
               />
             </div>
@@ -75,7 +77,7 @@ export function CreateTeamDialog({
               Cancel
             </Button>
             <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? <Loader /> : "Create Team"}
+              {isSubmitting ? <Loader /> : "Send Invitation"}
             </Button>
           </DialogFooter>
         </form>

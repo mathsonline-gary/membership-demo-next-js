@@ -18,7 +18,7 @@ import * as z from "zod";
 import { useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useAuth } from "@/hooks/use-auth";
-import { Loader } from "@/app/(app)/_components/loader";
+import { Loader } from "@/components/loader";
 
 const formSchema = z.object({
   email: z.string().email({

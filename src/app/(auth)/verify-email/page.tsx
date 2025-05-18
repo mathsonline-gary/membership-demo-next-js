@@ -11,7 +11,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useAuth } from "@/hooks/use-auth";
-import { Loader } from "@/app/(app)/_components/loader";
+import { Loader } from "@/components/loader";
 
 export default function Page() {
   const [isResending, setIsResending] = useState(false);

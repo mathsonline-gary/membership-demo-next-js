@@ -9,7 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Loader } from "@/app/(app)/_components/loader";
+import { Loader } from "@/components/loader";
 import { Team } from "@/types/user";
 import { useState } from "react";
 import { toast } from "sonner";

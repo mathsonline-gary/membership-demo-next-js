@@ -23,7 +23,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Loader } from "@/app/(app)/_components/loader";
+import { Loader } from "@/components/loader";
 import { Badge } from "@/components/ui/badge";
 
 const DeviceItem = ({ device }: { device: Device }) => {

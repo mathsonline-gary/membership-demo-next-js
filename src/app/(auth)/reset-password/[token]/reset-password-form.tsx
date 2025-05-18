@@ -17,7 +17,7 @@ import * as React from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Loader } from "@/app/(app)/_components/loader";
+import { Loader } from "@/components/loader";
 
 const formSchema = z
   .object({
