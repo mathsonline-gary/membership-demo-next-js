@@ -29,10 +29,12 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { Skeleton } from "@/components/ui/skeleton";
 
-interface TeamListProps {
+type TeamListProps = {
   teams: Team[];
-}
+  isLoading: boolean;
+};
 
 interface TeamMembersProps {
   members: Team["members"];
@@ -125,22 +127,28 @@ const TeamCards = ({
   onDelete: (team: Team) => void;
 }) => (
   <div className="grid gap-4">
-    {teams.map((team) => (
-      <Card key={team.id}>
-        <CardContent>
-          <div className="flex items-center justify-between">
-            <div className="space-y-1">
-              <h3 className="font-medium">{team.name}</h3>
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Users className="h-4 w-4" />
-                <Badge variant="secondary">{team.members.length} members</Badge>
+    {teams.length === 0 ? (
+      <div className="text-center">No teams found</div>
+    ) : (
+      teams.map((team) => (
+        <Card key={team.id}>
+          <CardContent>
+            <div className="flex items-center justify-between">
+              <div className="space-y-1">
+                <h3 className="font-medium">{team.name}</h3>
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <Users className="h-4 w-4" />
+                  <Badge variant="secondary">
+                    {team.members.length} members
+                  </Badge>
+                </div>
               </div>
+              <TeamActions team={team} onEdit={onEdit} onDelete={onDelete} />
             </div>
-            <TeamActions team={team} onEdit={onEdit} onDelete={onDelete} />
-          </div>
-        </CardContent>
-      </Card>
-    ))}
+          </CardContent>
+        </Card>
+      ))
+    )}
   </div>
 );
 
@@ -164,17 +172,58 @@ const TeamTable = ({
         </TableRow>
       </TableHeader>
       <TableBody>
-        {teams.map((team) => (
-          <TableRow key={team.id}>
-            <TableCell className="font-medium">{team.name}</TableCell>
+        {teams.length === 0 ? (
+          <TableRow>
+            <TableCell colSpan={4} className="text-center">
+              No teams found
+            </TableCell>
+          </TableRow>
+        ) : (
+          teams.map((team) => (
+            <TableRow key={team.id}>
+              <TableCell className="font-medium">{team.name}</TableCell>
+              <TableCell>
+                <TeamTableCellMembers members={team.members} />
+              </TableCell>
+              <TableCell>
+                {new Date(team.created_at).toLocaleDateString()}
+              </TableCell>
+              <TableCell>
+                <TeamActions team={team} onEdit={onEdit} onDelete={onDelete} />
+              </TableCell>
+            </TableRow>
+          ))
+        )}
+      </TableBody>
+    </Table>
+  </div>
+);
+
+const TeamTableSkeleton = () => (
+  <div className="rounded-md border">
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Name</TableHead>
+          <TableHead>Members</TableHead>
+          <TableHead>Created</TableHead>
+          <TableHead className="w-[100px]">Actions</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {Array.from({ length: 5 }).map((_, index) => (
+          <TableRow key={index}>
             <TableCell>
-              <TeamTableCellMembers members={team.members} />
+              <Skeleton className="h-4 w-[200px]" />
             </TableCell>
             <TableCell>
-              {new Date(team.created_at).toLocaleDateString()}
+              <Skeleton className="h-4 w-[150px]" />
             </TableCell>
             <TableCell>
-              <TeamActions team={team} onEdit={onEdit} onDelete={onDelete} />
+              <Skeleton className="h-4 w-[100px]" />
+            </TableCell>
+            <TableCell>
+              <Skeleton className="h-4 w-4" />
             </TableCell>
           </TableRow>
         ))}
@@ -183,7 +232,28 @@ const TeamTable = ({
   </div>
 );
 
-export function TeamList({ teams }: TeamListProps) {
+const TeamCardSkeleton = () => (
+  <div className="grid gap-4">
+    {Array.from({ length: 3 }).map((_, index) => (
+      <Card key={index}>
+        <CardContent>
+          <div className="flex items-center justify-between">
+            <div className="space-y-2">
+              <Skeleton className="h-5 w-[200px]" />
+              <div className="flex items-center gap-2">
+                <Skeleton className="h-4 w-4" />
+                <Skeleton className="h-4 w-[100px]" />
+              </div>
+            </div>
+            <Skeleton className="h-8 w-8 rounded-full" />
+          </div>
+        </CardContent>
+      </Card>
+    ))}
+  </div>
+);
+
+export function TeamList({ teams, isLoading }: TeamListProps) {
   const [editingTeam, setEditingTeam] = useState<Team | null>(null);
   const [deletingTeam, setDeletingTeam] = useState<Team | null>(null);
   const isMobile = useIsMobile();
@@ -191,6 +261,14 @@ export function TeamList({ teams }: TeamListProps) {
 
   const handleEdit = (team: Team) => setEditingTeam(team);
   const handleDelete = (team: Team) => setDeletingTeam(team);
+
+  if (isLoading) {
+    return (
+      <div className="space-y-4">
+        {isMobile || isTablet ? <TeamCardSkeleton /> : <TeamTableSkeleton />}
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4">

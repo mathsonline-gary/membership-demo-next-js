@@ -10,75 +10,107 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Loader } from "@/components/loader";
-import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import { toast } from "sonner";
+import { useCreateTeam } from "@/hooks/use-api-query";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { ApiError } from "@/lib/api/error";
 
 interface CreateTeamDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
+const teamSchema = z.object({
+  name: z.string().min(2, "Team name must be at least 2 characters"),
+});
+
+type TeamFormValues = z.infer<typeof teamSchema>;
+
 export function CreateTeamDialog({
   open,
   onOpenChange,
 }: CreateTeamDialogProps) {
-  const [name, setName] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { mutate: createTeam, isPending: isSubmitting } = useCreateTeam();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
+  const form = useForm<TeamFormValues>({
+    resolver: zodResolver(teamSchema),
+    defaultValues: {
+      name: "",
+    },
+  });
 
-    try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      toast.success("Team created successfully");
-      onOpenChange(false);
-      setName("");
-    } catch (error) {
-      toast.error("Failed to create team");
-    } finally {
-      setIsSubmitting(false);
-    }
+  const onSubmit = async (data: TeamFormValues) => {
+    createTeam(data, {
+      onSuccess: () => {
+        toast.success("Team created successfully");
+        onOpenChange(false);
+        form.reset();
+      },
+      onError: (error) => {
+        if (error instanceof ApiError && error.isUnprocessableEntity()) {
+          Object.entries(error.getErrors()).forEach(([field, messages]) => {
+            form.setError(field as keyof TeamFormValues, {
+              message: messages[0],
+            });
+          });
+        } else {
+          toast.error("Failed to create team");
+        }
+      },
+    });
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
-        <form onSubmit={handleSubmit}>
-          <DialogHeader>
-            <DialogTitle>Create Team</DialogTitle>
-            <DialogDescription>
-              Create a new team to collaborate with others
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid gap-2">
-              <Label htmlFor="name">Team Name</Label>
-              <Input
-                id="name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Enter team name"
-                required
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)}>
+            <DialogHeader>
+              <DialogTitle>Create Team</DialogTitle>
+              <DialogDescription>
+                Create a new team to collaborate with others
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Team Name</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="Enter team name" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
             </div>
-          </div>
-          <DialogFooter>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-            >
-              Cancel
-            </Button>
-            <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? <Loader /> : "Create Team"}
-            </Button>
-          </DialogFooter>
-        </form>
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => onOpenChange(false)}
+              >
+                Cancel
+              </Button>
+              <Button type="submit" disabled={isSubmitting}>
+                {isSubmitting ? <Loader /> : "Create Team"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );

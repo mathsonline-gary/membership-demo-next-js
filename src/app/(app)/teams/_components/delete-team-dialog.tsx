@@ -11,8 +11,8 @@ import {
 } from "@/components/ui/dialog";
 import { Loader } from "@/components/loader";
 import { Team } from "@/types/user";
-import { useState } from "react";
 import { toast } from "sonner";
+import { useDeleteTeam } from "@/hooks/use-api-query";
 
 interface DeleteTeamDialogProps {
   team: Team;
@@ -25,21 +25,18 @@ export function DeleteTeamDialog({
   open,
   onOpenChange,
 }: DeleteTeamDialogProps) {
-  const [isDeleting, setIsDeleting] = useState(false);
+  const { mutate: deleteTeam, isPending: isDeleting } = useDeleteTeam();
 
   const handleDelete = async () => {
-    setIsDeleting(true);
-
-    try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      toast.success("Team deleted successfully");
-      onOpenChange(false);
-    } catch (error) {
-      toast.error("Failed to delete team");
-    } finally {
-      setIsDeleting(false);
-    }
+    deleteTeam(team.id, {
+      onSuccess: () => {
+        toast.success("Team deleted successfully");
+        onOpenChange(false);
+      },
+      onError: () => {
+        toast.error("Failed to delete team");
+      },
+    });
   };
 
   return (

@@ -10,11 +10,22 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Loader } from "@/components/loader";
 import { Team } from "@/types/user";
-import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import { toast } from "sonner";
+import { useUpdateTeam } from "@/hooks/use-api-query";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { ApiError } from "@/lib/api/error";
 
 interface EditTeamDialogProps {
   team: Team;
@@ -22,65 +33,92 @@ interface EditTeamDialogProps {
   onOpenChange: (open: boolean) => void;
 }
 
+const teamSchema = z.object({
+  name: z.string().min(2, "Team name must be at least 2 characters"),
+});
+
+type TeamFormValues = z.infer<typeof teamSchema>;
+
 export function EditTeamDialog({
   team,
   open,
   onOpenChange,
 }: EditTeamDialogProps) {
-  const [name, setName] = useState(team.name);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { mutate: updateTeam, isPending: isUpdating } = useUpdateTeam();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
+  const form = useForm<TeamFormValues>({
+    resolver: zodResolver(teamSchema),
+    defaultValues: {
+      name: team.name,
+    },
+  });
 
-    try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      toast.success("Team updated successfully");
-      onOpenChange(false);
-    } catch (error) {
-      toast.error("Failed to update team");
-    } finally {
-      setIsSubmitting(false);
-    }
+  const currentName = form.watch("name");
+  const isTeamChanged = currentName !== team.name;
+
+  const onSubmit = async (data: TeamFormValues) => {
+    updateTeam(
+      { id: team.id, name: data.name },
+      {
+        onSuccess: () => {
+          toast.success("Team updated successfully");
+          onOpenChange(false);
+        },
+        onError: (error) => {
+          if (error instanceof ApiError && error.isUnprocessableEntity()) {
+            Object.entries(error.getErrors()).forEach(([field, messages]) => {
+              form.setError(field as keyof TeamFormValues, {
+                message: messages[0],
+              });
+            });
+          } else {
+            toast.error("Failed to update team");
+          }
+        },
+      }
+    );
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
-        <form onSubmit={handleSubmit}>
-          <DialogHeader>
-            <DialogTitle>Edit Team</DialogTitle>
-            <DialogDescription>
-              Update your team's information
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid gap-2">
-              <Label htmlFor="name">Team Name</Label>
-              <Input
-                id="name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Enter team name"
-                required
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)}>
+            <DialogHeader>
+              <DialogTitle>Edit Team</DialogTitle>
+              <DialogDescription>
+                Update your team&apos;s information
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Team Name</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="Enter team name" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
             </div>
-          </div>
-          <DialogFooter>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-            >
-              Cancel
-            </Button>
-            <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? <Loader /> : "Save Changes"}
-            </Button>
-          </DialogFooter>
-        </form>
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => onOpenChange(false)}
+              >
+                Cancel
+              </Button>
+              <Button type="submit" disabled={isUpdating || !isTeamChanged}>
+                {isUpdating ? <Loader /> : "Save Changes"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );
