@@ -1,6 +1,6 @@
 export type ApiResponse<T> = {
   message?: string;
-  data?: T;
+  data: T;
   links?: {
     first: string;
     last: string;

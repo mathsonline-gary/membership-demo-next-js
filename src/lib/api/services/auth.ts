@@ -6,6 +6,7 @@ import {
 } from "@/types/api/auth";
 import { AuthUser } from "@/types/user";
 import { ApiClient } from "../client";
+import { ApiResponse } from "@/types/api/common";
 
 export const createAuthService = (client: ApiClient) => ({
   csrf: async (): Promise<void> => {
@@ -27,8 +28,8 @@ export const createAuthService = (client: ApiClient) => ({
     await client.post<void>("/auth/logout");
   },
 
-  user: async (): Promise<AuthUser | undefined> => {
-    const response = await client.get<AuthUser>("/api/me");
+  user: async (): Promise<AuthUser> => {
+    const response = await client.get<ApiResponse<AuthUser>>("/api/me");
     return response.data;
   },
 

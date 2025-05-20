@@ -4,7 +4,7 @@ import axios, {
   AxiosRequestConfig,
   Method,
 } from "axios";
-import { ApiResponse, ApiErrorResponse } from "@/types/api/common";
+import { ApiErrorResponse } from "@/types/api/common";
 import { ApiError } from "./error";
 
 export const createApiClient = (baseURL: string) => {
@@ -69,8 +69,8 @@ export const createApiClient = (baseURL: string) => {
     url: string,
     data?: unknown,
     config?: AxiosRequestConfig
-  ): Promise<ApiResponse<T>> => {
-    const response = await client.request<ApiResponse<T>>({
+  ): Promise<T> => {
+    const response = await client.request<T>({
       method,
       url,
       data,

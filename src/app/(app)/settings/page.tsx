@@ -18,7 +18,7 @@ const SECTION_OVERVIEW_ITEMS: SectionOverviewItem[] = [
   {
     title: "Profile",
     description: "Manage profile.",
-    href: "#profile",
+    href: "/settings/profile",
     icon: User,
   },
   {
