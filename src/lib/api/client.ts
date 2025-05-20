@@ -7,26 +7,20 @@ import axios, {
 import { ApiResponse, ApiErrorResponse } from "@/types/api/common";
 import { ApiError } from "./error";
 
-class ApiClient {
-  private client: AxiosInstance;
+export const createApiClient = (baseURL: string) => {
+  const client: AxiosInstance = axios.create({
+    baseURL,
+    headers: {
+      Accept: "application/json",
+      "X-Requested-With": "XMLHttpRequest",
+      "Content-Type": "application/json",
+    },
+    withCredentials: true,
+    withXSRFToken: true,
+  });
 
-  constructor(baseURL: string) {
-    this.client = axios.create({
-      baseURL,
-      headers: {
-        Accept: "application/json",
-        "X-Requested-With": "XMLHttpRequest",
-        "Content-Type": "application/json",
-      },
-      withCredentials: true,
-      withXSRFToken: true,
-    });
-
-    this.setupInterceptors();
-  }
-
-  private setupInterceptors() {
-    this.client.interceptors.response.use(
+  const setupInterceptors = () => {
+    client.interceptors.response.use(
       (response) => response,
       (error: AxiosError<ApiErrorResponse>) => {
         if (!error.response) {
@@ -66,15 +60,17 @@ class ApiClient {
         );
       }
     );
-  }
+  };
 
-  async request<T>(
+  setupInterceptors();
+
+  const request = async <T>(
     method: Method,
     url: string,
     data?: unknown,
     config?: AxiosRequestConfig
-  ): Promise<ApiResponse<T>> {
-    const response = await this.client.request<ApiResponse<T>>({
+  ): Promise<ApiResponse<T>> => {
+    const response = await client.request<ApiResponse<T>>({
       method,
       url,
       data,
@@ -82,37 +78,19 @@ class ApiClient {
     });
 
     return response.data;
-  }
+  };
 
-  async get<T>(
-    url: string,
-    config?: AxiosRequestConfig
-  ): Promise<ApiResponse<T>> {
-    return this.request<T>("GET", url, undefined, config);
-  }
+  return {
+    request,
+    get: <T>(url: string, config?: AxiosRequestConfig) =>
+      request<T>("GET", url, undefined, config),
+    post: <T>(url: string, data?: unknown, config?: AxiosRequestConfig) =>
+      request<T>("POST", url, data, config),
+    put: <T>(url: string, data?: unknown, config?: AxiosRequestConfig) =>
+      request<T>("PUT", url, data, config),
+    delete: <T>(url: string, config?: AxiosRequestConfig) =>
+      request<T>("DELETE", url, undefined, config),
+  };
+};
 
-  async post<T>(
-    url: string,
-    data?: unknown,
-    config?: AxiosRequestConfig
-  ): Promise<ApiResponse<T>> {
-    return this.request<T>("POST", url, data, config);
-  }
-
-  async put<T>(
-    url: string,
-    data?: unknown,
-    config?: AxiosRequestConfig
-  ): Promise<ApiResponse<T>> {
-    return this.request<T>("PUT", url, data, config);
-  }
-
-  async delete<T>(
-    url: string,
-    config?: AxiosRequestConfig
-  ): Promise<ApiResponse<T>> {
-    return this.request<T>("DELETE", url, undefined, config);
-  }
-}
-
-export default ApiClient;
+export type ApiClient = ReturnType<typeof createApiClient>;

@@ -5,46 +5,44 @@ import {
   ResetPasswordRequest,
 } from "@/types/api/auth";
 import { AuthUser } from "@/types/user";
-import ApiClient from "../client";
+import { ApiClient } from "../client";
 
-class AuthService {
-  constructor(private readonly client: ApiClient) {}
+export const createAuthService = (client: ApiClient) => ({
+  csrf: async (): Promise<void> => {
+    await client.get("/sanctum/csrf-cookie");
+  },
 
-  async csrf(): Promise<void> {
-    await this.client.get("/sanctum/csrf-cookie");
-  }
-
-  async register(data: RegisterRequest): Promise<void> {
-    await this.client.post<void>("/auth/register", {
+  register: async (data: RegisterRequest): Promise<void> => {
+    await client.post<void>("/auth/register", {
       ...data,
       role: "teacher",
     });
-  }
+  },
 
-  async login(data: LoginRequest): Promise<void> {
-    await this.client.post<void>("/auth/login", { ...data, role: "teacher" });
-  }
+  login: async (data: LoginRequest): Promise<void> => {
+    await client.post<void>("/auth/login", { ...data, role: "teacher" });
+  },
 
-  async logout(): Promise<void> {
-    await this.client.post<void>("/auth/logout");
-  }
+  logout: async (): Promise<void> => {
+    await client.post<void>("/auth/logout");
+  },
 
-  async user(): Promise<AuthUser | undefined> {
-    const response = await this.client.get<AuthUser>("/api/me");
+  user: async (): Promise<AuthUser | undefined> => {
+    const response = await client.get<AuthUser>("/api/me");
     return response.data;
-  }
+  },
 
-  async forgotPassword(data: ForgotPasswordRequest): Promise<void> {
-    await this.client.post<void>("/auth/forgot-password", data);
-  }
+  forgotPassword: async (data: ForgotPasswordRequest): Promise<void> => {
+    await client.post<void>("/auth/forgot-password", data);
+  },
 
-  async resetPassword(data: ResetPasswordRequest): Promise<void> {
-    await this.client.post<void>("/auth/reset-password", data);
-  }
+  resetPassword: async (data: ResetPasswordRequest): Promise<void> => {
+    await client.post<void>("/auth/reset-password", data);
+  },
 
-  async resendEmailVerification(): Promise<void> {
-    await this.client.post<void>("/auth/email/verification-notification");
-  }
-}
+  resendEmailVerification: async (): Promise<void> => {
+    await client.post<void>("/auth/email/verification-notification");
+  },
+});
 
-export default AuthService;
+export type AuthService = ReturnType<typeof createAuthService>;

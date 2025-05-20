@@ -1,28 +1,19 @@
-import UserService from "./services/user";
-import AuthService from "./services/auth";
-import ApiClient from "./client";
+import { createProfileService } from "./services/profile";
+import { createAuthService } from "./services/auth";
+import { createDeviceService } from "./services/device";
+import { createApiClient } from "./client";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000";
 
-class ApiService {
-  private static instance: ApiService;
-  private readonly client: ApiClient;
+const createApi = () => {
+  const client = createApiClient(BASE_URL);
 
-  readonly users: UserService;
-  readonly auth: AuthService;
+  return {
+    profile: createProfileService(client),
+    auth: createAuthService(client),
+    devices: createDeviceService(client),
+  };
+};
 
-  constructor() {
-    this.client = new ApiClient(BASE_URL);
-    this.users = new UserService(this.client);
-    this.auth = new AuthService(this.client);
-  }
-
-  public static getInstance(): ApiService {
-    if (!ApiService.instance) {
-      ApiService.instance = new ApiService();
-    }
-    return ApiService.instance;
-  }
-}
-
-export const api = ApiService.getInstance();
+// Create a singleton instance
+export const api = createApi();

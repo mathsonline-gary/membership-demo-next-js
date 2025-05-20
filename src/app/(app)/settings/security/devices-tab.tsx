@@ -8,9 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { api } from "@/lib/api";
 import { Device } from "@/types/user";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   Smartphone,
   Tablet,
@@ -21,24 +19,13 @@ import {
   Bot,
   AppWindow,
 } from "lucide-react";
-import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Loader } from "@/components/loader";
 import { Badge } from "@/components/ui/badge";
+import { useGetDeviceList, useRevokeDevice } from "@/hooks/use-api-query";
 
 const DeviceItem = ({ device }: { device: Device }) => {
-  const queryClient = useQueryClient();
-  const { mutate: revokeDevice, isPending } = useMutation({
-    mutationFn: () => api.users.revokeDevice(device.uuid),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["devices"] });
-      toast.success("Device access revoked successfully");
-    },
-    onError: (error) => {
-      console.error(error);
-      toast.error("Failed to revoke device access");
-    },
-  });
+  const { mutate: revokeDevice, isPending } = useRevokeDevice();
 
   const getDeviceIcon = () => {
     if (device.is_robot)
@@ -107,7 +94,11 @@ const DeviceItem = ({ device }: { device: Device }) => {
           </div>
         </div>
         {!device.is_current && (
-          <Button size="sm" onClick={() => revokeDevice()} disabled={isPending}>
+          <Button
+            size="sm"
+            onClick={() => revokeDevice(device.uuid)}
+            disabled={isPending}
+          >
             {isPending ? <Loader /> : "Revoke Access"}
           </Button>
         )}
@@ -140,10 +131,7 @@ const DeviceItemSkeleton = () => {
 };
 
 export function DevicesTab() {
-  const { data: devices, isLoading } = useQuery({
-    queryKey: ["devices"],
-    queryFn: () => api.users.getDevices(),
-  });
+  const { data: devices, isLoading } = useGetDeviceList();
 
   return (
     <Card>
@@ -162,8 +150,6 @@ export function DevicesTab() {
             <DeviceItemSkeleton />
             <DeviceItemSkeleton />
           </>
-        ) : devices?.length === 0 ? (
-          <p className="text-muted-foreground">No devices found</p>
         ) : (
           devices?.map((device) => (
             <DeviceItem key={device.uuid} device={device} />
