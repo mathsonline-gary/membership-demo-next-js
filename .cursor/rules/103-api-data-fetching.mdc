@@ -1,0 +1,79 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+---
+description: Guidelines for structuring API clients and implementing data fetching using Axios and React Query
+globs: ["src/**/*.{ts,tsx}"]
+alwaysApply: true
+---
+
+# 🌐 API and Data Fetching Guidelines
+
+This rule defines the conventions for building type-safe, maintainable, and scalable API layers using **Axios** and **React Query** in a Next.js project.
+
+---
+
+## API Client Structure
+
+- Use **Axios** for all HTTP requests.
+- Define API clients inside `src/lib/api/`, grouped by domain (e.g., `user.ts`, `auth.ts`, etc.).
+- Use `axios.create()` to define a reusable client instance (`client.ts`).
+- Configure **request and response interceptors** for authentication and logging.
+- Read all base URLs and secrets from **environment variables** via `process.env`.
+
+---
+
+## Data Fetching — React Query
+
+- Use **React Query** for all API data fetching.
+- Create **custom hooks** in `src/hooks/use-api-query/` (e.g., `useUsers.ts`, `useUserById.ts`).
+- Always define `queryKey` and `queryFn` explicitly.
+- Handle loading/fetching, error, and empty states gracefully.
+- Cache responses efficiently with correct `staleTime`, `cacheTime`, and `refetch` options.
+- Use **mutation hooks** for POST/PUT/DELETE.
+
+---
+
+## ✅ Best Practices
+
+- ✅ Never fetch API data directly inside React components — always abstract into hooks.
+- ✅ Always use **TypeScript** for typing request payloads and response schemas.
+- ✅ Handle token expiration and auth errors inside Axios interceptors.
+- ✅ Use optimistic updates for responsive UX during mutations.
+- ✅ Separate pure API logic (e.g., `/lib/api/services/users.ts`) from query logic (e.g., `/hooks/use-api-query/users.ts`).
+- ✅ Avoid duplicating fetch logic; always use reusable hooks and centralized API functions.
+- ✅ Handle network errors, retry logic, and unauthorized access gracefully.
+
+---
+
+
+## Examples
+✅ Good:
+```tsx
+// src/use-api-query/users.ts
+export const useUsers = () => {
+  return useQuery({
+    queryKey: ['users'],
+    queryFn: async () => {
+      const { data } = await api.get<User[]>('/users');
+      return data;
+    },
+  });
+};
+```
+
+❌ Bad:
+```tsx
+// Avoid direct API calls in components
+const Component = () => {
+  const [data, setData] = useState();
+  
+  useEffect(() => {
+    // Don't make direct API calls in components
+    api.get('/users').then(setData);
+  }, []);
+};
+```
+

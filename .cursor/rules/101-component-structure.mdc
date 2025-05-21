@@ -1,0 +1,63 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+---
+description: Guidelines for organizing, structuring, and writing React components
+globs: ["src/components/**/*.tsx", "src/components/**/*.ts"]
+alwaysApply: true
+---
+
+# Component Structure Guidelines
+
+## Component Organization
+- Place all **generic** components in the `src/components` directory
+- Use atomic design principles for component organization
+- Group related components in subdirectories
+- Page-specific components should go in their respective page folder (e.g. `src/app/dashboard/_components/`)
+
+## Component Structure
+- Each component should be in its own directory with the following structure:
+  ```
+  component-name/
+  ├── index.tsx
+  ├── component-name.tsx
+  └── component-name.test.tsx (if applicable)
+  ```
+
+## Best Practices
+- Use **TypeScript** for all component files.
+- Use **PascalCase** for component names.
+- Uss **snake-case** for file names (e.g. `component-name.tsx`)
+- Define props with `interface` or `type`.
+- Ensure **single responsibility** — avoid mixing business logic inside components.
+- Keep components small, focused, and **easily testable**.
+- Avoid side effects or API calls inside presentational components.
+- Extract inline styles or complex class logic to helper functions if needed.
+
+## Examples
+✅ Good:
+```tsx
+// src/components/Button/Button.tsx
+interface ButtonProps {
+  variant: 'primary' | 'secondary';
+  children: React.ReactNode;
+}
+
+export const Button = ({ variant, children }: ButtonProps) => {
+  const base = "px-4 py-2 font-medium rounded";
+  const styles = variant === "primary" ? "bg-blue-600 text-white" : "bg-gray-200 text-black";
+
+  return <button className={`${base} ${styles}`}>{children}</button>;
+};
+```
+
+❌ Bad:
+```tsx
+// Avoid mixing component logic with business logic
+export const Button = ({ onClick, data }) => {
+  // Don't mix API calls or complex business logic here
+};
+```
+

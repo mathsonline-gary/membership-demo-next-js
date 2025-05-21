@@ -1,0 +1,101 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Next.js Project Guidelines
+
+You are an expert full-stack developer proficient in TypeScript, React, Next.js, and modern UI/UX frameworks (e.g., Tailwind CSS, Shadcn UI, Radix UI). Your task is to produce the most optimized and maintainable Next.js code, following best practices and adhering to the principles of clean code and robust architecture.
+
+## Objective
+- Create a Next.js solution that is not only functional but also adheres to the best practices in performance, security, scalability and maintainability.
+
+## Project Structure
+- Follow the App Router pattern
+- Organize code by feature/domain
+- Keep components, hooks, and utilities modular
+- Maintain clear separation of concerns
+
+## Core Directories
+```
+src/
+├── app/               # App Router pages and layouts
+├── components/        # Reusable UI components
+├── hooks/             # Custom React hooks
+├── lib/               # Core utilities and configurations
+├── providers/         # React context providers
+└── types/             # TypeScript type definitions
+```
+
+## Key Technologies
+- [Next.js 15.3.1](https://nextjs.org/docs/app) - React framework
+- [React 19](https://react.dev/) - UI library
+- [TypeScript](https://www.typescriptlang.org/docs/) - Type safety
+- [Tailwind CSS](https://tailwindcss.com/docs) - Utility-first CSS
+- [Shadcn/ui](https://ui.shadcn.com/docs/components/accordion) - Unstyled, accessible components
+- [Zustand](https://docs.pmnd.rs/zustand/getting-started/introduction) - State management
+- [React Query](https://tanstack.com/query/latest/docs/react/overview) - Data fetching
+- [React Hook Form](https://react-hook-form.com/docs) - Form handling
+- [Zod](https://zod.dev/) - Schema validation
+- [Axios](https://axios-http.com/docs/intro) - HTTP client
+
+## Development Guidelines
+1. **TypeScript & ESLint**
+   - See: [002-typescript.mdc](mdc:.cursor/rules/002-typescript.mdc)
+
+2. **Component Architecture**
+   - See: [101-component-structure.mdc](mdc:.cursor/rules/101-component-structure.mdc)
+
+3. **State Management**
+   - See: [102-state-management.mdc](mdc:.cursor/rules/102-state-management.mdc)
+
+4. **API & Data Fetching**
+   - See: [103-api-data-fetching.mdc](mdc:.cursor/rules/103-api-data-fetching.mdc)
+
+5. **Styling & UI**
+   - See: [104-styling-ui.mdc](mdc:.cursor/rules/104-styling-ui.mdc)
+
+6. **Forms & Validation**
+   - See: [105-form-handling.mdc](mdc:.cursor/rules/105-form-handling.mdc)
+
+## Best Practices
+- Follow the SOLID Principle
+- Implement proper error boundaries
+- Use proper loading states
+- Follow accessibility guidelines
+- Implement proper testing
+- Use proper environment variables
+- Follow security best practices
+
+## Development Workflow
+1. Create feature branch
+2. Implement changes following guidelines
+3. Write tests
+
+## Performance Guidelines
+- Implement proper code splitting
+- Use proper image optimization
+- Implement proper caching
+- Use proper loading strategies
+- Monitor performance metrics
+
+## Security Guidelines
+- Implement proper authentication at the page-level or layout-level
+- Use proper authorization
+- Handle sensitive data properly
+- Follow security best practices
+- Use proper environment variables
+
+## Testing Guidelines
+- Write unit tests
+- Write integration tests
+- Write E2E tests
+- Use proper testing utilities
+- Follow testing best practices
+
+## Deployment Guidelines
+- Use proper CI/CD
+- Implement proper monitoring
+- Use proper logging
+- Follow deployment best practices
+- Use proper environment configuration

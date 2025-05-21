@@ -1,0 +1,83 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+---
+description: Guidelines for styling UI components with Tailwind CSS and Shadcn UI while following accessibility and semantic best practices
+globs: ["src/**/*.{ts,tsx}"]
+alwaysApply: true
+---
+
+# 🎨 Styling and UI Guidelines
+
+These rules define how to create consistent, accessible, and maintainable UI components using **Tailwind CSS**, **Shadcn UI**, and **Radix UI** in a Next.js project.
+
+---
+
+## 🧩 Component Library Usage
+
+- Use **Shadcn UI** components as the base UI library.
+- Under the hood, Shadcn is built on **Radix UI** primitives — always follow **Radix's accessibility standards**.
+- Use accessible, composable UI patterns instead of writing custom behavior from scratch.
+- Avoid replacing Shadcn components with custom implementations unless required.
+- Apply **ARIA attributes** and keyboard navigation support where needed.
+
+---
+
+## 🎨 Styling Conventions
+
+- Use **Tailwind CSS** utility classes for all component styling.
+- Follow **mobile-first** responsive design (`sm:`, `md:`, etc.).
+- Use **semantic HTML elements** (e.g., `button`, `section`, `header`) over `div`s when possible.
+- Implement **CSS variables** via Tailwind's `theme.extend` for theming.
+- Support **dark mode** using Tailwind’s `dark:` variants.
+- Avoid inline styles and global styles unless absolutely necessary.
+
+---
+
+## ✅ Best Practices
+
+- ✅ Use semantic HTML (e.g., `button`, `nav`, `ul`, `label`, `input`, etc.).
+- ✅ Respect **WCAG 2.1** contrast and color accessibility guidelines.
+- ✅ Ensure **keyboard navigability** and **focus management**.
+- ✅ Follow **BEM-style className organization**, if using custom class names.
+- ✅ Use Tailwind **component classes** (`@apply`) for large reusable styles (optional).
+- ✅ Avoid absolute pixel values when rem/em-based scales suffice.
+
+---
+
+## Examples
+✅ Good:
+```tsx
+// src/components/Button/Button.tsx
+export const Button = ({ children, ...props }) => {
+  return (
+    <button
+      className="rounded-md bg-primary px-4 py-2 text-white hover:bg-primary/90"
+      {...props}
+    >
+      {children}
+    </button>
+  );
+};
+```
+
+❌ Bad:
+```tsx
+// Avoid inline styles and non-semantic elements
+export const Button = ({ children }) => {
+  return (
+    <div
+      style={{
+        backgroundColor: 'blue',
+        padding: '10px',
+        borderRadius: '5px',
+      }}
+    >
+      {children}
+    </div>
+  );
+};
+```
+

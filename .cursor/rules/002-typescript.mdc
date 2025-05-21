@@ -1,0 +1,123 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# TypeScript & ESLint Guidelines
+
+## TypeScript Configuration
+- Follow the **strict mode**
+- Use proper type definitions
+- Follow proper naming conventions
+- Use proper type imports/exports
+
+## Type Definitions
+- Place shared types in `src/types` directory
+- Use proper naming conventions (PascalCase)
+- Prefer interfaces for object types
+- Use type aliases for unions/intersections
+- Export types used across files
+
+## Component Types
+```tsx
+// Proper component props typing
+interface CustomProps {
+  variant: 'primary' | 'secondary';
+  children: React.ReactNode;
+}
+
+export const CustomComponent: React.FC<CustomProps> = ({ variant, children }) => {
+  return (
+    <button
+      className={`btn-${variant}`}
+    >
+      {children}
+    </button>
+  );
+};
+```
+
+## API Types
+```tsx
+// Proper API response typing
+interface ApiResponse<T> {
+  data: T;
+  status: number;
+  message: string;
+}
+
+interface User {
+  id: string;
+  name: string;
+  email: string;
+}
+
+// Usage
+const response: ApiResponse<User> = await api.get('/users/1');
+```
+
+## Type Guards
+```tsx
+// Proper type guard implementation
+export const isUser = (value: unknown): value is User => {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    'id' in value &&
+    'name' in value &&
+    'email' in value
+  );
+};
+```
+
+## Error Handling
+```tsx
+// Proper error handling with type narrowing
+try {
+  const result = await api.getUser();
+  if (isUser(result)) {
+    // TypeScript knows result is User here
+    console.log(result.name);
+  }
+} catch (error) {
+  if (error instanceof ApiError) {
+    // TypeScript knows error is ApiError here
+    console.error(error.message);
+  }
+}
+```
+
+## Type Imports
+```tsx
+// Use type imports for types
+import type { User } from './types';
+// Use value imports for values
+import { createUser } from './utils';
+```
+
+## React Specific Types
+```tsx
+// Event handler types
+const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  console.log(e.target.value);
+};
+
+// Ref types
+const inputRef = useRef<HTMLInputElement>(null);
+
+// Children prop types
+interface Props {
+  children: React.ReactNode;
+}
+```
+
+## Best Practices
+- Avoid using `any` type
+- Use proper type assertions
+- Implement proper error handling
+- Use proper type guards
+- Follow proper naming conventions
+- Use proper type imports
+- Implement proper null checks
+- Use proper async/await types
+- Follow proper ESLint rules

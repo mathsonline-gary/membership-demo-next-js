@@ -1,0 +1,94 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+---
+description: Guidelines for managing forms with React Hook Form and Zod, including accessibility, validation, and error handling best practices
+globs: ["src/components/forms/**/*.{ts,tsx}", "src/hooks/use-*.ts"]
+alwaysApply: true
+---
+
+# Form Handling and Validation Guidelines
+
+Use **React Hook Form** for lightweight and performant form state management, and **Zod** for schema validation. Follow these rules to ensure accessibility, maintainability, and good developer experience when building forms.
+
+---
+
+## Form State Management
+
+- Use **React Hook Form** to manage form state.
+- Use the `useForm()` hook with a `zodResolver` for built-in validation.
+- Keep form logic encapsulated and avoid prop drilling.
+
+---
+
+## Schema Validation with Zod
+
+- Define schemas with **Zod** in the same file.
+- Use `zodResolver()` to connect schemas to React Hook Form.
+- Include clear and specific error messages in your schemas.
+- Add **async validation** (e.g., username availability) via `validate` or inside `onSubmit`.
+
+---
+
+## Submission and Error Handling
+
+- Use `form.handleSubmit(onSubmit)` to ensure validation runs before processing.
+- Display user-friendly error messages close to form fields if provided in the error response.
+- Handle **loading**, **success**, and **error** states with proper UI feedback.
+- Reset forms with `form.reset()` after successful submissions.
+
+---
+
+## Accessibility and UX
+
+- Use **semantic elements** (`<label>`, `<input>`, `<button>`, etc.).
+- Always associate inputs with labels (`<label htmlFor="email">`).
+- Show validation errors with `aria-invalid` and `aria-describedby`.
+- Use `disabled` and `aria-busy` during submission.
+- Group related fields using `<fieldset>` when appropriate.
+
+---
+
+## Examples
+✅ Good:
+```tsx
+// src/components/forms/LoginForm.tsx
+const loginSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(8),
+});
+
+export const LoginForm = () => {
+  const form = useForm({
+    resolver: zodResolver(loginSchema),
+  });
+
+  return (
+    <form onSubmit={form.handleSubmit(onSubmit)}>
+      <input {...form.register('email')} />
+      {form.formState.errors.email && (
+        <span>{form.formState.errors.email.message}</span>
+      )}
+    </form>
+  );
+};
+```
+
+❌ Bad:
+```tsx
+// Avoid manual form handling
+const Form = () => {
+  const [email, setEmail] = useState('');
+  const [errors, setErrors] = useState({});
+
+  const validate = () => {
+    // Don't implement manual validation
+    if (!email.includes('@')) {
+      setErrors({ email: 'Invalid email' });
+    }
+  };
+};
+```
+

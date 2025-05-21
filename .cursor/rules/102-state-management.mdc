@@ -1,0 +1,82 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+---
+description: Guidelines for managing local, global, and server state using Zustand and React Query
+globs: ["src/**/*.{ts,tsx}"]
+alwaysApply: true
+---
+
+# State Management Guidelines
+
+This rule defines best practices for managing **local**, **global**, and **server** state in this project using **React**, **Zustand**, and **React Query**.
+
+---
+
+## Global State — Zustand
+
+- Use **Zustand** for global state management.
+- Define each store in `src/lib/stores/`, organized by feature or domain.
+- Store files should be named as `useXStore.ts` (e.g., `useAuthStore.ts`).
+- Keep each store **small**, **modular**, and **single-purpose**.
+- Always define state and actions using **TypeScript interfaces or types**.
+- Avoid coupling UI and store logic.
+
+---
+
+## Server State — React Query
+
+- Use **React Query** for data fetched from APIs (server state).
+- Place custom query hooks in `src/hooks/use-api-query/`.
+- Group hooks by resource domain (e.g., `useUserQuery.ts`, `useOrdersQuery.ts`).
+- Set proper `staleTime`, `cacheTime`, and **enable caching, retry, and invalidation** based on use case.
+- Avoid using Zustand for server-fetched data unless necessary for global access.
+- Keep query logic encapsulated in hooks and reuse them across components.
+
+---
+
+## Local State — React
+
+- Use `useState()` for simple, local component state.
+- Use `useReducer()` when managing more complex UI logic (e.g., multi-step forms).
+- Keep local state as **close to its usage** as possible.
+- Don't prematurely lift state up unless shared across components.
+
+---
+
+## Best Practices
+
+- Use **Zustand for global**, **React Query for async/server**, and **React state for local**.
+- Keep logic focused — don't mix Zustand, React Query, and local state in the same component.
+- Prefer **Context API** only when you need to share state between many levels and reactivity is limited.
+- Handle loading/fetching, error, and success states in all query-based components.
+- Use **optimistic updates** and `onMutate`, `onError`, `onSuccess` when appropriate.
+- Keep stores, reducers, and query hooks **organized by feature** for scalability.
+
+## Examples
+✅ Good:
+```tsx
+// src/lib/stores/useAuthStore.ts
+interface AuthState {
+  user: User | null;
+  setUser: (user: User | null) => void;
+}
+
+export const useAuthStore = create<AuthState>((set) => ({
+  user: null,
+  setUser: (user) => set({ user }),
+}));
+```
+
+❌ Bad:
+```tsx
+// Avoid mixing different state management solutions
+const Component = () => {
+  const [localState, setLocalState] = useState();
+  const globalState = useStore(); // Don't mix Zustand with other solutions
+  const query = useQuery(); // Don't mix React Query with other solutions
+};
+```
+
