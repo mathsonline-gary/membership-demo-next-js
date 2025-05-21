@@ -1,8 +1,4 @@
-export { useGetDeviceList, useRevokeDevice } from './devices'
-export { useGetProfile, useUpdateProfile } from './profile'
-export {
-  useGetTeamList,
-  useUpdateTeam,
-  useCreateTeam,
-  useDeleteTeam,
-} from './teams'
+export * from './devices'
+export * from './profile'
+export * from './students'
+export * from './teams'

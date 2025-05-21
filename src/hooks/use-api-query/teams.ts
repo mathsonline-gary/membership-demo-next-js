@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useAuth } from '@/hooks/use-auth'
 import { api } from '@/lib/api'
 
-const useGetTeamList = () => {
+export const useGetTeamList = () => {
   const { user } = useAuth()
 
   return useQuery({
@@ -12,7 +12,7 @@ const useGetTeamList = () => {
   })
 }
 
-const useUpdateTeam = () => {
+export const useUpdateTeam = () => {
   const queryClient = useQueryClient()
 
   return useMutation({
@@ -24,7 +24,7 @@ const useUpdateTeam = () => {
   })
 }
 
-const useCreateTeam = () => {
+export const useCreateTeam = () => {
   const queryClient = useQueryClient()
   const { user } = useAuth()
 
@@ -37,7 +37,7 @@ const useCreateTeam = () => {
   })
 }
 
-const useDeleteTeam = () => {
+export const useDeleteTeam = () => {
   const queryClient = useQueryClient()
 
   return useMutation({
@@ -47,5 +47,3 @@ const useDeleteTeam = () => {
     },
   })
 }
-
-export { useGetTeamList, useUpdateTeam, useCreateTeam, useDeleteTeam }

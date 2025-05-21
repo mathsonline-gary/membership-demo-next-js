@@ -3,14 +3,14 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { api } from '@/lib/api'
 import { UpdateProfileRequest } from '@/types/api/profile'
 
-const useGetProfile = () => {
+export const useGetProfile = () => {
   return useQuery({
     queryKey: ['profile'],
     queryFn: api.profile.show,
   })
 }
 
-const useUpdateProfile = () => {
+export const useUpdateProfile = () => {
   const queryClient = useQueryClient()
 
   return useMutation({
@@ -20,5 +20,3 @@ const useUpdateProfile = () => {
     },
   })
 }
-
-export { useGetProfile, useUpdateProfile }

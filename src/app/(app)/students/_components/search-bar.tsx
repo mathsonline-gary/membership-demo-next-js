@@ -5,7 +5,7 @@ import { useDebouncedCallback } from 'use-debounce'
 
 import { Input } from '@/components/ui/input'
 
-export function Search() {
+export function SearchBar() {
   const searchParams = useSearchParams()
   const pathname = usePathname()
   const { replace } = useRouter()

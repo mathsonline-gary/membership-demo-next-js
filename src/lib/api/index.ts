@@ -1,8 +1,9 @@
 import { createApiClient } from './client'
 import {
-  createProfileService,
   createAuthService,
   createDeviceService,
+  createProfileService,
+  createStudentService,
   createTeamsService,
 } from './services'
 
@@ -16,6 +17,7 @@ const createApi = () => {
     auth: createAuthService(client),
     devices: createDeviceService(client),
     teams: createTeamsService(client),
+    students: createStudentService(client),
   }
 }
 

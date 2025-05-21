@@ -6,8 +6,6 @@ import { toast } from 'sonner'
 import { Loader } from '@/components/loader'
 import { Button } from '@/components/ui/button'
 import {
-  Dialog,
-  DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
@@ -16,15 +14,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 
-interface InviteStudentDialogProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-}
-
-export function InviteStudentDialog({
-  open,
-  onOpenChange,
-}: InviteStudentDialogProps) {
+export function InviteStudentDialog() {
   const [email, setEmail] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -38,7 +28,6 @@ export function InviteStudentDialog({
 
       toast.success('Invitation sent successfully.')
       setEmail('')
-      onOpenChange(false)
     } catch (error) {
       console.error(error)
       toast.error('Failed to send invitation. Please try again.')
@@ -48,42 +37,33 @@ export function InviteStudentDialog({
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Invite Student</DialogTitle>
-          <DialogDescription>
-            Send an invitation to a student to join your organization.
-          </DialogDescription>
-        </DialogHeader>
-        <form onSubmit={handleSubmit}>
-          <div className="grid gap-4 py-4">
-            <div className="grid gap-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="student@example.com"
-                required
-              />
-            </div>
+    <>
+      <DialogHeader>
+        <DialogTitle>Invite Student</DialogTitle>
+        <DialogDescription>
+          Send an invitation to a student to join your organization.
+        </DialogDescription>
+      </DialogHeader>
+      <form onSubmit={handleSubmit}>
+        <div className="grid gap-4 py-4">
+          <div className="grid gap-2">
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="student@example.com"
+              required
+            />
           </div>
-          <DialogFooter>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-            >
-              Cancel
-            </Button>
-            <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? <Loader /> : 'Send Invitation'}
-            </Button>
-          </DialogFooter>
-        </form>
-      </DialogContent>
-    </Dialog>
+        </div>
+        <DialogFooter>
+          <Button type="submit" disabled={isSubmitting}>
+            {isSubmitting ? <Loader /> : 'Send Invitation'}
+          </Button>
+        </DialogFooter>
+      </form>
+    </>
   )
 }

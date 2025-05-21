@@ -2,14 +2,14 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 import { api } from '@/lib/api'
 
-const useGetDeviceList = () => {
+export const useGetDeviceList = () => {
   return useQuery({
     queryKey: ['devices'],
     queryFn: api.devices.index,
   })
 }
 
-const useRevokeDevice = () => {
+export const useRevokeDevice = () => {
   const queryClient = useQueryClient()
 
   return useMutation({
@@ -19,5 +19,3 @@ const useRevokeDevice = () => {
     },
   })
 }
-
-export { useGetDeviceList, useRevokeDevice }
