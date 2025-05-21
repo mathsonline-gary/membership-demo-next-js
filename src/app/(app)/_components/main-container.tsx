@@ -1,15 +1,15 @@
-import { Breadcrumb, BreadcrumbItem } from "./breadcrumb";
+import { Breadcrumb, BreadcrumbItem } from './breadcrumb'
 
 export function MainContainer({
   children,
   breadcrumbItems,
   title,
 }: {
-  children: React.ReactNode;
-  breadcrumbItems?: BreadcrumbItem[];
-  title: string;
+  children: React.ReactNode
+  breadcrumbItems?: BreadcrumbItem[]
+  title: string
 }) {
-  console.log("page: ", title);
+  console.log('page: ', title)
 
   return (
     <>
@@ -19,5 +19,5 @@ export function MainContainer({
         {children}
       </section>
     </>
-  );
+  )
 }

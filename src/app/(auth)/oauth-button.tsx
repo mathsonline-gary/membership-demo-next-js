@@ -1,14 +1,16 @@
-"use client";
+'use client'
 
-import { Button } from "@/components/ui/button";
-import Image from "next/image";
-import React from "react";
-import { cn } from "@/lib/utils";
-import Link from "next/link";
+import Image from 'next/image'
+import Link from 'next/link'
+import React from 'react'
+
+import { Button } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
+
 interface OAuthButtonProps {
-  className?: string;
-  provider: "google";
-  intent: "login" | "register";
+  className?: string
+  provider: 'google'
+  intent: 'login' | 'register'
 }
 
 export function OAuthButton({ provider, intent, className }: OAuthButtonProps) {
@@ -16,7 +18,7 @@ export function OAuthButton({ provider, intent, className }: OAuthButtonProps) {
     <Button
       type="button"
       variant="outline"
-      className={cn("w-full", className)}
+      className={cn('w-full', className)}
       asChild
     >
       <Link
@@ -32,5 +34,5 @@ export function OAuthButton({ provider, intent, className }: OAuthButtonProps) {
         Google
       </Link>
     </Button>
-  );
+  )
 }

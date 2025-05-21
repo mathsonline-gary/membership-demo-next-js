@@ -1,6 +1,11 @@
-"use client";
+'use client'
 
-import { User } from "@/types/user";
+import { useQuery } from '@tanstack/react-query'
+import { useSearchParams } from 'next/navigation'
+
+import { Loader } from '@/components/loader'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Card, CardContent } from '@/components/ui/card'
 import {
   Table,
   TableBody,
@@ -8,41 +13,37 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { Card, CardContent } from "@/components/ui/card";
-import { useIsMobile, useIsTablet } from "@/hooks/use-mobile";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useQuery } from "@tanstack/react-query";
-import { Loader } from "@/components/loader";
-import { useSearchParams } from "next/navigation";
+} from '@/components/ui/table'
+import { useIsMobile, useIsTablet } from '@/hooks/use-mobile'
+import { User } from '@/types/user'
 
 async function fetchStudents(searchQuery: string): Promise<User[]> {
-  console.log(searchQuery);
+  console.log(searchQuery)
 
   // TODO: Replace with actual API call
-  await new Promise((resolve) => setTimeout(resolve, 1000));
+  await new Promise((resolve) => setTimeout(resolve, 1000))
   return [
     {
       id: 1,
-      first_name: "John",
-      last_name: "Doe",
-      email: "john.doe@example.com",
+      first_name: 'John',
+      last_name: 'Doe',
+      email: 'john.doe@example.com',
       avatar: null,
       created_at: new Date().toLocaleDateString(),
       updated_at: new Date().toLocaleDateString(),
-      role: "student",
+      role: 'student',
     },
     {
       id: 2,
-      first_name: "Jane",
-      last_name: "Smith",
-      email: "jane.smith@example.com",
+      first_name: 'Jane',
+      last_name: 'Smith',
+      email: 'jane.smith@example.com',
       avatar: null,
       created_at: new Date().toLocaleDateString(),
       updated_at: new Date().toLocaleDateString(),
-      role: "student",
+      role: 'student',
     },
-  ];
+  ]
 }
 
 const StudentCards = ({ students }: { students: User[] }) => (
@@ -62,14 +63,14 @@ const StudentCards = ({ students }: { students: User[] }) => (
               <h3 className="font-medium">
                 {student.first_name} {student.last_name}
               </h3>
-              <p className="text-sm text-muted-foreground">{student.email}</p>
+              <p className="text-muted-foreground text-sm">{student.email}</p>
             </div>
           </div>
         </CardContent>
       </Card>
     ))}
   </div>
-);
+)
 
 const StudentTable = ({ students }: { students: User[] }) => (
   <div className="rounded-md border">
@@ -109,45 +110,45 @@ const StudentTable = ({ students }: { students: User[] }) => (
       </TableBody>
     </Table>
   </div>
-);
+)
 
 export function StudentList() {
-  const searchParams = useSearchParams();
-  const searchQuery = searchParams.get("search") || "";
-  const isMobile = useIsMobile();
-  const isTablet = useIsTablet();
+  const searchParams = useSearchParams()
+  const searchQuery = searchParams.get('search') || ''
+  const isMobile = useIsMobile()
+  const isTablet = useIsTablet()
 
   const {
     data: students,
     isLoading,
     error,
   } = useQuery({
-    queryKey: ["students", searchQuery],
+    queryKey: ['students', searchQuery],
     queryFn: () => fetchStudents(searchQuery),
-  });
+  })
 
   if (isLoading) {
     return (
       <div className="flex h-[200px] items-center justify-center">
         <Loader />
       </div>
-    );
+    )
   }
 
   if (error) {
     return (
-      <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-4 text-center text-destructive">
+      <div className="border-destructive/50 bg-destructive/10 text-destructive rounded-lg border p-4 text-center">
         Failed to load students. Please try again.
       </div>
-    );
+    )
   }
 
   if (!students?.length) {
     return (
-      <div className="rounded-lg border p-4 text-center text-muted-foreground">
+      <div className="text-muted-foreground rounded-lg border p-4 text-center">
         No students found
       </div>
-    );
+    )
   }
 
   return (
@@ -158,5 +159,5 @@ export function StudentList() {
         <StudentTable students={students} />
       )}
     </div>
-  );
+  )
 }

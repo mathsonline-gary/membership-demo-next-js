@@ -1,16 +1,19 @@
-"use client";
+'use client'
 
-import { Card, CardContent } from "@/components/ui/card";
-import { RegisterForm } from "./register-form";
-import { OAuthButton } from "../oauth-button";
-import Link from "next/link";
-import { useAuth } from "@/hooks/use-auth";
+import Link from 'next/link'
+
+import { Card, CardContent } from '@/components/ui/card'
+import { useAuth } from '@/hooks/use-auth'
+
+import { OAuthButton } from '../oauth-button'
+
+import { RegisterForm } from './register-form'
 
 export default function Page() {
   useAuth({
-    middleware: "guest",
-    redirectIfAuthenticated: "/dashboard",
-  });
+    middleware: 'guest',
+    redirectIfAuthenticated: '/dashboard',
+  })
 
   return (
     <>
@@ -34,7 +37,7 @@ export default function Page() {
             <OAuthButton provider="google" intent="register" />
           </div>
           <div className="text-center text-sm">
-            Already have an account?{" "}
+            Already have an account?{' '}
             <Link href="/login" className="underline underline-offset-4">
               Login
             </Link>
@@ -42,9 +45,9 @@ export default function Page() {
         </CardContent>
       </Card>
       <div className="text-muted-foreground *:[a]:hover:text-primary text-center text-xs text-balance *:[a]:underline *:[a]:underline-offset-4">
-        By clicking continue, you agree to our <a href="#">Terms of Service</a>{" "}
+        By clicking continue, you agree to our <a href="#">Terms of Service</a>{' '}
         and <a href="#">Privacy Policy</a>.
       </div>
     </>
-  );
+  )
 }

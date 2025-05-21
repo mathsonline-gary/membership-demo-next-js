@@ -1,18 +1,20 @@
-"use client";
+'use client'
 
-import { Card, CardContent } from "@/components/ui/card";
-import Link from "next/link";
-import { LoginForm } from "./login-form";
-import { OAuthButton } from "@/app/(auth)/oauth-button";
-import { useAuth } from "@/hooks/use-auth";
-import { useSearchParams } from "next/navigation";
+import Link from 'next/link'
+import { useSearchParams } from 'next/navigation'
+
+import { OAuthButton } from '@/app/(auth)/oauth-button'
+import { Card, CardContent } from '@/components/ui/card'
+import { useAuth } from '@/hooks/use-auth'
+
+import { LoginForm } from './login-form'
 
 export default function Page() {
-  const searchParams = useSearchParams();
+  const searchParams = useSearchParams()
   useAuth({
-    middleware: "guest",
-    redirectIfAuthenticated: searchParams.get("redirect") ?? "/dashboard",
-  });
+    middleware: 'guest',
+    redirectIfAuthenticated: searchParams.get('redirect') ?? '/dashboard',
+  })
 
   return (
     <>
@@ -32,13 +34,13 @@ export default function Page() {
                 Or continue with
               </span>
             </div>
-            <div className="grid grid-cols-1 gap-4 mt-6">
+            <div className="mt-6 grid grid-cols-1 gap-4">
               <OAuthButton provider="google" intent="login" />
             </div>
           </div>
 
           <div className="text-center text-sm">
-            Don&apos;t have an account?{" "}
+            Don&apos;t have an account?{' '}
             <Link href="/register" className="underline underline-offset-4">
               Sign up
             </Link>
@@ -46,10 +48,10 @@ export default function Page() {
         </CardContent>
       </Card>
       <div className="text-muted-foreground *:[a]:hover:text-primary text-center text-xs text-balance *:[a]:underline *:[a]:underline-offset-4">
-        By clicking continue, you agree to our{" "}
-        <Link href="#">Terms of Service</Link> and{" "}
+        By clicking continue, you agree to our{' '}
+        <Link href="#">Terms of Service</Link> and{' '}
         <Link href="#">Privacy Policy</Link>.
       </div>
     </>
-  );
+  )
 }

@@ -1,21 +1,21 @@
-import Image from "next/image";
+import Image from 'next/image'
 
 export default function AuthLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode
 }) {
   return (
-    <div className="min-h-svh bg-background">
+    <div className="bg-background min-h-svh">
       <div className="container mx-auto px-4 py-8">
         <div className="space-y-8">
-          <div className="max-w-sm mx-auto">
+          <div className="mx-auto max-w-sm">
             <Image
               src="/logo-icon-text.png"
               alt="Logo"
               width={180}
               height={43}
-              className="mx-auto dark:invert w-auto mb-18"
+              className="mx-auto mb-18 w-auto dark:invert"
               priority
             />
           </div>
@@ -27,5 +27,5 @@ export default function AuthLayout({
         </div>
       </div>
     </div>
-  );
+  )
 }

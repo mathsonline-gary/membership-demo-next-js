@@ -1,6 +1,12 @@
-"use client";
+'use client'
 
-import { Button } from "@/components/ui/button";
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
+import { z } from 'zod'
+
+import { Loader } from '@/components/loader'
+import { Button } from '@/components/ui/button'
 import {
   Dialog,
   DialogContent,
@@ -8,15 +14,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Loader } from "@/components/loader";
-import { Team } from "@/types/user";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { toast } from "sonner";
-import { useUpdateTeam } from "@/hooks/use-api-query";
+} from '@/components/ui/dialog'
 import {
   Form,
   FormControl,
@@ -24,60 +22,63 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { ApiError } from "@/lib/api/error";
+} from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
+import { useUpdateTeam } from '@/hooks/use-api-query'
+import { ApiError } from '@/lib/api/error'
+import { Team } from '@/types/user'
 
 interface EditTeamDialogProps {
-  team: Team;
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
+  team: Team
+  open: boolean
+  onOpenChange: (open: boolean) => void
 }
 
 const teamSchema = z.object({
-  name: z.string().min(2, "Team name must be at least 2 characters"),
-});
+  name: z.string().min(2, 'Team name must be at least 2 characters'),
+})
 
-type TeamFormValues = z.infer<typeof teamSchema>;
+type TeamFormValues = z.infer<typeof teamSchema>
 
 export function EditTeamDialog({
   team,
   open,
   onOpenChange,
 }: EditTeamDialogProps) {
-  const { mutate: updateTeam, isPending: isUpdating } = useUpdateTeam();
+  const { mutate: updateTeam, isPending: isUpdating } = useUpdateTeam()
 
   const form = useForm<TeamFormValues>({
     resolver: zodResolver(teamSchema),
     defaultValues: {
       name: team.name,
     },
-  });
+  })
 
-  const currentName = form.watch("name");
-  const isTeamChanged = currentName !== team.name;
+  const currentName = form.watch('name')
+  const isTeamChanged = currentName !== team.name
 
   const onSubmit = async (data: TeamFormValues) => {
     updateTeam(
       { id: team.id, name: data.name },
       {
         onSuccess: () => {
-          toast.success("Team updated successfully");
-          onOpenChange(false);
+          toast.success('Team updated successfully')
+          onOpenChange(false)
         },
         onError: (error) => {
           if (error instanceof ApiError && error.isUnprocessableEntity()) {
             Object.entries(error.getErrors()).forEach(([field, messages]) => {
               form.setError(field as keyof TeamFormValues, {
                 message: messages[0],
-              });
-            });
+              })
+            })
           } else {
-            toast.error("Failed to update team");
+            toast.error('Failed to update team')
           }
         },
       }
-    );
-  };
+    )
+  }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -114,12 +115,12 @@ export function EditTeamDialog({
                 Cancel
               </Button>
               <Button type="submit" disabled={isUpdating || !isTeamChanged}>
-                {isUpdating ? <Loader /> : "Save Changes"}
+                {isUpdating ? <Loader /> : 'Save Changes'}
               </Button>
             </DialogFooter>
           </form>
         </Form>
       </DialogContent>
     </Dialog>
-  );
+  )
 }

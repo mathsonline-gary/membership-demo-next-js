@@ -1,6 +1,15 @@
-"use client";
+'use client'
 
-import { Button } from "@/components/ui/button";
+import { zodResolver } from '@hookform/resolvers/zod'
+import Link from 'next/link'
+import { useSearchParams } from 'next/navigation'
+import { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import * as z from 'zod'
+
+import { Loader } from '@/components/loader'
+import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
 import {
   Form,
   FormControl,
@@ -8,74 +17,66 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
-import Link from "next/link";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import * as z from "zod";
-import { useState } from "react";
-import { useSearchParams } from "next/navigation";
-import { useAuth } from "@/hooks/use-auth";
-import { Loader } from "@/components/loader";
+} from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
+import { useAuth } from '@/hooks/use-auth'
 
 const formSchema = z.object({
   email: z.string().email({
-    message: "Please enter a valid email address.",
+    message: 'Please enter a valid email address.',
   }),
   password: z.string().min(8, {
-    message: "Password must be at least 8 characters.",
+    message: 'Password must be at least 8 characters.',
   }),
   remember: z.boolean(),
-});
+})
 
-type LoginFormValues = z.infer<typeof formSchema>;
+type LoginFormValues = z.infer<typeof formSchema>
 
 export function LoginForm() {
-  const searchParams = useSearchParams();
-  const { login } = useAuth();
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
+  const searchParams = useSearchParams()
+  const { login } = useAuth()
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
+  const [error, setError] = useState<string | null>(null)
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: searchParams.get("email") ?? "",
-      password: "",
+      email: searchParams.get('email') ?? '',
+      password: '',
       remember: false,
     },
-  });
+  })
 
   const handleSubmit = async (values: LoginFormValues) => {
     try {
-      setIsSubmitting(true);
+      setIsSubmitting(true)
 
       await login({
         email: values.email,
         password: values.password,
         remember: values.remember,
         setError: (message, errors) => {
-          setError(message);
+          setError(message)
           Object.entries(errors).forEach(([field, messages]) => {
             form.setError(field as keyof LoginFormValues, {
-              type: "server",
+              type: 'server',
               message: messages[0],
-            });
-          });
+            })
+          })
         },
-      });
+      })
     } finally {
-      setIsSubmitting(false);
+      setIsSubmitting(false)
     }
-  };
+  }
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)}>
         <div className="flex flex-col gap-6">
           {error && (
-            <div className="rounded-md bg-destructive/10 p-2 text-sm text-center text-destructive">
+            <div className="bg-destructive/10 text-destructive rounded-md p-2 text-center text-sm">
               {error}
             </div>
           )}
@@ -133,10 +134,10 @@ export function LoginForm() {
             )}
           />
           <Button type="submit" className="w-full" disabled={isSubmitting}>
-            {isSubmitting ? <Loader /> : "Login"}
+            {isSubmitting ? <Loader /> : 'Login'}
           </Button>
         </div>
       </form>
     </Form>
-  );
+  )
 }

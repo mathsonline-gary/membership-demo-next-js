@@ -1,6 +1,12 @@
-"use client";
+'use client'
 
-import { Button } from "@/components/ui/button";
+import { zodResolver } from '@hookform/resolvers/zod'
+import * as React from 'react'
+import { useForm } from 'react-hook-form'
+import * as z from 'zod'
+
+import { Loader } from '@/components/loader'
+import { Button } from '@/components/ui/button'
 import {
   Form,
   FormControl,
@@ -8,71 +14,66 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import * as z from "zod";
-import * as React from "react";
-import { useAuth } from "@/hooks/use-auth";
-import { Loader } from "@/components/loader";
+} from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
+import { useAuth } from '@/hooks/use-auth'
 const formSchema = z
   .object({
     email: z.string().email({
-      message: "Please enter a valid email address.",
+      message: 'Please enter a valid email address.',
     }),
     first_name: z.string().min(1, {
-      message: "First name is required.",
+      message: 'First name is required.',
     }),
     last_name: z.string().min(1, {
-      message: "Last name is required.",
+      message: 'Last name is required.',
     }),
     password: z.string().min(8, {
-      message: "Password must be at least 8 characters.",
+      message: 'Password must be at least 8 characters.',
     }),
     password_confirmation: z.string(),
   })
   .refine((data) => data.password === data.password_confirmation, {
     message: "Passwords don't match",
-    path: ["password_confirmation"],
-  });
+    path: ['password_confirmation'],
+  })
 
-type RegisterFormValues = z.infer<typeof formSchema>;
+type RegisterFormValues = z.infer<typeof formSchema>
 
 export function RegisterForm() {
-  const [isSubmitting, setIsSubmitting] = React.useState(false);
-  const [error, setError] = React.useState<string | null>(null);
-  const { register } = useAuth();
+  const [isSubmitting, setIsSubmitting] = React.useState(false)
+  const [error, setError] = React.useState<string | null>(null)
+  const { register } = useAuth()
 
   const form = useForm<RegisterFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: "",
-      first_name: "",
-      last_name: "",
-      password: "",
-      password_confirmation: "",
+      email: '',
+      first_name: '',
+      last_name: '',
+      password: '',
+      password_confirmation: '',
     },
-  });
+  })
 
   async function onSubmit(values: RegisterFormValues) {
     try {
-      setIsSubmitting(true);
+      setIsSubmitting(true)
 
       await register({
         ...values,
         setError: (message, errors) => {
-          setError(message);
+          setError(message)
           Object.entries(errors).forEach(([field, messages]) => {
             form.setError(field as keyof RegisterFormValues, {
-              type: "server",
+              type: 'server',
               message: messages[0],
-            });
-          });
+            })
+          })
         },
-      });
+      })
     } finally {
-      setIsSubmitting(false);
+      setIsSubmitting(false)
     }
   }
 
@@ -81,11 +82,11 @@ export function RegisterForm() {
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <div className="flex flex-col gap-6">
           {error && (
-            <div className="rounded-md bg-destructive/10 p-2 text-sm text-center text-destructive">
+            <div className="bg-destructive/10 text-destructive rounded-md p-2 text-center text-sm">
               {error}
             </div>
           )}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <FormField
               control={form.control}
               name="first_name"
@@ -165,10 +166,10 @@ export function RegisterForm() {
             )}
           />
           <Button type="submit" className="w-full" disabled={isSubmitting}>
-            {isSubmitting ? <Loader /> : "Create account"}
+            {isSubmitting ? <Loader /> : 'Create account'}
           </Button>
         </div>
       </form>
     </Form>
-  );
+  )
 }

@@ -3,47 +3,48 @@ import {
   LoginRequest,
   RegisterRequest,
   ResetPasswordRequest,
-} from "@/types/api/auth";
-import { AuthUser } from "@/types/user";
-import { ApiClient } from "../client";
-import { ApiResponse } from "@/types/api/common";
+} from '@/types/api/auth'
+import { ApiResponse } from '@/types/api/common'
+import { AuthUser } from '@/types/user'
+
+import { ApiClient } from '../client'
 
 export const createAuthService = (client: ApiClient) => ({
   csrf: async (): Promise<void> => {
-    await client.get("/sanctum/csrf-cookie");
+    await client.get('/sanctum/csrf-cookie')
   },
 
   register: async (data: RegisterRequest): Promise<void> => {
-    await client.post<void>("/auth/register", {
+    await client.post<void>('/auth/register', {
       ...data,
-      role: "teacher",
-    });
+      role: 'teacher',
+    })
   },
 
   login: async (data: LoginRequest): Promise<void> => {
-    await client.post<void>("/auth/login", { ...data, role: "teacher" });
+    await client.post<void>('/auth/login', { ...data, role: 'teacher' })
   },
 
   logout: async (): Promise<void> => {
-    await client.post<void>("/auth/logout");
+    await client.post<void>('/auth/logout')
   },
 
   user: async (): Promise<AuthUser> => {
-    const response = await client.get<ApiResponse<AuthUser>>("/api/me");
-    return response.data;
+    const response = await client.get<ApiResponse<AuthUser>>('/api/me')
+    return response.data
   },
 
   forgotPassword: async (data: ForgotPasswordRequest): Promise<void> => {
-    await client.post<void>("/auth/forgot-password", data);
+    await client.post<void>('/auth/forgot-password', data)
   },
 
   resetPassword: async (data: ResetPasswordRequest): Promise<void> => {
-    await client.post<void>("/auth/reset-password", data);
+    await client.post<void>('/auth/reset-password', data)
   },
 
   resendEmailVerification: async (): Promise<void> => {
-    await client.post<void>("/auth/email/verification-notification");
+    await client.post<void>('/auth/email/verification-notification')
   },
-});
+})
 
-export type AuthService = ReturnType<typeof createAuthService>;
+export type AuthService = ReturnType<typeof createAuthService>

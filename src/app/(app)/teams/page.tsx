@@ -1,35 +1,36 @@
-"use client";
+'use client'
 
-import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
-import { TeamList } from "./_components/team-list";
-import { CreateTeamDialog } from "./_components/create-team-dialog";
-import { useState } from "react";
-import { BreadcrumbItem } from "@/app/(app)/_components/breadcrumb";
-import { MainContainer } from "@/app/(app)/_components/main-container";
-import { Input } from "@/components/ui/input";
-import { Search } from "lucide-react";
-import { useGetTeamList } from "@/hooks/use-api-query";
+import { Plus, Search } from 'lucide-react'
+import { useState } from 'react'
 
-const BREADCRUMB_ITEMS: BreadcrumbItem[] = [{ label: "Teams" }];
+import { BreadcrumbItem } from '@/app/(app)/_components/breadcrumb'
+import { MainContainer } from '@/app/(app)/_components/main-container'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { useGetTeamList } from '@/hooks/use-api-query'
+
+import { CreateTeamDialog } from './_components/create-team-dialog'
+import { TeamList } from './_components/team-list'
+
+const BREADCRUMB_ITEMS: BreadcrumbItem[] = [{ label: 'Teams' }]
 
 export default function TeamsPage() {
-  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-  const { data: teams, isFetching } = useGetTeamList();
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
+  const { data: teams, isFetching } = useGetTeamList()
 
   const filteredTeams = teams
     ? teams.filter((team) =>
         team.name.toLowerCase().includes(searchQuery.toLowerCase())
       )
-    : [];
+    : []
 
   return (
     <MainContainer title="Teams" breadcrumbItems={BREADCRUMB_ITEMS}>
       <div className="space-y-6">
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div className="relative flex-1">
-            <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Search className="text-muted-foreground absolute top-2.5 left-2 h-4 w-4" />
             <Input
               placeholder="Search teams..."
               className="pl-8"
@@ -51,5 +52,5 @@ export default function TeamsPage() {
         />
       </div>
     </MainContainer>
-  );
+  )
 }

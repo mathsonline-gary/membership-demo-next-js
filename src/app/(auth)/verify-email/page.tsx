@@ -1,7 +1,9 @@
-"use client";
+'use client'
 
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
+import { useState } from 'react'
+
+import { Loader } from '@/components/loader'
+import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
@@ -9,36 +11,35 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { useAuth } from "@/hooks/use-auth";
-import { Loader } from "@/components/loader";
+} from '@/components/ui/card'
+import { useAuth } from '@/hooks/use-auth'
 
 export default function Page() {
-  const [isResending, setIsResending] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [isResent, setIsResent] = useState<boolean>(false);
+  const [isResending, setIsResending] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [isResent, setIsResent] = useState<boolean>(false)
   const { logout, resendEmailVerification } = useAuth({
-    middleware: "auth",
-    redirectIfAuthenticated: "/dashboard",
-  });
+    middleware: 'auth',
+    redirectIfAuthenticated: '/dashboard',
+  })
 
   const handleResendVerification = async () => {
     try {
-      setIsResending(true);
-      setError(null);
-      await resendEmailVerification({ setError });
-      setIsResent(true);
+      setIsResending(true)
+      setError(null)
+      await resendEmailVerification({ setError })
+      setIsResent(true)
     } catch (err) {
-      void err;
-      setError("Failed to resend verification email. Please try again.");
+      void err
+      setError('Failed to resend verification email. Please try again.')
     } finally {
-      setIsResending(false);
+      setIsResending(false)
     }
-  };
+  }
 
   const handleLogout = async () => {
-    await logout();
-  };
+    await logout()
+  }
 
   return (
     <Card className="w-full text-center">
@@ -72,17 +73,17 @@ export default function Page() {
           disabled={isResending}
           className="w-full"
         >
-          {isResending ? <Loader /> : "Resend verification email"}
+          {isResending ? <Loader /> : 'Resend verification email'}
         </Button>
         <div className="text-center">
           <span
             onClick={handleLogout}
-            className="text-sm underline underline-offset-4 cursor-pointer"
+            className="cursor-pointer text-sm underline underline-offset-4"
           >
             Logout
           </span>
         </div>
       </CardFooter>
     </Card>
-  );
+  )
 }

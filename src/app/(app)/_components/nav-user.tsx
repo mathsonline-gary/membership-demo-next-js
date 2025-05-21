@@ -1,14 +1,16 @@
-"use client";
+'use client'
 
-import * as React from "react";
 import {
   BadgeCheck,
   Bell,
   ChevronsUpDown,
   CreditCard,
   LogOut,
-} from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+} from 'lucide-react'
+import * as React from 'react'
+
+import { ModeSwitcher } from '@/app/(app)/_components/mode-switcher'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,28 +19,27 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from '@/components/ui/dropdown-menu'
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar";
-import { ModeSwitcher } from "@/app/(app)/_components/mode-switcher";
-import { useAuth } from "@/hooks/use-auth";
-import { Skeleton } from "@/components/ui/skeleton";
+} from '@/components/ui/sidebar'
+import { Skeleton } from '@/components/ui/skeleton'
+import { useAuth } from '@/hooks/use-auth'
 
 export function NavUser() {
-  const { user, logout } = useAuth();
-  const [isLoggingOut, setIsLoggingOut] = React.useState(false);
+  const { user, logout } = useAuth()
+  const [isLoggingOut, setIsLoggingOut] = React.useState(false)
 
   const handleLogout = async () => {
     try {
-      setIsLoggingOut(true);
-      await logout();
+      setIsLoggingOut(true)
+      await logout()
     } finally {
-      setIsLoggingOut(false);
+      setIsLoggingOut(false)
     }
-  };
+  }
 
   return (
     <SidebarMenu>
@@ -51,8 +52,8 @@ export function NavUser() {
             >
               <Avatar className="h-8 w-8 rounded-lg">
                 <AvatarImage
-                  src={user?.avatar ?? ""}
-                  alt={user?.first_name + " " + user?.last_name}
+                  src={user?.avatar ?? ''}
+                  alt={user?.first_name + ' ' + user?.last_name}
                 />
                 <AvatarFallback className="rounded-lg">
                   {user?.first_name.charAt(0)}
@@ -81,8 +82,8 @@ export function NavUser() {
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
                   <AvatarImage
-                    src={user?.avatar ?? ""}
-                    alt={user?.first_name + " " + user?.last_name}
+                    src={user?.avatar ?? ''}
+                    alt={user?.first_name + ' ' + user?.last_name}
                   />
                   <AvatarFallback className="rounded-lg">
                     {user?.first_name.charAt(0)}
@@ -125,11 +126,11 @@ export function NavUser() {
               className="text-destructive focus:text-destructive"
             >
               <LogOut className="text-destructive" />
-              {isLoggingOut ? "Logging out..." : "Log out"}
+              {isLoggingOut ? 'Logging out...' : 'Log out'}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>
     </SidebarMenu>
-  );
+  )
 }

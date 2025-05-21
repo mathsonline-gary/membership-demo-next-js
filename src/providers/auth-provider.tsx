@@ -1,10 +1,11 @@
-"use client";
+'use client'
 
-import { useAuth } from "@/hooks/use-auth";
-import Image from "next/image";
+import Image from 'next/image'
+
+import { useAuth } from '@/hooks/use-auth'
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const { user } = useAuth({ middleware: "auth" });
+  const { user } = useAuth({ middleware: 'auth' })
 
   if (!user) {
     return (
@@ -14,12 +15,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           alt="Loading..."
           width={180}
           height={43}
-          className="mx-auto dark:invert w-auto animate-pulse"
+          className="mx-auto w-auto animate-pulse dark:invert"
           priority
         />
       </div>
-    );
+    )
   }
 
-  return <>{children}</>;
+  return <>{children}</>
 }

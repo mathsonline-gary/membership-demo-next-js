@@ -1,7 +1,5 @@
-"use client";
+'use client'
 
-import * as React from "react";
-import Image from "next/image";
 import {
   ChevronRightIcon,
   HelpCircle,
@@ -11,13 +9,24 @@ import {
   BookOpen,
   BookCheck,
   LayoutDashboard,
-} from "lucide-react";
-import Link from "next/link";
+} from 'lucide-react'
+import Image from 'next/image'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import * as React from 'react'
+
+import { ModeSwitcher } from '@/app/(app)/_components/mode-switcher'
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "@/components/ui/collapsible";
+} from '@/components/ui/collapsible'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import {
   Sidebar,
   SidebarContent,
@@ -34,99 +43,91 @@ import {
   SidebarMenuSubItem,
   SidebarRail,
   useSidebar,
-} from "@/components/ui/sidebar";
-import { cn } from "@/lib/utils";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { ModeSwitcher } from "@/app/(app)/_components/mode-switcher";
-import { usePathname } from "next/navigation";
+} from '@/components/ui/sidebar'
+import { cn } from '@/lib/utils'
 
 const MENU_1_ITEMS: AppSidebarMenuItem[] = [
   {
-    title: "Dashboard",
-    url: "/dashboard",
+    title: 'Dashboard',
+    url: '/dashboard',
     icon: LayoutDashboard,
   },
   {
-    title: "People",
-    url: "#people",
+    title: 'People',
+    url: '#people',
     icon: Users,
     items: [
       {
-        title: "Teams",
-        url: "/teams",
+        title: 'Teams',
+        url: '/teams',
       },
       {
-        title: "Students",
-        url: "/students",
+        title: 'Students',
+        url: '/students',
       },
     ],
   },
   {
-    title: "Courses",
-    url: "/courses",
+    title: 'Courses',
+    url: '/courses',
     icon: BookOpen,
   },
   {
-    title: "Lessons",
-    url: "/lessons",
+    title: 'Lessons',
+    url: '/lessons',
     icon: BookCheck,
   },
-];
+]
 
 const MENU_2_ITEMS: AppSidebarMenuItem[] = [
   {
-    title: "Tools",
-    url: "/tools",
+    title: 'Tools',
+    url: '/tools',
     icon: Wrench,
     items: [
       {
-        title: "Export Data",
-        url: "/tools/export",
+        title: 'Export Data',
+        url: '/tools/export',
       },
       {
-        title: "Upload Date",
-        url: "/tools/upload",
+        title: 'Upload Date',
+        url: '/tools/upload',
       },
     ],
   },
   {
-    title: "Documentation",
-    url: "/documentation",
+    title: 'Documentation',
+    url: '/documentation',
     icon: BookOpen,
     items: [
       {
-        title: "Get Started",
-        url: "/documentation/get-started",
+        title: 'Get Started',
+        url: '/documentation/get-started',
       },
       {
-        title: "Tutorials",
-        url: "/documentation/tutorials",
+        title: 'Tutorials',
+        url: '/documentation/tutorials',
       },
     ],
   },
-];
+]
 
 type AppSidebarMenuItem = {
-  title: string;
-  url: string;
-  icon?: React.ElementType;
-  items?: AppSidebarMenuItem[];
-};
+  title: string
+  url: string
+  icon?: React.ElementType
+  items?: AppSidebarMenuItem[]
+}
 
 function AppSidebarMenu({
   menu,
   isActiveItem,
 }: {
-  menu: AppSidebarMenuItem[];
-  isActiveItem: (item: AppSidebarMenuItem) => boolean;
+  menu: AppSidebarMenuItem[]
+  isActiveItem: (item: AppSidebarMenuItem) => boolean
 }) {
-  const { state } = useSidebar();
-  const { isMobile } = useSidebar();
+  const { state } = useSidebar()
+  const { isMobile } = useSidebar()
 
   return (
     <SidebarMenu>
@@ -134,7 +135,7 @@ function AppSidebarMenu({
         <React.Fragment key={item.title}>
           {item.items ? (
             // Submenu items
-            state === "collapsed" && !isMobile ? (
+            state === 'collapsed' && !isMobile ? (
               // Collapsed & non-mobile
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -214,7 +215,7 @@ function AppSidebarMenu({
         </React.Fragment>
       ))}
     </SidebarMenu>
-  );
+  )
 }
 
 function SidebarLink({
@@ -223,22 +224,22 @@ function SidebarLink({
   isActive,
   ...props
 }: {
-  href: string;
-  children: React.ReactNode;
-  isActive?: boolean;
+  href: string
+  children: React.ReactNode
+  isActive?: boolean
 }) {
-  const { isMobile, setOpenMobile } = useSidebar();
+  const { isMobile, setOpenMobile } = useSidebar()
 
   const handleNavigation = (e: React.MouseEvent<HTMLAnchorElement>) => {
     // Disable navigation if the item is active
     if (isActive ?? false) {
-      e.preventDefault();
+      e.preventDefault()
     }
 
     if (isMobile) {
-      setOpenMobile(false);
+      setOpenMobile(false)
     }
-  };
+  }
 
   return (
     <Link
@@ -249,46 +250,46 @@ function SidebarLink({
     >
       {children}
     </Link>
-  );
+  )
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const { state, isMobile } = useSidebar();
-  const pathname = usePathname();
+  const { state, isMobile } = useSidebar()
+  const pathname = usePathname()
   const imageProps = isMobile
     ? {
-        src: "/logo-icon-text.png",
+        src: '/logo-icon-text.png',
         width: 180,
         height: 43,
       }
     : {
         expanded: {
-          src: "/logo-icon-text.png",
+          src: '/logo-icon-text.png',
           width: 180,
           height: 43,
         },
         collapsed: {
-          src: "/logo-icon.png",
+          src: '/logo-icon.png',
           width: 32,
           height: 28,
         },
-      }[state];
+      }[state]
 
   const isActive = (path: string) => {
-    return pathname === path;
-  };
+    return pathname === path
+  }
 
   const isActiveItem = (item: AppSidebarMenuItem) => {
     return (
       item.items?.some((subItem) => isActive(subItem.url)) || isActive(item.url)
-    );
-  };
+    )
+  }
 
   return (
     <Sidebar collapsible="icon" variant="floating" {...props}>
-      <SidebarHeader className="h-14 flex items-center justify-center">
+      <SidebarHeader className="flex h-14 items-center justify-center">
         <SidebarGroup
-          className={cn("py-0", !isMobile && state === "collapsed" && "px-0")}
+          className={cn('py-0', !isMobile && state === 'collapsed' && 'px-0')}
         >
           <SidebarGroupContent>
             <SidebarLink href="/dashboard">
@@ -321,8 +322,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarFooter className="pb-24">
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton asChild isActive={isActive("/settings")}>
-              <SidebarLink href="/settings" isActive={isActive("/settings")}>
+            <SidebarMenuButton asChild isActive={isActive('/settings')}>
+              <SidebarLink href="/settings" isActive={isActive('/settings')}>
                 <Settings />
                 <span>Settings</span>
               </SidebarLink>
@@ -341,7 +342,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               <div>
                 <ModeSwitcher
                   variant={
-                    state === "collapsed" && !isMobile ? "icon" : "switch"
+                    state === 'collapsed' && !isMobile ? 'icon' : 'switch'
                   }
                 />
               </div>
@@ -351,5 +352,5 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
-  );
+  )
 }

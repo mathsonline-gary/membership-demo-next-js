@@ -1,43 +1,44 @@
-import * as React from "react";
-import { Eclipse } from "lucide-react";
-import { useTheme } from "next-themes";
-import { META_THEME_COLORS, useMetaColor } from "@/hooks/use-meta-color";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Eclipse } from 'lucide-react'
+import { useTheme } from 'next-themes'
+import * as React from 'react'
+
+import { Label } from '@/components/ui/label'
+import { Skeleton } from '@/components/ui/skeleton'
+import { Switch } from '@/components/ui/switch'
+import { META_THEME_COLORS, useMetaColor } from '@/hooks/use-meta-color'
 
 type ModeSwitcherProps = {
-  variant?: "icon" | "switch";
-  className?: string;
-};
+  variant?: 'icon' | 'switch'
+  className?: string
+}
 
-export function ModeSwitcher({ variant = "switch" }: ModeSwitcherProps) {
-  const [mounted, setMounted] = React.useState(false);
-  const { setTheme, resolvedTheme } = useTheme();
-  const { setMetaColor } = useMetaColor();
+export function ModeSwitcher({ variant = 'switch' }: ModeSwitcherProps) {
+  const [mounted, setMounted] = React.useState(false)
+  const { setTheme, resolvedTheme } = useTheme()
+  const { setMetaColor } = useMetaColor()
 
   React.useEffect(() => {
-    setMounted(true);
-  }, []);
+    setMounted(true)
+  }, [])
 
   const toggleTheme = React.useCallback(() => {
-    setTheme(resolvedTheme === "dark" ? "light" : "dark");
+    setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')
     setMetaColor(
-      resolvedTheme === "dark"
+      resolvedTheme === 'dark'
         ? META_THEME_COLORS.light
         : META_THEME_COLORS.dark
-    );
-  }, [resolvedTheme, setTheme, setMetaColor]);
+    )
+  }, [resolvedTheme, setTheme, setMetaColor])
 
-  if (variant === "icon") {
-    return <Eclipse className="size-4 cursor-pointer" onClick={toggleTheme} />;
+  if (variant === 'icon') {
+    return <Eclipse className="size-4 cursor-pointer" onClick={toggleTheme} />
   }
 
   return (
-    <div className="flex items-center justify-between w-full">
+    <div className="flex w-full items-center justify-between">
       <Label
         htmlFor="dark-mode"
-        className="flex items-center gap-2 cursor-pointer w-full"
+        className="flex w-full cursor-pointer items-center gap-2"
       >
         <Eclipse className="size-4" />
         <span className="text-sm">Dark Mode</span>
@@ -47,17 +48,17 @@ export function ModeSwitcher({ variant = "switch" }: ModeSwitcherProps) {
         <Switch
           className="cursor-pointer"
           id="dark-mode"
-          checked={resolvedTheme === "dark"}
+          checked={resolvedTheme === 'dark'}
           onCheckedChange={(checked: boolean) => {
-            setTheme(checked ? "dark" : "light");
+            setTheme(checked ? 'dark' : 'light')
             setMetaColor(
               checked ? META_THEME_COLORS.dark : META_THEME_COLORS.light
-            );
+            )
           }}
         />
       ) : (
         <Skeleton className="h-4 w-8 rounded-full" />
       )}
     </div>
-  );
+  )
 }

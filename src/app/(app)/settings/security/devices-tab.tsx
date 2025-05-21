@@ -1,14 +1,5 @@
-"use client";
+'use client'
 
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Device } from "@/types/user";
 import {
   Smartphone,
   Tablet,
@@ -18,29 +9,39 @@ import {
   Laptop,
   Bot,
   AppWindow,
-} from "lucide-react";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Loader } from "@/components/loader";
-import { Badge } from "@/components/ui/badge";
-import { useGetDeviceList, useRevokeDevice } from "@/hooks/use-api-query";
+} from 'lucide-react'
+
+import { Loader } from '@/components/loader'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
+import { Skeleton } from '@/components/ui/skeleton'
+import { useGetDeviceList, useRevokeDevice } from '@/hooks/use-api-query'
+import { Device } from '@/types/user'
 
 const DeviceItem = ({ device }: { device: Device }) => {
-  const { mutate: revokeDevice, isPending } = useRevokeDevice();
+  const { mutate: revokeDevice, isPending } = useRevokeDevice()
 
   const getDeviceIcon = () => {
     if (device.is_robot)
-      return <Bot className="h-4 w-4 text-muted-foreground" />;
+      return <Bot className="text-muted-foreground h-4 w-4" />
     switch (device.device_type) {
-      case "desktop":
-        return <Monitor className="h-4 w-4" />;
-      case "mobile":
-        return <Smartphone className="h-4 w-4" />;
-      case "tablet":
-        return <Tablet className="h-4 w-4" />;
+      case 'desktop':
+        return <Monitor className="h-4 w-4" />
+      case 'mobile':
+        return <Smartphone className="h-4 w-4" />
+      case 'tablet':
+        return <Tablet className="h-4 w-4" />
       default:
-        return <Laptop className="h-4 w-4" />;
+        return <Laptop className="h-4 w-4" />
     }
-  };
+  }
 
   return (
     <div className="rounded-lg border p-4">
@@ -52,15 +53,15 @@ const DeviceItem = ({ device }: { device: Device }) => {
               <p className="flex items-center gap-2 font-medium">
                 {device.is_robot ? (
                   <span className="font-bold">
-                    {device.robot_name || "Unknown Bot"}
+                    {device.robot_name || 'Unknown Bot'}
                   </span>
                 ) : (
                   <span className="font-bold">
-                    {device.device_name || "Unknown Device"}
+                    {device.device_name || 'Unknown Device'}
                   </span>
                 )}
                 {device.platform && (
-                  <span className="text-xs text-muted-foreground">
+                  <span className="text-muted-foreground text-xs">
                     ({device.platform})
                   </span>
                 )}
@@ -70,7 +71,7 @@ const DeviceItem = ({ device }: { device: Device }) => {
               </p>
             </div>
           </div>
-          <div className="text-sm text-muted-foreground space-y-1">
+          <div className="text-muted-foreground space-y-1 text-sm">
             {device.browser && (
               <p className="flex items-center gap-1">
                 <AppWindow className="h-3 w-3" />
@@ -83,13 +84,13 @@ const DeviceItem = ({ device }: { device: Device }) => {
             </p>
             <p className="flex items-center gap-1">
               <Clock className="h-3 w-3" />
-              Last active:{" "}
+              Last active:{' '}
               {device.last_used_at
                 ? new Date(device.last_used_at).toLocaleString(undefined, {
-                    dateStyle: "medium",
-                    timeStyle: "short",
+                    dateStyle: 'medium',
+                    timeStyle: 'short',
                   })
-                : "Never"}
+                : 'Never'}
             </p>
           </div>
         </div>
@@ -99,13 +100,13 @@ const DeviceItem = ({ device }: { device: Device }) => {
             onClick={() => revokeDevice(device.uuid)}
             disabled={isPending}
           >
-            {isPending ? <Loader /> : "Revoke Access"}
+            {isPending ? <Loader /> : 'Revoke Access'}
           </Button>
         )}
       </div>
     </div>
-  );
-};
+  )
+}
 
 const DeviceItemSkeleton = () => {
   return (
@@ -127,17 +128,17 @@ const DeviceItemSkeleton = () => {
         <Skeleton className="h-8 w-24" />
       </div>
     </div>
-  );
-};
+  )
+}
 
 export function DevicesTab() {
-  const { data: devices, isLoading } = useGetDeviceList();
+  const { data: devices, isLoading } = useGetDeviceList()
 
   return (
     <Card>
       <CardHeader>
         <div className="flex items-center gap-2">
-          <Smartphone className="h-5 w-5 text-muted-foreground" />
+          <Smartphone className="text-muted-foreground h-5 w-5" />
           <CardTitle>Device Management</CardTitle>
         </div>
         <CardDescription>
@@ -157,5 +158,5 @@ export function DevicesTab() {
         )}
       </CardContent>
     </Card>
-  );
+  )
 }

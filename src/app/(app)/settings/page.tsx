@@ -1,44 +1,45 @@
-import { BreadcrumbItem } from "@/app/(app)/_components/breadcrumb";
-import { MainContainer } from "@/app/(app)/_components/main-container";
+import { Settings, User, CreditCard, Lock } from 'lucide-react'
+
+import { BreadcrumbItem } from '@/app/(app)/_components/breadcrumb'
+import { MainContainer } from '@/app/(app)/_components/main-container'
 import {
   SectionOverview,
   SectionOverviewItem,
-} from "@/app/(app)/_components/section-overview";
-import { Settings, User, CreditCard, Lock } from "lucide-react";
+} from '@/app/(app)/_components/section-overview'
 
-const BREADCRUMB_ITEMS: BreadcrumbItem[] = [{ label: "Settings" }];
+const BREADCRUMB_ITEMS: BreadcrumbItem[] = [{ label: 'Settings' }]
 
 const SECTION_OVERVIEW_ITEMS: SectionOverviewItem[] = [
   {
-    title: "General",
-    description: "General settings for the app.",
-    href: "#general",
+    title: 'General',
+    description: 'General settings for the app.',
+    href: '#general',
     icon: Settings,
   },
   {
-    title: "Profile",
-    description: "Manage profile.",
-    href: "/settings/profile",
+    title: 'Profile',
+    description: 'Manage profile.',
+    href: '/settings/profile',
     icon: User,
   },
   {
-    title: "Billing",
-    description: "Manage billing.",
-    href: "#billing",
+    title: 'Billing',
+    description: 'Manage billing.',
+    href: '#billing',
     icon: CreditCard,
   },
   {
-    title: "Security",
-    description: "Manage password and device access.",
-    href: "/settings/security",
+    title: 'Security',
+    description: 'Manage password and device access.',
+    href: '/settings/security',
     icon: Lock,
   },
-];
+]
 
 export default function Page() {
   return (
     <MainContainer title="Settings" breadcrumbItems={BREADCRUMB_ITEMS}>
       <SectionOverview items={SECTION_OVERVIEW_ITEMS} />
     </MainContainer>
-  );
+  )
 }

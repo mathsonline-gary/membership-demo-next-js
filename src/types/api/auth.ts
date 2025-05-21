@@ -1,24 +1,24 @@
 export type RegisterRequest = {
-  first_name: string;
-  last_name: string;
-  email: string;
-  password: string;
-  password_confirmation: string;
-};
+  first_name: string
+  last_name: string
+  email: string
+  password: string
+  password_confirmation: string
+}
 
 export type LoginRequest = {
-  email: string;
-  password: string;
-  remember?: boolean;
-};
+  email: string
+  password: string
+  remember?: boolean
+}
 
 export type ForgotPasswordRequest = {
-  email: string;
-};
+  email: string
+}
 
 export type ResetPasswordRequest = {
-  token: string;
-  email: string;
-  password: string;
-  password_confirmation: string;
-};
+  token: string
+  email: string
+  password: string
+  password_confirmation: string
+}

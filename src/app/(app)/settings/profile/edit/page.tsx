@@ -1,13 +1,15 @@
-"use client";
+'use client'
 
-import { useGetProfile, useUpdateProfile } from "@/hooks/use-api-query";
-import { BreadcrumbItem } from "../../../_components/breadcrumb";
-import { MainContainer } from "../../../_components/main-container";
-import * as React from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { Button } from "@/components/ui/button";
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useRouter } from 'next/navigation'
+import * as React from 'react'
+import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
+import { z } from 'zod'
+
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   Form,
   FormControl,
@@ -15,76 +17,76 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { toast } from "sonner";
-import { useRouter } from "next/navigation";
+} from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
+import { useGetProfile, useUpdateProfile } from '@/hooks/use-api-query'
+
+import { BreadcrumbItem } from '../../../_components/breadcrumb'
+import { MainContainer } from '../../../_components/main-container'
 
 const BREADCRUMB_ITEMS: BreadcrumbItem[] = [
-  { label: "Settings", href: "/settings" },
-  { label: "Profile", href: "/settings/profile" },
-  { label: "Edit" },
-];
+  { label: 'Settings', href: '/settings' },
+  { label: 'Profile', href: '/settings/profile' },
+  { label: 'Edit' },
+]
 
 const profileSchema = z.object({
-  first_name: z.string().min(2, "First name must be at least 2 characters"),
-  last_name: z.string().min(2, "Last name must be at least 2 characters"),
+  first_name: z.string().min(2, 'First name must be at least 2 characters'),
+  last_name: z.string().min(2, 'Last name must be at least 2 characters'),
   avatar: z.string().optional(),
-});
+})
 
-type ProfileFormValues = z.infer<typeof profileSchema>;
+type ProfileFormValues = z.infer<typeof profileSchema>
 
 export default function EditProfilePage() {
-  const router = useRouter();
-  const { data: profile, isLoading } = useGetProfile();
-  const { mutate: updateProfile, isPending: isUpdating } = useUpdateProfile();
+  const router = useRouter()
+  const { data: profile, isLoading } = useGetProfile()
+  const { mutate: updateProfile, isPending: isUpdating } = useUpdateProfile()
 
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
-      first_name: "",
-      last_name: "",
-      avatar: "",
+      first_name: '',
+      last_name: '',
+      avatar: '',
     },
-  });
+  })
 
   React.useEffect(() => {
     if (profile) {
       form.reset({
-        first_name: profile.first_name || "",
-        last_name: profile.last_name || "",
-        avatar: profile.avatar || "",
-      });
+        first_name: profile.first_name || '',
+        last_name: profile.last_name || '',
+        avatar: profile.avatar || '',
+      })
     }
-  }, [profile, form]);
+  }, [profile, form])
 
   const onSubmit = async (data: ProfileFormValues) => {
     updateProfile(data, {
       onSuccess: () => {
-        toast.success("Profile updated successfully");
-        router.push("/settings/profile");
+        toast.success('Profile updated successfully')
+        router.push('/settings/profile')
       },
       onError: () => {
-        toast.error("Failed to update profile");
+        toast.error('Failed to update profile')
       },
-    });
-  };
+    })
+  }
 
   const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const avatarUrl = URL.createObjectURL(file);
-    form.setValue("avatar", avatarUrl);
-  };
+    const file = e.target.files?.[0]
+    if (!file) return
+    const avatarUrl = URL.createObjectURL(file)
+    form.setValue('avatar', avatarUrl)
+  }
 
   if (isLoading) {
     return (
       <MainContainer title="Edit Profile" breadcrumbItems={BREADCRUMB_ITEMS}>
         <div>Loading...</div>
       </MainContainer>
-    );
+    )
   }
 
   return (
@@ -98,7 +100,7 @@ export default function EditProfilePage() {
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <div className="flex items-center gap-4">
                 <Avatar className="h-20 w-20">
-                  <AvatarImage src={form.watch("avatar")} />
+                  <AvatarImage src={form.watch('avatar')} />
                   <AvatarFallback>
                     {profile?.first_name?.[0]}
                     {profile?.last_name?.[0]}
@@ -111,7 +113,7 @@ export default function EditProfilePage() {
                     onChange={handleAvatarChange}
                     className="w-full"
                   />
-                  <p className="text-sm text-muted-foreground mt-1">
+                  <p className="text-muted-foreground mt-1 text-sm">
                     Upload a new avatar
                   </p>
                 </div>
@@ -147,12 +149,12 @@ export default function EditProfilePage() {
 
               <div className="flex gap-2">
                 <Button type="submit" disabled={isUpdating}>
-                  {isUpdating ? "Saving..." : "Save Changes"}
+                  {isUpdating ? 'Saving...' : 'Save Changes'}
                 </Button>
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => router.push("/settings/profile")}
+                  onClick={() => router.push('/settings/profile')}
                 >
                   Cancel
                 </Button>
@@ -162,5 +164,5 @@ export default function EditProfilePage() {
         </CardContent>
       </Card>
     </MainContainer>
-  );
+  )
 }

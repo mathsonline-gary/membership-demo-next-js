@@ -1,6 +1,10 @@
-"use client";
+'use client'
 
-import { Button } from "@/components/ui/button";
+import { useState } from 'react'
+import { toast } from 'sonner'
+
+import { Loader } from '@/components/loader'
+import { Button } from '@/components/ui/button'
 import {
   Dialog,
   DialogContent,
@@ -8,42 +12,40 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { useState } from "react";
-import { toast } from "sonner";
-import { Loader } from "@/components/loader";
+} from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 
 interface InviteStudentDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
+  open: boolean
+  onOpenChange: (open: boolean) => void
 }
 
 export function InviteStudentDialog({
   open,
   onOpenChange,
 }: InviteStudentDialogProps) {
-  const [email, setEmail] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [email, setEmail] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
+    e.preventDefault()
+    setIsSubmitting(true)
 
     try {
       // TODO: Implement API call
-      await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 1000)) // Simulate API call
 
-      toast.success("Invitation sent successfully.");
-      setEmail("");
-      onOpenChange(false);
+      toast.success('Invitation sent successfully.')
+      setEmail('')
+      onOpenChange(false)
     } catch (error) {
-      toast.error("Failed to send invitation. Please try again.");
+      console.error(error)
+      toast.error('Failed to send invitation. Please try again.')
     } finally {
-      setIsSubmitting(false);
+      setIsSubmitting(false)
     }
-  };
+  }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -77,11 +79,11 @@ export function InviteStudentDialog({
               Cancel
             </Button>
             <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? <Loader /> : "Send Invitation"}
+              {isSubmitting ? <Loader /> : 'Send Invitation'}
             </Button>
           </DialogFooter>
         </form>
       </DialogContent>
     </Dialog>
-  );
+  )
 }

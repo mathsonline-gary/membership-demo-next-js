@@ -1,19 +1,20 @@
-import { Button } from "@/components/ui/button";
+import { Shield } from 'lucide-react'
+
+import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Shield } from "lucide-react";
+} from '@/components/ui/card'
 
 export function TwoFactorAuthenticationTab() {
   return (
     <Card>
       <CardHeader>
         <div className="flex items-center gap-2">
-          <Shield className="h-5 w-5 text-muted-foreground" />
+          <Shield className="text-muted-foreground h-5 w-5" />
           <CardTitle>Two-Factor Authentication</CardTitle>
         </div>
         <CardDescription>
@@ -25,7 +26,7 @@ export function TwoFactorAuthenticationTab() {
           <div className="flex items-center justify-between">
             <div className="grid gap-1">
               <p className="font-medium">Enable Two-Factor Authentication</p>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-muted-foreground text-sm">
                 Add an extra layer of security to your account
               </p>
             </div>
@@ -36,5 +37,5 @@ export function TwoFactorAuthenticationTab() {
         </div>
       </CardContent>
     </Card>
-  );
+  )
 }

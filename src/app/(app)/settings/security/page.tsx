@@ -1,36 +1,38 @@
-import { BreadcrumbItem } from "@/app/(app)/_components/breadcrumb";
-import { MainContainer } from "@/app/(app)/_components/main-container";
-import { Shield, Smartphone, Key } from "lucide-react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { PasswordTab } from "./update-password-tab";
-import { DevicesTab } from "./devices-tab";
-import { TwoFactorAuthenticationTab } from "./two-factor-authentication-tab";
+import { Shield, Smartphone, Key } from 'lucide-react'
+
+import { BreadcrumbItem } from '@/app/(app)/_components/breadcrumb'
+import { MainContainer } from '@/app/(app)/_components/main-container'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+
+import { DevicesTab } from './devices-tab'
+import { TwoFactorAuthenticationTab } from './two-factor-authentication-tab'
+import { PasswordTab } from './update-password-tab'
 
 const BREADCRUMB_ITEMS: BreadcrumbItem[] = [
-  { label: "Settings", href: "/settings" },
-  { label: "Security" },
-];
+  { label: 'Settings', href: '/settings' },
+  { label: 'Security' },
+]
 
 const TAB_ITEMS = [
   {
-    value: "password",
-    label: "Password",
+    value: 'password',
+    label: 'Password',
     icon: Key,
     component: PasswordTab,
   },
   {
-    value: "devices",
-    label: "Devices",
+    value: 'devices',
+    label: 'Devices',
     icon: Smartphone,
     component: DevicesTab,
   },
   {
-    value: "two-factor-authentication",
-    label: "Two-Factor Authentication",
+    value: 'two-factor-authentication',
+    label: 'Two-Factor Authentication',
     icon: Shield,
     component: TwoFactorAuthenticationTab,
   },
-] as const;
+] as const
 
 export default function SecurityPage() {
   return (
@@ -41,7 +43,7 @@ export default function SecurityPage() {
             <TabsTrigger
               key={value}
               value={value}
-              className="w-full flex items-center gap-2"
+              className="flex w-full items-center gap-2"
             >
               <Icon className="h-4 w-4" />
               {label}
@@ -56,5 +58,5 @@ export default function SecurityPage() {
         ))}
       </Tabs>
     </MainContainer>
-  );
+  )
 }

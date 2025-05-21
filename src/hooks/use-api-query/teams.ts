@@ -1,50 +1,51 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { api } from "@/lib/api";
-import { useAuth } from "@/hooks/use-auth";
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+
+import { useAuth } from '@/hooks/use-auth'
+import { api } from '@/lib/api'
 
 const useGetTeamList = () => {
-  const { user } = useAuth();
+  const { user } = useAuth()
 
   return useQuery({
-    queryKey: ["teams"],
+    queryKey: ['teams'],
     queryFn: () => api.teams.index(user?.id ?? 0),
-  });
-};
+  })
+}
 
 const useUpdateTeam = () => {
-  const queryClient = useQueryClient();
+  const queryClient = useQueryClient()
 
   return useMutation({
     mutationFn: ({ id, name }: { id: number; name: string }) =>
       api.teams.update(id, { name }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["teams"] });
+      queryClient.invalidateQueries({ queryKey: ['teams'] })
     },
-  });
-};
+  })
+}
 
 const useCreateTeam = () => {
-  const queryClient = useQueryClient();
-  const { user } = useAuth();
+  const queryClient = useQueryClient()
+  const { user } = useAuth()
 
   return useMutation({
     mutationFn: (data: { name: string }) =>
       api.teams.create({ ...data, owner_id: user?.id ?? 0 }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["teams"] });
+      queryClient.invalidateQueries({ queryKey: ['teams'] })
     },
-  });
-};
+  })
+}
 
 const useDeleteTeam = () => {
-  const queryClient = useQueryClient();
+  const queryClient = useQueryClient()
 
   return useMutation({
     mutationFn: (id: number) => api.teams.destroy(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["teams"] });
+      queryClient.invalidateQueries({ queryKey: ['teams'] })
     },
-  });
-};
+  })
+}
 
-export { useGetTeamList, useUpdateTeam, useCreateTeam, useDeleteTeam };
+export { useGetTeamList, useUpdateTeam, useCreateTeam, useDeleteTeam }

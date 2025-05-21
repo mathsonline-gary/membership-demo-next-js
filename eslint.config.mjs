@@ -47,9 +47,6 @@ const eslintConfig = [
           },
         },
       ],
-      'import/no-unresolved': 'error',
-      'import/prefer-default-export': 'off',
-      'import/no-default-export': 'warn',
     },
   },
 ]

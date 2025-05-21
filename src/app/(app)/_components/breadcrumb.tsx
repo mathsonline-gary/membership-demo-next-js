@@ -1,14 +1,9 @@
-"use client";
+'use client'
 
-import * as React from "react";
-import Link from "next/link";
-import { LayoutDashboard } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { LayoutDashboard } from 'lucide-react'
+import Link from 'next/link'
+import * as React from 'react'
+
 import {
   Breadcrumb as BreadcrumbComponent,
   BreadcrumbEllipsis,
@@ -17,9 +12,8 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
-import { useIsMobile } from "@/hooks/use-mobile";
-import { Button } from "@/components/ui/button";
+} from '@/components/ui/breadcrumb'
+import { Button } from '@/components/ui/button'
 import {
   Drawer,
   DrawerClose,
@@ -29,29 +23,36 @@ import {
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
-} from "@/components/ui/drawer";
+} from '@/components/ui/drawer'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import { useIsMobile } from '@/hooks/use-mobile'
 
 export type BreadcrumbItem = {
-  label: string;
-  href?: string;
-};
+  label: string
+  href?: string
+}
 
 interface BreadcrumbProps {
-  items: BreadcrumbItem[];
+  items: BreadcrumbItem[]
 }
 
 export function Breadcrumb({ items }: BreadcrumbProps) {
-  const [open, setOpen] = React.useState(false);
-  const isDesktop = !useIsMobile();
+  const [open, setOpen] = React.useState(false)
+  const isDesktop = !useIsMobile()
 
-  if (items.length === 0) return null;
+  if (items.length === 0) return null
 
   // Show ellipsis if we have more than 2 items (not counting home)
-  const shouldShowEllipsis = items.length > 2;
+  const shouldShowEllipsis = items.length > 2
   // Get the last two items
-  const lastTwoItems = items.slice(-2);
+  const lastTwoItems = items.slice(-2)
   // Get all items except the last two for the ellipsis menu
-  const hiddenItems = shouldShowEllipsis ? items.slice(0, -2) : [];
+  const hiddenItems = shouldShowEllipsis ? items.slice(0, -2) : []
 
   return (
     <BreadcrumbComponent>
@@ -79,7 +80,7 @@ export function Breadcrumb({ items }: BreadcrumbProps) {
                   <DropdownMenuContent align="start">
                     {hiddenItems.map((item, index) => (
                       <DropdownMenuItem key={index}>
-                        <Link href={item.href ? item.href : "#"}>
+                        <Link href={item.href ? item.href : '#'}>
                           {item.label}
                         </Link>
                       </DropdownMenuItem>
@@ -102,7 +103,7 @@ export function Breadcrumb({ items }: BreadcrumbProps) {
                       {hiddenItems.map((item, index) => (
                         <Link
                           key={index}
-                          href={item.href ? item.href : "#"}
+                          href={item.href ? item.href : '#'}
                           className="py-1 text-sm"
                         >
                           {item.label}
@@ -124,7 +125,7 @@ export function Breadcrumb({ items }: BreadcrumbProps) {
 
         {/* Last two items */}
         {lastTwoItems.map((item, index) => {
-          const isLast = index === lastTwoItems.length - 1;
+          const isLast = index === lastTwoItems.length - 1
 
           return (
             <React.Fragment key={index}>
@@ -144,9 +145,9 @@ export function Breadcrumb({ items }: BreadcrumbProps) {
               </BreadcrumbItem>
               {!isLast && <BreadcrumbSeparator />}
             </React.Fragment>
-          );
+          )
         })}
       </BreadcrumbList>
     </BreadcrumbComponent>
-  );
+  )
 }

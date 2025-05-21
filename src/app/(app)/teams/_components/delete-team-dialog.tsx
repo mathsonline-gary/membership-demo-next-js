@@ -1,6 +1,9 @@
-"use client";
+'use client'
 
-import { Button } from "@/components/ui/button";
+import { toast } from 'sonner'
+
+import { Loader } from '@/components/loader'
+import { Button } from '@/components/ui/button'
 import {
   Dialog,
   DialogContent,
@@ -8,16 +11,14 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Loader } from "@/components/loader";
-import { Team } from "@/types/user";
-import { toast } from "sonner";
-import { useDeleteTeam } from "@/hooks/use-api-query";
+} from '@/components/ui/dialog'
+import { useDeleteTeam } from '@/hooks/use-api-query'
+import { Team } from '@/types/user'
 
 interface DeleteTeamDialogProps {
-  team: Team;
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
+  team: Team
+  open: boolean
+  onOpenChange: (open: boolean) => void
 }
 
 export function DeleteTeamDialog({
@@ -25,19 +26,19 @@ export function DeleteTeamDialog({
   open,
   onOpenChange,
 }: DeleteTeamDialogProps) {
-  const { mutate: deleteTeam, isPending: isDeleting } = useDeleteTeam();
+  const { mutate: deleteTeam, isPending: isDeleting } = useDeleteTeam()
 
   const handleDelete = async () => {
     deleteTeam(team.id, {
       onSuccess: () => {
-        toast.success("Team deleted successfully");
-        onOpenChange(false);
+        toast.success('Team deleted successfully')
+        onOpenChange(false)
       },
       onError: () => {
-        toast.error("Failed to delete team");
+        toast.error('Failed to delete team')
       },
-    });
-  };
+    })
+  }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -63,10 +64,10 @@ export function DeleteTeamDialog({
             onClick={handleDelete}
             disabled={isDeleting}
           >
-            {isDeleting ? <Loader /> : "Delete Team"}
+            {isDeleting ? <Loader /> : 'Delete Team'}
           </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  );
+  )
 }

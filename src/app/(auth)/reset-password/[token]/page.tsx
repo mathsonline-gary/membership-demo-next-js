@@ -1,4 +1,4 @@
-"use client";
+'use client'
 
 import {
   Card,
@@ -6,15 +6,16 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { useAuth } from "@/hooks/use-auth";
-import { ResetPasswordForm } from "./reset-password-form";
+} from '@/components/ui/card'
+import { useAuth } from '@/hooks/use-auth'
+
+import { ResetPasswordForm } from './reset-password-form'
 
 export default function Page() {
   useAuth({
-    middleware: "guest",
-    redirectIfAuthenticated: "/dashboard",
-  });
+    middleware: 'guest',
+    redirectIfAuthenticated: '/dashboard',
+  })
 
   return (
     <Card>
@@ -26,5 +27,5 @@ export default function Page() {
         <ResetPasswordForm />
       </CardContent>
     </Card>
-  );
+  )
 }

@@ -1,33 +1,34 @@
-import { ApiResponse } from "@/types/api/common";
-import { ApiClient } from "../client";
-import { Team } from "@/types/user";
+import { ApiResponse } from '@/types/api/common'
+import { Team } from '@/types/user'
+
+import { ApiClient } from '../client'
 
 export const createTeamsService = (client: ApiClient) => ({
   index: async (ownerId: number): Promise<Team[]> => {
-    const response = await client.get<ApiResponse<Team[]>>("/api/teams", {
+    const response = await client.get<ApiResponse<Team[]>>('/api/teams', {
       params: {
         owner_id: ownerId,
       },
-    });
-    return response.data;
+    })
+    return response.data
   },
 
   create: async (data: { name: string; owner_id: number }): Promise<Team> => {
-    const response = await client.post<ApiResponse<Team>>("/api/teams", data);
-    return response.data;
+    const response = await client.post<ApiResponse<Team>>('/api/teams', data)
+    return response.data
   },
 
   update: async (id: number, data: { name: string }): Promise<Team> => {
     const response = await client.put<ApiResponse<Team>>(
       `/api/teams/${id}`,
       data
-    );
-    return response.data;
+    )
+    return response.data
   },
 
   destroy: async (id: number): Promise<void> => {
-    await client.delete<ApiResponse<void>>(`/api/teams/${id}`);
+    await client.delete<ApiResponse<void>>(`/api/teams/${id}`)
   },
-});
+})
 
-export type TeamsService = ReturnType<typeof createTeamsService>;
+export type TeamsService = ReturnType<typeof createTeamsService>

@@ -1,6 +1,18 @@
-"use client";
+'use client'
 
-import { Team } from "@/types/user";
+import { MoreHorizontal, Users } from 'lucide-react'
+import { useState } from 'react'
+
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import { Skeleton } from '@/components/ui/skeleton'
 import {
   Table,
   TableBody,
@@ -8,63 +20,53 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import { MoreHorizontal, Users } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { useState } from "react";
-import { EditTeamDialog } from "./edit-team-dialog";
-import { DeleteTeamDialog } from "./delete-team-dialog";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
-import { useIsMobile, useIsTablet } from "@/hooks/use-mobile";
+} from '@/components/ui/table'
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { Skeleton } from "@/components/ui/skeleton";
+} from '@/components/ui/tooltip'
+import { useIsMobile, useIsTablet } from '@/hooks/use-mobile'
+import { Team } from '@/types/user'
+
+import { DeleteTeamDialog } from './delete-team-dialog'
+import { EditTeamDialog } from './edit-team-dialog'
 
 type TeamListProps = {
-  teams: Team[];
-  isLoading: boolean;
-};
+  teams: Team[]
+  isLoading: boolean
+}
 
 interface TeamMembersProps {
-  members: Team["members"];
+  members: Team['members']
 }
 
 interface TeamActionsProps {
-  team: Team;
-  onEdit: (team: Team) => void;
-  onDelete: (team: Team) => void;
+  team: Team
+  onEdit: (team: Team) => void
+  onDelete: (team: Team) => void
 }
 
 const TeamTableCellMembers = ({ members }: TeamMembersProps) => {
-  const formatMembers = (members: Team["members"]) => {
+  const formatMembers = (members: Team['members']) => {
     if (members.length <= 2) {
-      return members.map((m) => `${m.first_name} ${m.last_name}`).join(", ");
+      return members.map((m) => `${m.first_name} ${m.last_name}`).join(', ')
     }
     const firstTwo = members
       .slice(0, 2)
       .map((m) => `${m.first_name} ${m.last_name}`)
-      .join(", ");
-    const remaining = members.slice(2);
-    return { firstTwo, remaining };
-  };
+      .join(', ')
+    const remaining = members.slice(2)
+    return { firstTwo, remaining }
+  }
 
-  const formattedMembers = formatMembers(members);
+  const formattedMembers = formatMembers(members)
 
   return (
     <div className="flex items-center gap-2">
-      <span className="text-sm text-muted-foreground">
-        {typeof formattedMembers === "string" ? (
+      <span className="text-muted-foreground text-sm">
+        {typeof formattedMembers === 'string' ? (
           formattedMembers
         ) : (
           <>
@@ -93,8 +95,8 @@ const TeamTableCellMembers = ({ members }: TeamMembersProps) => {
         )}
       </span>
     </div>
-  );
-};
+  )
+}
 
 const TeamActions = ({ team, onEdit, onDelete }: TeamActionsProps) => (
   <DropdownMenu>
@@ -115,16 +117,16 @@ const TeamActions = ({ team, onEdit, onDelete }: TeamActionsProps) => (
       </DropdownMenuItem>
     </DropdownMenuContent>
   </DropdownMenu>
-);
+)
 
 const TeamCards = ({
   teams,
   onEdit,
   onDelete,
 }: {
-  teams: Team[];
-  onEdit: (team: Team) => void;
-  onDelete: (team: Team) => void;
+  teams: Team[]
+  onEdit: (team: Team) => void
+  onDelete: (team: Team) => void
 }) => (
   <div className="grid gap-4">
     {teams.length === 0 ? (
@@ -136,7 +138,7 @@ const TeamCards = ({
             <div className="flex items-center justify-between">
               <div className="space-y-1">
                 <h3 className="font-medium">{team.name}</h3>
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <div className="text-muted-foreground flex items-center gap-2 text-sm">
                   <Users className="h-4 w-4" />
                   <Badge variant="secondary">
                     {team.members.length} members
@@ -150,16 +152,16 @@ const TeamCards = ({
       ))
     )}
   </div>
-);
+)
 
 const TeamTable = ({
   teams,
   onEdit,
   onDelete,
 }: {
-  teams: Team[];
-  onEdit: (team: Team) => void;
-  onDelete: (team: Team) => void;
+  teams: Team[]
+  onEdit: (team: Team) => void
+  onDelete: (team: Team) => void
 }) => (
   <div className="rounded-md border">
     <Table>
@@ -197,7 +199,7 @@ const TeamTable = ({
       </TableBody>
     </Table>
   </div>
-);
+)
 
 const TeamTableSkeleton = () => (
   <div className="rounded-md border">
@@ -230,7 +232,7 @@ const TeamTableSkeleton = () => (
       </TableBody>
     </Table>
   </div>
-);
+)
 
 const TeamCardSkeleton = () => (
   <div className="grid gap-4">
@@ -251,23 +253,23 @@ const TeamCardSkeleton = () => (
       </Card>
     ))}
   </div>
-);
+)
 
 export function TeamList({ teams, isLoading }: TeamListProps) {
-  const [editingTeam, setEditingTeam] = useState<Team | null>(null);
-  const [deletingTeam, setDeletingTeam] = useState<Team | null>(null);
-  const isMobile = useIsMobile();
-  const isTablet = useIsTablet();
+  const [editingTeam, setEditingTeam] = useState<Team | null>(null)
+  const [deletingTeam, setDeletingTeam] = useState<Team | null>(null)
+  const isMobile = useIsMobile()
+  const isTablet = useIsTablet()
 
-  const handleEdit = (team: Team) => setEditingTeam(team);
-  const handleDelete = (team: Team) => setDeletingTeam(team);
+  const handleEdit = (team: Team) => setEditingTeam(team)
+  const handleDelete = (team: Team) => setDeletingTeam(team)
 
   if (isLoading) {
     return (
       <div className="space-y-4">
         {isMobile || isTablet ? <TeamCardSkeleton /> : <TeamTableSkeleton />}
       </div>
-    );
+    )
   }
 
   return (
@@ -294,5 +296,5 @@ export function TeamList({ teams, isLoading }: TeamListProps) {
         />
       )}
     </div>
-  );
+  )
 }

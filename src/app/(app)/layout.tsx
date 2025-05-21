@@ -1,17 +1,20 @@
-"use client";
+'use client'
 
-import { AppSidebar } from "@/app/(app)/_components/app-sidebar";
-import { Separator } from "@/components/ui/separator";
+import { AppSidebar } from '@/app/(app)/_components/app-sidebar'
+import { NavUser } from '@/app/(app)/_components/nav-user'
+import { Separator } from '@/components/ui/separator'
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
-} from "@/components/ui/sidebar";
-import { NavUser } from "@/app/(app)/_components/nav-user";
-import { Tooltip, TooltipTrigger } from "@/components/ui/tooltip";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { TooltipContent } from "@/components/ui/tooltip";
-import { AuthProvider } from "@/providers/auth-provider";
+} from '@/components/ui/sidebar'
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipProvider,
+  TooltipContent,
+} from '@/components/ui/tooltip'
+import { AuthProvider } from '@/providers/auth-provider'
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -42,5 +45,5 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         </SidebarInset>
       </SidebarProvider>
     </AuthProvider>
-  );
+  )
 }

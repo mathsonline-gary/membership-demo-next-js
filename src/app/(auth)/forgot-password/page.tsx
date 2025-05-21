@@ -1,4 +1,7 @@
-"use client";
+'use client'
+
+import Link from 'next/link'
+import * as React from 'react'
 
 import {
   Card,
@@ -6,25 +9,24 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { useAuth } from "@/hooks/use-auth";
-import { ForgotPasswordForm } from "./forgot-password-form";
-import Link from "next/link";
-import * as React from "react";
+} from '@/components/ui/card'
+import { useAuth } from '@/hooks/use-auth'
+
+import { ForgotPasswordForm } from './forgot-password-form'
 
 export default function Page() {
   useAuth({
-    middleware: "guest",
-    redirectIfAuthenticated: "/dashboard",
-  });
+    middleware: 'guest',
+    redirectIfAuthenticated: '/dashboard',
+  })
 
   const [isPasswordResetEmailSent, setIsPasswordResetEmailSent] =
-    React.useState(false);
-  const [email, setEmail] = React.useState("");
+    React.useState(false)
+  const [email, setEmail] = React.useState('')
   const onPasswordResetEmailSent = (email: string) => {
-    setIsPasswordResetEmailSent(true);
-    setEmail(email);
-  };
+    setIsPasswordResetEmailSent(true)
+    setEmail(email)
+  }
 
   const FormCard = () => (
     <Card>
@@ -40,12 +42,12 @@ export default function Page() {
         <ForgotPasswordForm
           onPasswordResetEmailSent={onPasswordResetEmailSent}
         />
-        <div className="text-center text-sm text-accent-foreground">
+        <div className="text-accent-foreground text-center text-sm">
           <Link href="/login">Back to login</Link>
         </div>
       </CardContent>
     </Card>
-  );
+  )
 
   const CheckEmailCard = () => (
     <Card>
@@ -60,10 +62,10 @@ export default function Page() {
         </p>
         <p>
           If you haven&apos;t received an email in 60 minutes, check your spam,
-          or{" "}
+          or{' '}
           <span
             onClick={() => setIsPasswordResetEmailSent(false)}
-            className="underline cursor-pointer"
+            className="cursor-pointer underline"
           >
             try a different email address
           </span>
@@ -74,7 +76,7 @@ export default function Page() {
         </div>
       </CardContent>
     </Card>
-  );
+  )
 
-  return !isPasswordResetEmailSent ? <FormCard /> : <CheckEmailCard />;
+  return !isPasswordResetEmailSent ? <FormCard /> : <CheckEmailCard />
 }
