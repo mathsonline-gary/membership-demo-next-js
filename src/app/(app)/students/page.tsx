@@ -12,12 +12,7 @@ import { InviteStudentDialog } from './_components/invite-student-dialog'
 import { Search } from './_components/search'
 import { StudentList } from './_components/student-list'
 
-const BREADCRUMB_ITEMS: BreadcrumbItem[] = [
-  {
-    label: 'Students',
-    href: '/students',
-  },
-]
+const BREADCRUMB_ITEMS: BreadcrumbItem[] = [{ label: 'People' }]
 
 export default function StudentsPage() {
   const [isInviteDialogOpen, setIsInviteDialogOpen] = useState(false)

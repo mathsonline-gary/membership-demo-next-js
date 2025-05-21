@@ -12,7 +12,7 @@ import { useGetTeamList } from '@/hooks/use-api-query'
 import { CreateTeamDialog } from './_components/create-team-dialog'
 import { TeamList } from './_components/team-list'
 
-const BREADCRUMB_ITEMS: BreadcrumbItem[] = [{ label: 'Teams' }]
+const BREADCRUMB_ITEMS: BreadcrumbItem[] = [{ label: 'People' }]
 
 export default function TeamsPage() {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)

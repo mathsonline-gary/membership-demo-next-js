@@ -125,12 +125,10 @@ export function Breadcrumb({ items }: BreadcrumbProps) {
 
         {/* Last two items */}
         {lastTwoItems.map((item, index) => {
-          const isLast = index === lastTwoItems.length - 1
-
           return (
             <React.Fragment key={index}>
               <BreadcrumbItem>
-                {!isLast && item.href ? (
+                {item.href ? (
                   <BreadcrumbLink
                     asChild
                     className="max-w-20 truncate md:max-w-none"
@@ -143,7 +141,7 @@ export function Breadcrumb({ items }: BreadcrumbProps) {
                   </BreadcrumbPage>
                 )}
               </BreadcrumbItem>
-              {!isLast && <BreadcrumbSeparator />}
+              <BreadcrumbSeparator />
             </React.Fragment>
           )
         })}

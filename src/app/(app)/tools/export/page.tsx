@@ -1,10 +1,7 @@
 import { BreadcrumbItem } from '@/app/(app)/_components/breadcrumb'
 import { MainContainer } from '@/app/(app)/_components/main-container'
 
-const BREADCRUMB_ITEMS: BreadcrumbItem[] = [
-  { label: 'Tools', href: '/tools' },
-  { label: 'Export Data' },
-]
+const BREADCRUMB_ITEMS: BreadcrumbItem[] = [{ label: 'Tools', href: '/tools' }]
 
 export default function Page() {
   return (

@@ -1,13 +1,10 @@
-import { Settings, User, CreditCard, Lock } from 'lucide-react'
+import { CreditCard, Lock, Settings, User } from 'lucide-react'
 
-import { BreadcrumbItem } from '@/app/(app)/_components/breadcrumb'
 import { MainContainer } from '@/app/(app)/_components/main-container'
 import {
   SectionOverview,
   SectionOverviewItem,
 } from '@/app/(app)/_components/section-overview'
-
-const BREADCRUMB_ITEMS: BreadcrumbItem[] = [{ label: 'Settings' }]
 
 const SECTION_OVERVIEW_ITEMS: SectionOverviewItem[] = [
   {
@@ -38,7 +35,7 @@ const SECTION_OVERVIEW_ITEMS: SectionOverviewItem[] = [
 
 export default function Page() {
   return (
-    <MainContainer title="Settings" breadcrumbItems={BREADCRUMB_ITEMS}>
+    <MainContainer title="Settings">
       <SectionOverview items={SECTION_OVERVIEW_ITEMS} />
     </MainContainer>
   )

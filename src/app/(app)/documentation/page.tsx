@@ -1,13 +1,10 @@
 import { BookOpen, NotebookPen } from 'lucide-react'
 
-import { BreadcrumbItem } from '@/app/(app)/_components/breadcrumb'
 import { MainContainer } from '@/app/(app)/_components/main-container'
 import {
   SectionOverview,
   SectionOverviewItem,
 } from '@/app/(app)/_components/section-overview'
-
-const BREADCRUMB_ITEMS: BreadcrumbItem[] = [{ label: 'Documentation' }]
 
 const DOC_PAGES: SectionOverviewItem[] = [
   {
@@ -27,7 +24,7 @@ const DOC_PAGES: SectionOverviewItem[] = [
 
 export default function Page() {
   return (
-    <MainContainer title="Documentation" breadcrumbItems={BREADCRUMB_ITEMS}>
+    <MainContainer title="Documentation">
       <SectionOverview items={DOC_PAGES} />
     </MainContainer>
   )

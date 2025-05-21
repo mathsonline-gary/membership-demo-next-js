@@ -27,7 +27,6 @@ import { MainContainer } from '../../../_components/main-container'
 const BREADCRUMB_ITEMS: BreadcrumbItem[] = [
   { label: 'Settings', href: '/settings' },
   { label: 'Profile', href: '/settings/profile' },
-  { label: 'Edit' },
 ]
 
 const profileSchema = z.object({

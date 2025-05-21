@@ -1,4 +1,4 @@
-import { Shield, Smartphone, Key } from 'lucide-react'
+import { Key, Shield, Smartphone } from 'lucide-react'
 
 import { BreadcrumbItem } from '@/app/(app)/_components/breadcrumb'
 import { MainContainer } from '@/app/(app)/_components/main-container'
@@ -10,7 +10,6 @@ import { PasswordTab } from './update-password-tab'
 
 const BREADCRUMB_ITEMS: BreadcrumbItem[] = [
   { label: 'Settings', href: '/settings' },
-  { label: 'Security' },
 ]
 
 const TAB_ITEMS = [
