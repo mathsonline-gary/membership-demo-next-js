@@ -48,7 +48,7 @@ interface TeamActionsProps {
   onDelete: (team: Team) => void
 }
 
-const TeamTableCellMembers = ({ members }: TeamMembersProps) => {
+function TeamTableCellMembers({ members }: TeamMembersProps) {
   const formatMembers = (members: Team['members']) => {
     if (members.length <= 2) {
       return members.map((m) => `${m.first_name} ${m.last_name}`).join(', ')
@@ -98,28 +98,30 @@ const TeamTableCellMembers = ({ members }: TeamMembersProps) => {
   )
 }
 
-const TeamActions = ({ team, onEdit, onDelete }: TeamActionsProps) => (
-  <DropdownMenu>
-    <DropdownMenuTrigger asChild>
-      <Button variant="ghost" size="icon" className="h-full">
-        <MoreHorizontal className="h-4 w-4" />
-      </Button>
-    </DropdownMenuTrigger>
-    <DropdownMenuContent align="end">
-      <DropdownMenuItem onClick={() => onEdit(team)}>
-        Edit team
-      </DropdownMenuItem>
-      <DropdownMenuItem
-        className="text-destructive"
-        onClick={() => onDelete(team)}
-      >
-        Delete team
-      </DropdownMenuItem>
-    </DropdownMenuContent>
-  </DropdownMenu>
-)
+function TeamActions({ team, onEdit, onDelete }: TeamActionsProps) {
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" size="icon" className="h-full">
+          <MoreHorizontal className="h-4 w-4" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuItem onClick={() => onEdit(team)}>
+          Edit team
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          className="text-destructive"
+          onClick={() => onDelete(team)}
+        >
+          Delete team
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  )
+}
 
-const TeamCards = ({
+function TeamCards({
   teams,
   onEdit,
   onDelete,
@@ -127,133 +129,145 @@ const TeamCards = ({
   teams: Team[]
   onEdit: (team: Team) => void
   onDelete: (team: Team) => void
-}) => (
-  <div className="grid gap-4">
-    {teams.length === 0 ? (
-      <div className="text-center">No teams found</div>
-    ) : (
-      teams.map((team) => (
-        <Card key={team.id}>
+}) {
+  return (
+    <div className="grid gap-4">
+      {teams.length === 0 ? (
+        <div className="text-center">No teams found</div>
+      ) : (
+        teams.map((team) => (
+          <Card key={team.id}>
+            <CardContent>
+              <div className="flex items-center justify-between">
+                <div className="space-y-1">
+                  <h3 className="font-medium">{team.name}</h3>
+                  <div className="text-muted-foreground flex items-center gap-2 text-sm">
+                    <Users className="h-4 w-4" />
+                    <Badge variant="secondary">
+                      {team.members.length} members
+                    </Badge>
+                  </div>
+                </div>
+                <TeamActions team={team} onEdit={onEdit} onDelete={onDelete} />
+              </div>
+            </CardContent>
+          </Card>
+        ))
+      )}
+    </div>
+  )
+}
+
+function TeamTable({
+  teams,
+  onEdit,
+  onDelete,
+}: {
+  teams: Team[]
+  onEdit: (team: Team) => void
+  onDelete: (team: Team) => void
+}) {
+  return (
+    <div className="rounded-md border">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Name</TableHead>
+            <TableHead>Members</TableHead>
+            <TableHead>Created</TableHead>
+            <TableHead className="w-[100px]">Actions</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {teams.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={4} className="text-center">
+                No teams found
+              </TableCell>
+            </TableRow>
+          ) : (
+            teams.map((team) => (
+              <TableRow key={team.id}>
+                <TableCell className="font-medium">{team.name}</TableCell>
+                <TableCell>
+                  <TeamTableCellMembers members={team.members} />
+                </TableCell>
+                <TableCell>
+                  {new Date(team.created_at).toLocaleDateString()}
+                </TableCell>
+                <TableCell>
+                  <TeamActions
+                    team={team}
+                    onEdit={onEdit}
+                    onDelete={onDelete}
+                  />
+                </TableCell>
+              </TableRow>
+            ))
+          )}
+        </TableBody>
+      </Table>
+    </div>
+  )
+}
+
+function TeamTableSkeleton() {
+  return (
+    <div className="rounded-md border">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Name</TableHead>
+            <TableHead>Members</TableHead>
+            <TableHead>Created</TableHead>
+            <TableHead className="w-[100px]">Actions</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {Array.from({ length: 5 }).map((_, index) => (
+            <TableRow key={index}>
+              <TableCell>
+                <Skeleton className="h-4 w-[200px]" />
+              </TableCell>
+              <TableCell>
+                <Skeleton className="h-4 w-[150px]" />
+              </TableCell>
+              <TableCell>
+                <Skeleton className="h-4 w-[100px]" />
+              </TableCell>
+              <TableCell>
+                <Skeleton className="h-4 w-4" />
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
+  )
+}
+
+function TeamCardSkeleton() {
+  return (
+    <div className="grid gap-4">
+      {Array.from({ length: 3 }).map((_, index) => (
+        <Card key={index}>
           <CardContent>
             <div className="flex items-center justify-between">
-              <div className="space-y-1">
-                <h3 className="font-medium">{team.name}</h3>
-                <div className="text-muted-foreground flex items-center gap-2 text-sm">
-                  <Users className="h-4 w-4" />
-                  <Badge variant="secondary">
-                    {team.members.length} members
-                  </Badge>
+              <div className="space-y-2">
+                <Skeleton className="h-5 w-[200px]" />
+                <div className="flex items-center gap-2">
+                  <Skeleton className="h-4 w-4" />
+                  <Skeleton className="h-4 w-[100px]" />
                 </div>
               </div>
-              <TeamActions team={team} onEdit={onEdit} onDelete={onDelete} />
+              <Skeleton className="h-8 w-8 rounded-full" />
             </div>
           </CardContent>
         </Card>
-      ))
-    )}
-  </div>
-)
-
-const TeamTable = ({
-  teams,
-  onEdit,
-  onDelete,
-}: {
-  teams: Team[]
-  onEdit: (team: Team) => void
-  onDelete: (team: Team) => void
-}) => (
-  <div className="rounded-md border">
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>Name</TableHead>
-          <TableHead>Members</TableHead>
-          <TableHead>Created</TableHead>
-          <TableHead className="w-[100px]">Actions</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {teams.length === 0 ? (
-          <TableRow>
-            <TableCell colSpan={4} className="text-center">
-              No teams found
-            </TableCell>
-          </TableRow>
-        ) : (
-          teams.map((team) => (
-            <TableRow key={team.id}>
-              <TableCell className="font-medium">{team.name}</TableCell>
-              <TableCell>
-                <TeamTableCellMembers members={team.members} />
-              </TableCell>
-              <TableCell>
-                {new Date(team.created_at).toLocaleDateString()}
-              </TableCell>
-              <TableCell>
-                <TeamActions team={team} onEdit={onEdit} onDelete={onDelete} />
-              </TableCell>
-            </TableRow>
-          ))
-        )}
-      </TableBody>
-    </Table>
-  </div>
-)
-
-const TeamTableSkeleton = () => (
-  <div className="rounded-md border">
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>Name</TableHead>
-          <TableHead>Members</TableHead>
-          <TableHead>Created</TableHead>
-          <TableHead className="w-[100px]">Actions</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {Array.from({ length: 5 }).map((_, index) => (
-          <TableRow key={index}>
-            <TableCell>
-              <Skeleton className="h-4 w-[200px]" />
-            </TableCell>
-            <TableCell>
-              <Skeleton className="h-4 w-[150px]" />
-            </TableCell>
-            <TableCell>
-              <Skeleton className="h-4 w-[100px]" />
-            </TableCell>
-            <TableCell>
-              <Skeleton className="h-4 w-4" />
-            </TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
-  </div>
-)
-
-const TeamCardSkeleton = () => (
-  <div className="grid gap-4">
-    {Array.from({ length: 3 }).map((_, index) => (
-      <Card key={index}>
-        <CardContent>
-          <div className="flex items-center justify-between">
-            <div className="space-y-2">
-              <Skeleton className="h-5 w-[200px]" />
-              <div className="flex items-center gap-2">
-                <Skeleton className="h-4 w-4" />
-                <Skeleton className="h-4 w-[100px]" />
-              </div>
-            </div>
-            <Skeleton className="h-8 w-8 rounded-full" />
-          </div>
-        </CardContent>
-      </Card>
-    ))}
-  </div>
-)
+      ))}
+    </div>
+  )
+}
 
 export function TeamList({ teams, isLoading }: TeamListProps) {
   const [editingTeam, setEditingTeam] = useState<Team | null>(null)
