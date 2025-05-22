@@ -1,8 +1,14 @@
 ---
 description: 
 globs: 
-alwaysApply: false
+alwaysApply: true
 ---
+---
+description: Guidelines for TypeScript and ESLint
+globs: ["src/**/*.tsx", "src/**/*.ts"]
+alwaysApply: true
+---
+
 # TypeScript & ESLint Guidelines
 
 ## TypeScript Configuration

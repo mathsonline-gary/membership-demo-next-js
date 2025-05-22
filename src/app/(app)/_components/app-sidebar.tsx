@@ -1,14 +1,14 @@
 'use client'
 
 import {
+  BookCheck,
+  BookOpen,
   ChevronRightIcon,
   HelpCircle,
+  LayoutDashboard,
   Settings,
   Users,
   Wrench,
-  BookOpen,
-  BookCheck,
-  LayoutDashboard,
 } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -53,19 +53,9 @@ const MENU_1_ITEMS: AppSidebarMenuItem[] = [
     icon: LayoutDashboard,
   },
   {
-    title: 'People',
-    url: '#people',
+    title: 'Teams',
+    url: '/teams',
     icon: Users,
-    items: [
-      {
-        title: 'Teams',
-        url: '/teams',
-      },
-      {
-        title: 'Students',
-        url: '/students',
-      },
-    ],
   },
   {
     title: 'Courses',
