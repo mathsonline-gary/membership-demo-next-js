@@ -8,7 +8,7 @@ import { z } from 'zod'
 import { Loader } from '@/components/loader'
 import { Button } from '@/components/ui/button'
 import {
-  Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -28,10 +28,8 @@ import { useUpdateTeam } from '@/hooks/use-api-query'
 import { ApiError } from '@/lib/api/error'
 import { Team } from '@/types/user'
 
-interface EditTeamDialogProps {
+interface EditTeamDialogContentProps {
   team: Team
-  open: boolean
-  onOpenChange: (open: boolean) => void
 }
 
 const teamSchema = z.object({
@@ -40,11 +38,7 @@ const teamSchema = z.object({
 
 type TeamFormValues = z.infer<typeof teamSchema>
 
-export function EditTeamDialog({
-  team,
-  open,
-  onOpenChange,
-}: EditTeamDialogProps) {
+export function EditTeamDialogContent({ team }: EditTeamDialogContentProps) {
   const { mutate: updateTeam, isPending: isUpdating } = useUpdateTeam()
 
   const form = useForm<TeamFormValues>({
@@ -63,7 +57,6 @@ export function EditTeamDialog({
       {
         onSuccess: () => {
           toast.success('Team updated successfully')
-          onOpenChange(false)
         },
         onError: (error) => {
           if (error instanceof ApiError && error.isUnprocessableEntity()) {
@@ -81,46 +74,42 @@ export function EditTeamDialog({
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)}>
-            <DialogHeader>
-              <DialogTitle>Edit Team</DialogTitle>
-              <DialogDescription>
-                Update your team&apos;s information
-              </DialogDescription>
-            </DialogHeader>
-            <div className="grid gap-4 py-4">
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Team Name</FormLabel>
-                    <FormControl>
-                      <Input {...field} placeholder="Enter team name" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <DialogFooter>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => onOpenChange(false)}
-              >
+    <DialogContent>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+          <DialogHeader>
+            <DialogTitle>Edit Team</DialogTitle>
+            <DialogDescription>
+              Update your team&apos;s information
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Team Name</FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder="Enter team name" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button type="button" variant="outline">
                 Cancel
               </Button>
-              <Button type="submit" disabled={isUpdating || !isTeamChanged}>
-                {isUpdating ? <Loader /> : 'Save Changes'}
-              </Button>
-            </DialogFooter>
-          </form>
-        </Form>
-      </DialogContent>
-    </Dialog>
+            </DialogClose>
+            <Button type="submit" disabled={isUpdating || !isTeamChanged}>
+              {isUpdating ? <Loader /> : 'Save Changes'}
+            </Button>
+          </DialogFooter>
+        </form>
+      </Form>
+    </DialogContent>
   )
 }

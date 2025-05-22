@@ -8,7 +8,7 @@ import { z } from 'zod'
 import { Loader } from '@/components/loader'
 import { Button } from '@/components/ui/button'
 import {
-  Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -27,21 +27,13 @@ import { Input } from '@/components/ui/input'
 import { useCreateTeam } from '@/hooks/use-api-query'
 import { ApiError } from '@/lib/api/error'
 
-interface CreateTeamDialogProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-}
-
 const teamSchema = z.object({
   name: z.string().min(2, 'Team name must be at least 2 characters'),
 })
 
 type TeamFormValues = z.infer<typeof teamSchema>
 
-export function CreateTeamDialog({
-  open,
-  onOpenChange,
-}: CreateTeamDialogProps) {
+export function CreateTeamDialog() {
   const { mutate: createTeam, isPending: isSubmitting } = useCreateTeam()
 
   const form = useForm<TeamFormValues>({
@@ -55,7 +47,6 @@ export function CreateTeamDialog({
     createTeam(data, {
       onSuccess: () => {
         toast.success('Team created successfully')
-        onOpenChange(false)
         form.reset()
       },
       onError: (error) => {
@@ -73,46 +64,42 @@ export function CreateTeamDialog({
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)}>
-            <DialogHeader>
-              <DialogTitle>Create Team</DialogTitle>
-              <DialogDescription>
-                Create a new team to collaborate with others
-              </DialogDescription>
-            </DialogHeader>
-            <div className="grid gap-4 py-4">
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Team Name</FormLabel>
-                    <FormControl>
-                      <Input {...field} placeholder="Enter team name" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <DialogFooter>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => onOpenChange(false)}
-              >
+    <DialogContent>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+          <DialogHeader>
+            <DialogTitle>Create Team</DialogTitle>
+            <DialogDescription>
+              Create a new team to collaborate with others
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Team Name</FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder="Enter team name" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button type="button" variant="outline">
                 Cancel
               </Button>
-              <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? <Loader /> : 'Create Team'}
-              </Button>
-            </DialogFooter>
-          </form>
-        </Form>
-      </DialogContent>
-    </Dialog>
+            </DialogClose>
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting ? <Loader /> : 'Create Team'}
+            </Button>
+          </DialogFooter>
+        </form>
+      </Form>
+    </DialogContent>
   )
 }

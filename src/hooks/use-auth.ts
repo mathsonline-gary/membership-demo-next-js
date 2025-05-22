@@ -4,6 +4,7 @@ import useSWR from 'swr'
 
 import { api } from '@/lib/api'
 import { ApiError } from '@/lib/api/error'
+import { queryClient } from '@/providers/query-client-provider'
 import {
   ForgotPasswordRequest,
   LoginRequest,
@@ -148,6 +149,9 @@ export const useAuth = ({
       try {
         await api.auth.logout()
         await mutate()
+
+        // clear all queries
+        queryClient.clear()
       } catch (error) {
         if (!(error instanceof ApiError && error.isUnauthorized())) {
           throw error

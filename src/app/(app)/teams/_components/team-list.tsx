@@ -1,11 +1,13 @@
 'use client'
 
 import { MoreHorizontal, Users } from 'lucide-react'
+import { useSearchParams } from 'next/navigation'
 import { useState } from 'react'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
+import { Dialog } from '@/components/ui/dialog'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -27,25 +29,46 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
+import { useGetTeamList } from '@/hooks/use-api-query'
 import { useIsMobile, useIsTablet } from '@/hooks/use-mobile'
 import { Team } from '@/types/user'
 
-import { DeleteTeamDialog } from './delete-team-dialog'
-import { EditTeamDialog } from './edit-team-dialog'
+import { DeleteTeamDialogContent } from './delete-team-dialog'
+import { EditTeamDialogContent } from './edit-team-dialog'
+import { ManageMembersDialogContent } from './manage-members-dialog'
 
-type TeamListProps = {
-  teams: Team[]
-  isLoading: boolean
+export function TeamList() {
+  const searchParams = useSearchParams()
+  const query = searchParams.get('query') || ''
+
+  const { data: teams, isLoading, isError } = useGetTeamList(query)
+  const isMobile = useIsMobile()
+  const isTablet = useIsTablet()
+
+  if (isLoading) {
+    return (
+      <div className="space-y-4">
+        {isMobile || isTablet ? <TeamCardSkeleton /> : <TeamTableSkeleton />}
+      </div>
+    )
+  }
+
+  if (isError || !teams) {
+    return <div className="text-destructive">Failed to load teams.</div>
+  }
+
+  return (
+    <div className="space-y-4">
+      {isMobile || isTablet ? (
+        <TeamCards teams={teams} />
+      ) : (
+        <TeamTable teams={teams} />
+      )}
+    </div>
+  )
 }
-
 interface TeamMembersProps {
   members: Team['members']
-}
-
-interface TeamActionsProps {
-  team: Team
-  onEdit: (team: Team) => void
-  onDelete: (team: Team) => void
 }
 
 function TeamTableCellMembers({ members }: TeamMembersProps) {
@@ -98,38 +121,62 @@ function TeamTableCellMembers({ members }: TeamMembersProps) {
   )
 }
 
-function TeamActions({ team, onEdit, onDelete }: TeamActionsProps) {
+interface TeamActionsProps {
+  team: Team
+}
+
+function TeamActions({ team }: TeamActionsProps) {
+  const [dialog, setDialog] = useState<null | 'edit' | 'members' | 'delete'>(
+    null
+  )
+
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" className="h-full">
-          <MoreHorizontal className="h-4 w-4" />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => onEdit(team)}>
-          Edit team
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          className="text-destructive"
-          onClick={() => onDelete(team)}
-        >
-          Delete team
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" size="icon" className="h-full">
+            <MoreHorizontal className="h-4 w-4" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuItem onClick={() => setDialog('edit')}>
+            Edit team
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => setDialog('members')}>
+            Manage members
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            className="text-destructive"
+            onClick={() => setDialog('delete')}
+          >
+            Delete team
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+
+      <Dialog
+        open={dialog === 'edit'}
+        onOpenChange={(open) => !open && setDialog(null)}
+      >
+        <EditTeamDialogContent team={team} />
+      </Dialog>
+      <Dialog
+        open={dialog === 'members'}
+        onOpenChange={(open) => !open && setDialog(null)}
+      >
+        <ManageMembersDialogContent team={team} />
+      </Dialog>
+      <Dialog
+        open={dialog === 'delete'}
+        onOpenChange={(open) => !open && setDialog(null)}
+      >
+        <DeleteTeamDialogContent team={team} />
+      </Dialog>
+    </>
   )
 }
 
-function TeamCards({
-  teams,
-  onEdit,
-  onDelete,
-}: {
-  teams: Team[]
-  onEdit: (team: Team) => void
-  onDelete: (team: Team) => void
-}) {
+function TeamCards({ teams }: { teams: Team[] }) {
   return (
     <div className="grid gap-4">
       {teams.length === 0 ? (
@@ -148,7 +195,7 @@ function TeamCards({
                     </Badge>
                   </div>
                 </div>
-                <TeamActions team={team} onEdit={onEdit} onDelete={onDelete} />
+                <TeamActions team={team} />
               </div>
             </CardContent>
           </Card>
@@ -158,15 +205,7 @@ function TeamCards({
   )
 }
 
-function TeamTable({
-  teams,
-  onEdit,
-  onDelete,
-}: {
-  teams: Team[]
-  onEdit: (team: Team) => void
-  onDelete: (team: Team) => void
-}) {
+function TeamTable({ teams }: { teams: Team[] }) {
   return (
     <div className="rounded-md border">
       <Table>
@@ -196,11 +235,7 @@ function TeamTable({
                   {new Date(team.created_at).toLocaleDateString()}
                 </TableCell>
                 <TableCell>
-                  <TeamActions
-                    team={team}
-                    onEdit={onEdit}
-                    onDelete={onDelete}
-                  />
+                  <TeamActions team={team} />
                 </TableCell>
               </TableRow>
             ))
@@ -265,50 +300,6 @@ function TeamCardSkeleton() {
           </CardContent>
         </Card>
       ))}
-    </div>
-  )
-}
-
-export function TeamList({ teams, isLoading }: TeamListProps) {
-  const [editingTeam, setEditingTeam] = useState<Team | null>(null)
-  const [deletingTeam, setDeletingTeam] = useState<Team | null>(null)
-  const isMobile = useIsMobile()
-  const isTablet = useIsTablet()
-
-  const handleEdit = (team: Team) => setEditingTeam(team)
-  const handleDelete = (team: Team) => setDeletingTeam(team)
-
-  if (isLoading) {
-    return (
-      <div className="space-y-4">
-        {isMobile || isTablet ? <TeamCardSkeleton /> : <TeamTableSkeleton />}
-      </div>
-    )
-  }
-
-  return (
-    <div className="space-y-4">
-      {isMobile || isTablet ? (
-        <TeamCards teams={teams} onEdit={handleEdit} onDelete={handleDelete} />
-      ) : (
-        <TeamTable teams={teams} onEdit={handleEdit} onDelete={handleDelete} />
-      )}
-
-      {editingTeam && (
-        <EditTeamDialog
-          team={editingTeam}
-          open={!!editingTeam}
-          onOpenChange={(open: boolean) => !open && setEditingTeam(null)}
-        />
-      )}
-
-      {deletingTeam && (
-        <DeleteTeamDialog
-          team={deletingTeam}
-          open={!!deletingTeam}
-          onOpenChange={(open: boolean) => !open && setDeletingTeam(null)}
-        />
-      )}
     </div>
   )
 }

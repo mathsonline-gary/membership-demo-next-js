@@ -28,12 +28,20 @@ export interface Student extends User {
   role: UserRole.STUDENT
 }
 
+export interface TeamMember extends Student {
+  pivot: {
+    status: string
+    created_at: string
+    updated_at: string
+  }
+}
+
 export type Team = {
   id: number
   name: string
   owner_id: number
   owner: Teacher
-  members: Student[]
+  members: TeamMember[]
   created_at: string
   updated_at: string
 }

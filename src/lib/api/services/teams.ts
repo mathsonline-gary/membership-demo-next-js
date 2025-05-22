@@ -4,10 +4,11 @@ import { Team } from '@/types/user'
 import { ApiClient } from '../client'
 
 export const createTeamsService = (client: ApiClient) => ({
-  index: async (ownerId: number): Promise<Team[]> => {
+  index: async (ownerId: number, searchQuery?: string): Promise<Team[]> => {
     const response = await client.get<ApiResponse<Team[]>>('/api/teams', {
       params: {
         owner_id: ownerId,
+        query: searchQuery,
       },
     })
     return response.data
@@ -28,6 +29,21 @@ export const createTeamsService = (client: ApiClient) => ({
 
   destroy: async (id: number): Promise<void> => {
     await client.delete<ApiResponse<void>>(`/api/teams/${id}`)
+  },
+
+  members: {
+    invite: async (teamId: number, data: { email: string }): Promise<void> => {
+      await client.post<ApiResponse<void>>(
+        `/api/teams/${teamId}/member-invitations`,
+        data
+      )
+    },
+
+    destroy: async (teamId: number, memberId: number): Promise<void> => {
+      await client.delete<ApiResponse<void>>(
+        `/api/teams/${teamId}/members/${memberId}`
+      )
+    },
   },
 })
 
