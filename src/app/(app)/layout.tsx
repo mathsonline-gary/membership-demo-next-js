@@ -2,6 +2,7 @@
 
 import { AppSidebar } from '@/app/(app)/_components/app-sidebar'
 import { NavUser } from '@/app/(app)/_components/nav-user'
+import { Notifications } from '@/app/(app)/_components/notifications'
 import { Separator } from '@/components/ui/separator'
 import {
   SidebarInset,
@@ -10,9 +11,9 @@ import {
 } from '@/components/ui/sidebar'
 import {
   Tooltip,
-  TooltipTrigger,
-  TooltipProvider,
   TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { AuthProvider } from '@/providers/auth-provider'
 
@@ -37,6 +38,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                 className="mr-2 data-[orientation=vertical]:h-4"
               />
               <div className="ml-auto flex items-center gap-2">
+                <Notifications />
                 <NavUser />
               </div>
             </div>

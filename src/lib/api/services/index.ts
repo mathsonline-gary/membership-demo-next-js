@@ -1,5 +1,6 @@
 export * from './auth'
 export * from './device'
+export * from './notifications'
 export * from './profile'
 export * from './students'
 export * from './teams'
