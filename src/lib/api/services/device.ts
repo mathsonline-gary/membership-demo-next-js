@@ -1,8 +1,9 @@
 import { ApiResponse } from '@/types/api/common'
 import { Device } from '@/types/user'
 
-import { ApiClient } from '../client'
-export const createDeviceService = (client: ApiClient) => ({
+import { Client } from '../client'
+
+export const createDeviceService = (client: Client) => ({
   index: async (): Promise<Device[]> => {
     const response = await client.get<ApiResponse<Device[]>>(`/api/devices`)
     return response.data

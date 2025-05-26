@@ -2,9 +2,9 @@ import { ApiResponse } from '@/types/api/common'
 import { UpdateProfileRequest } from '@/types/api/profile'
 import { Profile } from '@/types/user'
 
-import { ApiClient } from '../client'
+import { Client } from '../client'
 
-export const createProfileService = (client: ApiClient) => ({
+export const createProfileService = (client: Client) => ({
   show: async (): Promise<Profile> => {
     const response = await client.get<ApiResponse<Profile>>(`/api/profile`)
     return response.data

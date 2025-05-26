@@ -1,9 +1,9 @@
 import { ApiResponse } from '@/types/api/common'
 import { Team } from '@/types/user'
 
-import { ApiClient } from '../client'
+import { Client } from '../client'
 
-export const createTeamsService = (client: ApiClient) => ({
+export const createTeamsService = (client: Client) => ({
   index: async (ownerId: number, searchQuery?: string): Promise<Team[]> => {
     const response = await client.get<ApiResponse<Team[]>>('/api/teams', {
       params: {

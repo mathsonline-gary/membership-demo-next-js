@@ -9,7 +9,7 @@ import { ApiErrorResponse } from '@/types/api/common'
 
 import { ApiError } from './error'
 
-export const createApiClient = (baseURL: string) => {
+export const createClient = (baseURL: string) => {
   const client: AxiosInstance = axios.create({
     baseURL,
     headers: {
@@ -90,4 +90,4 @@ export const createApiClient = (baseURL: string) => {
   }
 }
 
-export type ApiClient = ReturnType<typeof createApiClient>
+export type Client = ReturnType<typeof createClient>

@@ -1,4 +1,5 @@
-import { createApiClient } from './client'
+import { Client, createClient } from './client'
+import { createEcho } from './echo'
 import {
   createAuthService,
   createDeviceService,
@@ -10,9 +11,7 @@ import {
 
 const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000'
 
-const createApi = () => {
-  const client = createApiClient(BASE_URL)
-
+const createApi = (client: Client) => {
   return {
     profile: createProfileService(client),
     auth: createAuthService(client),
@@ -23,4 +22,5 @@ const createApi = () => {
   }
 }
 
-export const api = createApi()
+export const api = createApi(createClient(BASE_URL))
+export const echo = createEcho(createClient(BASE_URL))

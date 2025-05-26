@@ -7,9 +7,9 @@ import {
 import { ApiResponse } from '@/types/api/common'
 import { AuthUser } from '@/types/user'
 
-import { ApiClient } from '../client'
+import { Client } from '../client'
 
-export const createAuthService = (client: ApiClient) => ({
+export const createAuthService = (client: Client) => ({
   csrf: async (): Promise<void> => {
     await client.get('/sanctum/csrf-cookie')
   },
