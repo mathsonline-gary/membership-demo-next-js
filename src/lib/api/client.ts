@@ -15,7 +15,6 @@ export const createClient = (baseURL: string) => {
     headers: {
       Accept: 'application/json',
       'X-Requested-With': 'XMLHttpRequest',
-      'Content-Type': 'application/json',
     },
     withCredentials: true,
     withXSRFToken: true,

@@ -7,6 +7,9 @@ import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
 
+import { BreadcrumbItem } from '@/app/(app)/_components/breadcrumb'
+import { MainContainer } from '@/app/(app)/_components/main-container'
+import { Loader } from '@/components/loader'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -21,9 +24,6 @@ import {
 import { Input } from '@/components/ui/input'
 import { useGetProfile, useUpdateProfile } from '@/hooks/use-api-query'
 
-import { BreadcrumbItem } from '../../../_components/breadcrumb'
-import { MainContainer } from '../../../_components/main-container'
-
 const BREADCRUMB_ITEMS: BreadcrumbItem[] = [
   { label: 'Settings', href: '/settings' },
   { label: 'Profile', href: '/settings/profile' },
@@ -32,7 +32,7 @@ const BREADCRUMB_ITEMS: BreadcrumbItem[] = [
 const profileSchema = z.object({
   first_name: z.string().min(2, 'First name must be at least 2 characters'),
   last_name: z.string().min(2, 'Last name must be at least 2 characters'),
-  avatar: z.string().optional(),
+  avatar: z.instanceof(File).optional(),
 })
 
 type ProfileFormValues = z.infer<typeof profileSchema>
@@ -41,13 +41,14 @@ export default function EditProfilePage() {
   const router = useRouter()
   const { data: profile, isLoading } = useGetProfile()
   const { mutate: updateProfile, isPending: isUpdating } = useUpdateProfile()
+  const [avatarPreview, setAvatarPreview] = React.useState<string>('')
 
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
       first_name: '',
       last_name: '',
-      avatar: '',
+      avatar: undefined,
     },
   })
 
@@ -56,8 +57,9 @@ export default function EditProfilePage() {
       form.reset({
         first_name: profile.first_name || '',
         last_name: profile.last_name || '',
-        avatar: profile.avatar || '',
+        avatar: undefined,
       })
+      setAvatarPreview(profile.avatar || '')
     }
   }, [profile, form])
 
@@ -73,17 +75,23 @@ export default function EditProfilePage() {
     })
   }
 
-  const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
-    const avatarUrl = URL.createObjectURL(file)
-    form.setValue('avatar', avatarUrl)
+
+    const previewUrl = URL.createObjectURL(file)
+    setAvatarPreview(previewUrl)
+
+    // Cleanup previous preview URL
+    return () => {
+      URL.revokeObjectURL(previewUrl)
+    }
   }
 
   if (isLoading) {
     return (
       <MainContainer title="Edit Profile" breadcrumbItems={BREADCRUMB_ITEMS}>
-        <div>Loading...</div>
+        <Loader />
       </MainContainer>
     )
   }
@@ -99,23 +107,33 @@ export default function EditProfilePage() {
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <div className="flex items-center gap-4">
                 <Avatar className="h-20 w-20">
-                  <AvatarImage src={form.watch('avatar')} />
+                  <AvatarImage src={avatarPreview} />
                   <AvatarFallback>
                     {profile?.first_name?.[0]}
                     {profile?.last_name?.[0]}
                   </AvatarFallback>
                 </Avatar>
-                <div>
-                  <Input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleAvatarChange}
-                    className="w-full"
-                  />
-                  <p className="text-muted-foreground mt-1 text-sm">
-                    Upload a new avatar
-                  </p>
-                </div>
+                <FormField
+                  control={form.control}
+                  name="avatar"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="sr-only">Avatar</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0]
+                            field.onChange(file)
+                            handleAvatarChange(e)
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
 
               <FormField

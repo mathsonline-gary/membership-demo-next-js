@@ -1,12 +1,8 @@
 'use client'
 
-import { Plus } from 'lucide-react'
-
 import { MainContainer } from '@/app/(app)/_components/main-container'
-import { Button } from '@/components/ui/button'
-import { Dialog, DialogTrigger } from '@/components/ui/dialog'
 
-import { CreateTeamDialog } from './_components/create-team-dialog'
+import { CreateTeamButton } from './_components/create-team-button'
 import { SearchBar } from './_components/search-bar'
 import { TeamList } from './_components/team-list'
 
@@ -18,15 +14,7 @@ export default function TeamsPage() {
           <div className="relative flex-1">
             <SearchBar />
           </div>
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button>
-                <Plus className="h-4 w-4" />
-                New Team
-              </Button>
-            </DialogTrigger>
-            <CreateTeamDialog />
-          </Dialog>
+          <CreateTeamButton />
         </div>
         <TeamList />
       </div>

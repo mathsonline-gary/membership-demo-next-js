@@ -8,7 +8,7 @@ export const createTeamsService = (client: Client) => ({
     const response = await client.get<ApiResponse<Team[]>>('/api/teams', {
       params: {
         owner_id: ownerId,
-        query: searchQuery,
+        search: searchQuery,
       },
     })
     return response.data

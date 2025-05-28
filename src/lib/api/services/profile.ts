@@ -11,7 +11,21 @@ export const createProfileService = (client: Client) => ({
   },
 
   update: async (data: UpdateProfileRequest): Promise<void> => {
-    await client.put<void>(`/api/profile`, data)
+    const formData = new FormData()
+    if (data.first_name) {
+      console.log(data.first_name)
+      formData.append('first_name', data.first_name)
+    }
+    if (data.last_name) {
+      console.log(data.last_name)
+      formData.append('last_name', data.last_name)
+    }
+    if (data.avatar instanceof File) {
+      console.log(data.avatar)
+      formData.append('avatar', data.avatar)
+    }
+
+    await client.post<void>(`/api/profile`, formData)
   },
 })
 

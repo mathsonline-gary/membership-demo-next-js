@@ -5,7 +5,6 @@ import {
   createDeviceService,
   createNotificationsService,
   createProfileService,
-  createStudentService,
   createTeamsService,
 } from './services'
 
@@ -17,7 +16,6 @@ const createApi = (client: Client) => {
     auth: createAuthService(client),
     devices: createDeviceService(client),
     teams: createTeamsService(client),
-    students: createStudentService(client),
     notifications: createNotificationsService(client),
   }
 }

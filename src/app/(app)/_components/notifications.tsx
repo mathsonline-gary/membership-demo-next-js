@@ -125,7 +125,7 @@ export function Notifications() {
                           <div className="invisible absolute right-2 bottom-2 flex items-center gap-1 group-hover:visible">
                             <TooltipProvider>
                               <Tooltip>
-                                <TooltipTrigger>
+                                <TooltipTrigger asChild>
                                   <Button
                                     variant="ghost"
                                     size="icon"
@@ -157,7 +157,7 @@ export function Notifications() {
 
                             <TooltipProvider>
                               <Tooltip>
-                                <TooltipTrigger>
+                                <TooltipTrigger asChild>
                                   <Button
                                     variant="ghost"
                                     size="icon"
