@@ -2,6 +2,7 @@ import { Client, createClient } from './client'
 import { createEcho } from './echo'
 import {
   createAuthService,
+  createChatService,
   createDeviceService,
   createNotificationsService,
   createProfileService,
@@ -17,6 +18,7 @@ const createApi = (client: Client) => {
     devices: createDeviceService(client),
     teams: createTeamsService(client),
     notifications: createNotificationsService(client),
+    chat: createChatService(client),
   }
 }
 

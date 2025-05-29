@@ -2,7 +2,6 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import React from 'react'
 
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
@@ -22,7 +21,7 @@ export function OAuthButton({ provider, intent, className }: OAuthButtonProps) {
       asChild
     >
       <Link
-        href={`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/oauth/${provider}/redirect?client=teacher_dashboard&intent=${intent}`}
+        href={`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/oauth/${provider}/redirect?client=member_dashboard&intent=${intent}`}
         target="_self"
       >
         <Image

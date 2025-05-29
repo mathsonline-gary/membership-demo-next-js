@@ -17,12 +17,11 @@ export const createAuthService = (client: Client) => ({
   register: async (data: RegisterRequest): Promise<void> => {
     await client.post<void>('/auth/register', {
       ...data,
-      role: 'teacher',
     })
   },
 
   login: async (data: LoginRequest): Promise<void> => {
-    await client.post<void>('/auth/login', { ...data, role: 'teacher' })
+    await client.post<void>('/auth/login', { ...data, role: 'member' })
   },
 
   logout: async (): Promise<void> => {

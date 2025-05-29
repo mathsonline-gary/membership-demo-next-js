@@ -6,6 +6,7 @@ import {
   ChevronRightIcon,
   HelpCircle,
   LayoutDashboard,
+  MessageSquare,
   Settings,
   Users,
   Wrench,
@@ -56,6 +57,11 @@ const MENU_1_ITEMS: AppSidebarMenuItem[] = [
     title: 'Teams',
     url: '/teams',
     icon: Users,
+  },
+  {
+    title: 'Chats',
+    url: '/chat',
+    icon: MessageSquare,
   },
   {
     title: 'Courses',

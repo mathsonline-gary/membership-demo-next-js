@@ -1,4 +1,5 @@
 export * from './auth'
+export * from './chat'
 export * from './device'
 export * from './notifications'
 export * from './profile'

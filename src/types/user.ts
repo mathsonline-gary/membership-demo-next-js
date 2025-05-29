@@ -1,6 +1,6 @@
 export enum UserRole {
-  TEACHER = 'teacher',
-  STUDENT = 'student',
+  ADMIN = 'admin',
+  MEMBER = 'member',
 }
 
 export interface User {
@@ -20,15 +20,15 @@ export interface AuthUser extends User {
 
 export type Profile = AuthUser
 
-export interface Teacher extends User {
-  role: UserRole.TEACHER
+export interface Admin extends User {
+  role: UserRole.ADMIN
 }
 
-export interface Student extends User {
-  role: UserRole.STUDENT
+export interface Member extends User {
+  role: UserRole.MEMBER
 }
 
-export interface TeamMember extends Student {
+export interface TeamMember extends Member {
   pivot: {
     status: string
     created_at: string
@@ -40,7 +40,7 @@ export type Team = {
   id: number
   name: string
   owner_id: number
-  owner: Teacher
+  owner: Member
   members: TeamMember[]
   created_at: string
   updated_at: string
