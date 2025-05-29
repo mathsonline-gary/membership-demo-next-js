@@ -9,7 +9,7 @@ import {
   ForgotPasswordRequest,
   LoginRequest,
   RegisterRequest,
-} from '@/types/api/auth'
+} from '@/types/api'
 
 type AuthConfig = {
   middleware?: 'guest' | 'auth'

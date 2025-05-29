@@ -1,6 +1,11 @@
-export type ApiResponse<T> = {
+export type ApiEmptyResponse = void
+
+export interface ApiResponse<T> {
   message?: string
   data: T
+}
+
+export interface ApiPaginatedResponse<T> extends ApiResponse<T[]> {
   links?: {
     first: string
     last: string
@@ -18,7 +23,12 @@ export type ApiResponse<T> = {
   }
 }
 
-export type ApiErrorResponse = {
+export interface ApiCursorPaginatedResponse<T> extends ApiResponse<T[]> {
+  next_page_url: string | null
+  prev_page_url: string | null
+}
+
+export interface ApiErrorResponse {
   message: string
   errors?: Record<string, string[]>
 }

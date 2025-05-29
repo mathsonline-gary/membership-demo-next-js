@@ -1,31 +1,35 @@
+import { AuthUser } from '@/types'
 import {
+  ApiEmptyResponse,
+  ApiResponse,
   ForgotPasswordRequest,
   LoginRequest,
   RegisterRequest,
   ResetPasswordRequest,
-} from '@/types/api/auth'
-import { ApiResponse } from '@/types/api/common'
-import { AuthUser } from '@/types/user'
+} from '@/types/api'
 
 import { Client } from '../client'
 
 export const createAuthService = (client: Client) => ({
-  csrf: async (): Promise<void> => {
-    await client.get('/sanctum/csrf-cookie')
+  csrf: async (): Promise<ApiEmptyResponse> => {
+    await client.get<ApiEmptyResponse>('/sanctum/csrf-cookie')
   },
 
-  register: async (data: RegisterRequest): Promise<void> => {
-    await client.post<void>('/auth/register', {
+  register: async (data: RegisterRequest): Promise<ApiEmptyResponse> => {
+    await client.post<ApiEmptyResponse>('/auth/register', {
       ...data,
     })
   },
 
-  login: async (data: LoginRequest): Promise<void> => {
-    await client.post<void>('/auth/login', { ...data, role: 'member' })
+  login: async (data: LoginRequest): Promise<ApiEmptyResponse> => {
+    await client.post<ApiEmptyResponse>('/auth/login', {
+      ...data,
+      role: 'member',
+    })
   },
 
-  logout: async (): Promise<void> => {
-    await client.post<void>('/auth/logout')
+  logout: async (): Promise<ApiEmptyResponse> => {
+    await client.post<ApiEmptyResponse>('/auth/logout')
   },
 
   user: async (): Promise<AuthUser> => {
@@ -33,16 +37,20 @@ export const createAuthService = (client: Client) => ({
     return response.data
   },
 
-  forgotPassword: async (data: ForgotPasswordRequest): Promise<void> => {
-    await client.post<void>('/auth/forgot-password', data)
+  forgotPassword: async (
+    data: ForgotPasswordRequest
+  ): Promise<ApiEmptyResponse> => {
+    await client.post<ApiEmptyResponse>('/auth/forgot-password', data)
   },
 
-  resetPassword: async (data: ResetPasswordRequest): Promise<void> => {
-    await client.post<void>('/auth/reset-password', data)
+  resetPassword: async (
+    data: ResetPasswordRequest
+  ): Promise<ApiEmptyResponse> => {
+    await client.post<ApiEmptyResponse>('/auth/reset-password', data)
   },
 
-  resendEmailVerification: async (): Promise<void> => {
-    await client.post<void>('/auth/email/verification-notification')
+  resendEmailVerification: async (): Promise<ApiEmptyResponse> => {
+    await client.post<ApiEmptyResponse>('/auth/email/verification-notification')
   },
 })
 

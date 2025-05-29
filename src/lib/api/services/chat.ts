@@ -1,6 +1,6 @@
 import { Client } from '@/lib/api/client'
-import { ApiResponse } from '@/types/api/common'
-import { Chat, ChatMessage } from '@/types/chat'
+import { Chat, ChatMessage } from '@/types'
+import { ApiEmptyResponse, ApiResponse } from '@/types/api'
 
 export const createChatService = (client: Client) => ({
   index: async (targetUserId: number): Promise<Chat[]> => {
@@ -17,7 +17,7 @@ export const createChatService = (client: Client) => ({
     return response.data
   },
 
-  create: async (
+  store: async (
     senderId: number,
     receiverId: number,
     message: string
@@ -29,6 +29,17 @@ export const createChatService = (client: Client) => ({
     })
     return response.data
   },
+
+  messages: {
+    store: async (
+      chatId: number,
+      message: string
+    ): Promise<ApiEmptyResponse> => {
+      await client.post<ApiEmptyResponse>(`/api/chats/${chatId}/messages`, {
+        message,
+      })
+    },
+  },
 })
 
-export const createChatMessageService = (client: Client) => ({})
+export type ChatService = ReturnType<typeof createChatService>

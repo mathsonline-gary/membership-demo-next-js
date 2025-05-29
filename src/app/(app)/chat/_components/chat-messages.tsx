@@ -25,7 +25,7 @@ type MessageFormValues = z.infer<typeof messageFormSchema>
 export function ChatMessages() {
   const searchParams = useSearchParams()
   const chatId = Number(searchParams.get('id'))
-  const { data: chat, isLoading } = useGetChat(chatId)
+  const { data: chat, isFetching } = useGetChat(chatId)
   const { user } = useAuth()
 
   const participants = chat?.participants.filter((participant) => {
@@ -73,7 +73,7 @@ export function ChatMessages() {
 
       <ScrollArea className="flex-1">
         <div className="space-y-8">
-          {isLoading
+          {isFetching
             ? Array.from({ length: 4 }).map((_, i) => (
                 <MessageBoxSkeleton key={i} isCurrentUser={i % 2 === 1} />
               ))

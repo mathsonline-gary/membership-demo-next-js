@@ -1,6 +1,9 @@
-import { ApiResponse } from '@/types/api/common'
-import { UpdateProfileRequest } from '@/types/api/profile'
-import { Profile } from '@/types/user'
+import { Profile } from '@/types'
+import {
+  ApiEmptyResponse,
+  ApiResponse,
+  UpdateProfileRequest,
+} from '@/types/api'
 
 import { Client } from '../client'
 
@@ -10,7 +13,7 @@ export const createProfileService = (client: Client) => ({
     return response.data
   },
 
-  update: async (data: UpdateProfileRequest): Promise<void> => {
+  update: async (data: UpdateProfileRequest): Promise<ApiEmptyResponse> => {
     const formData = new FormData()
     if (data.first_name) {
       console.log(data.first_name)
@@ -25,7 +28,7 @@ export const createProfileService = (client: Client) => ({
       formData.append('avatar', data.avatar)
     }
 
-    await client.post<void>(`/api/profile`, formData)
+    await client.post<ApiEmptyResponse>(`/api/profile`, formData)
   },
 })
 

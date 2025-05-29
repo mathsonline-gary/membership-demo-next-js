@@ -2,7 +2,6 @@ import { Client, createClient } from './client'
 import { createEcho } from './echo'
 import {
   createAuthService,
-  createChatMessageService,
   createChatService,
   createDeviceService,
   createNotificationsService,
@@ -20,7 +19,6 @@ const createApi = (client: Client) => {
     teams: createTeamsService(client),
     notifications: createNotificationsService(client),
     chat: createChatService(client),
-    chatMessage: createChatMessageService(client),
   }
 }
 

@@ -33,7 +33,7 @@ import {
   useNotificationEcho,
 } from '@/hooks/use-api-query/notifications'
 import { cn } from '@/lib/utils'
-import { Notification } from '@/types/notification'
+import { Notification } from '@/types'
 
 export function Notifications() {
   const { data: notifications, isLoading } = useGetNotificationList()

@@ -12,7 +12,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { useDeleteTeam } from '@/hooks/use-api-query'
-import { Team } from '@/types/user'
+import { Team } from '@/types'
 
 interface DeleteTeamDialogContentProps {
   team: Team

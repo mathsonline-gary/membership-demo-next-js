@@ -30,7 +30,7 @@ import {
   useInviteTeamMember,
 } from '@/hooks/use-api-query/teams'
 import { ApiError } from '@/lib/api/error'
-import type { Team, TeamMember } from '@/types/user'
+import type { Team, TeamMember } from '@/types'
 
 interface ManageMembersDialogContentProps {
   team: Team

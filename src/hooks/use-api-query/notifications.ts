@@ -3,10 +3,7 @@ import * as React from 'react'
 
 import { useAuth } from '@/hooks/use-auth'
 import { api, echo } from '@/lib/api'
-import {
-  Notification,
-  TeamMemberInvitationNotification,
-} from '@/types/notification'
+import { Notification, TeamMemberInvitationNotification } from '@/types'
 
 export function useGetNotificationList() {
   return useQuery({
@@ -27,7 +24,7 @@ export function useDeleteNotification() {
         return old.filter((notification) => notification.id !== id)
       })
 
-      return await api.notifications.delete(id)
+      return await api.notifications.destroy(id)
     },
   })
 }

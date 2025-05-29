@@ -7,7 +7,7 @@ import {
 
 import { useAuth } from '@/hooks/use-auth'
 import { api } from '@/lib/api'
-import { Chat, ChatMessage } from '@/types/chat'
+import { Chat, ChatMessage } from '@/types'
 
 export const useGetChats = () => {
   const { user } = useAuth()
@@ -41,7 +41,7 @@ export const useSendChatMessage = (senderId: number, receiverId: number) => {
 
   return useMutation({
     mutationFn: (message: string) =>
-      api.chat.create(senderId, receiverId, message),
+      api.chat.store(senderId, receiverId, message),
     onSuccess: (chatMessage: ChatMessage) => {
       queryClient.setQueryData(
         ['chats', senderId, receiverId],

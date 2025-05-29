@@ -26,7 +26,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { useUpdateTeam } from '@/hooks/use-api-query'
 import { ApiError } from '@/lib/api/error'
-import { Team } from '@/types/user'
+import { Team } from '@/types'
 
 interface EditTeamDialogContentProps {
   team: Team

@@ -1,6 +1,6 @@
 import { Client } from '@/lib/api/client'
-import { ApiResponse } from '@/types/api/common'
-import { Device } from '@/types/user'
+import { Device } from '@/types'
+import { ApiEmptyResponse, ApiResponse } from '@/types/api'
 
 export const createDeviceService = (client: Client) => ({
   index: async (userId: number): Promise<Device[]> => {
@@ -10,8 +10,10 @@ export const createDeviceService = (client: Client) => ({
     return response.data
   },
 
-  destroy: async (userId: number, uuid: string): Promise<void> => {
-    await client.delete(`/api/users/${userId}/devices/${uuid}`)
+  destroy: async (userId: number, uuid: string): Promise<ApiEmptyResponse> => {
+    await client.delete<ApiEmptyResponse>(
+      `/api/users/${userId}/devices/${uuid}`
+    )
   },
 })
 

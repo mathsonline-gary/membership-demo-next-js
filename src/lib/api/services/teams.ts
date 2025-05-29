@@ -1,5 +1,5 @@
-import { ApiResponse } from '@/types/api/common'
-import { Team } from '@/types/user'
+import { Team } from '@/types'
+import { ApiEmptyResponse, ApiResponse } from '@/types/api'
 
 import { Client } from '../client'
 
@@ -27,20 +27,26 @@ export const createTeamsService = (client: Client) => ({
     return response.data
   },
 
-  destroy: async (id: number): Promise<void> => {
-    await client.delete<ApiResponse<void>>(`/api/teams/${id}`)
+  destroy: async (id: number): Promise<ApiEmptyResponse> => {
+    await client.delete<ApiEmptyResponse>(`/api/teams/${id}`)
   },
 
   members: {
-    invite: async (teamId: number, data: { email: string }): Promise<void> => {
-      await client.post<ApiResponse<void>>(
+    invite: async (
+      teamId: number,
+      data: { email: string }
+    ): Promise<ApiEmptyResponse> => {
+      await client.post<ApiEmptyResponse>(
         `/api/teams/${teamId}/member-invitations`,
         data
       )
     },
 
-    destroy: async (teamId: number, memberId: number): Promise<void> => {
-      await client.delete<ApiResponse<void>>(
+    destroy: async (
+      teamId: number,
+      memberId: number
+    ): Promise<ApiEmptyResponse> => {
+      await client.delete<ApiEmptyResponse>(
         `/api/teams/${teamId}/members/${memberId}`
       )
     },

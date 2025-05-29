@@ -5,7 +5,7 @@ import axios, {
   Method,
 } from 'axios'
 
-import { ApiErrorResponse } from '@/types/api/common'
+import { ApiErrorResponse } from '@/types/api'
 
 import { ApiError } from './error'
 

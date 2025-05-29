@@ -31,7 +31,7 @@ import {
 } from '@/components/ui/tooltip'
 import { useGetTeamList } from '@/hooks/use-api-query'
 import { useIsMobile, useIsTablet } from '@/hooks/use-mobile'
-import { Team } from '@/types/user'
+import { Team } from '@/types'
 
 import { DeleteTeamDialogContent } from './delete-team-dialog'
 import { EditTeamDialogContent } from './edit-team-dialog'

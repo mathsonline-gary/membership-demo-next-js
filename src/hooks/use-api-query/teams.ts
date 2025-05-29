@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 import { useAuth } from '@/hooks/use-auth'
 import { api } from '@/lib/api'
-import type { Team } from '@/types/user'
+import type { Team } from '@/types'
 
 export const useGetTeamList = (searchQuery?: string) => {
   const { user } = useAuth()

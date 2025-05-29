@@ -1,14 +1,14 @@
 'use client'
 
 import {
+  AppWindow,
+  Bot,
+  Clock,
+  Globe,
+  Laptop,
+  Monitor,
   Smartphone,
   Tablet,
-  Monitor,
-  Globe,
-  Clock,
-  Laptop,
-  Bot,
-  AppWindow,
 } from 'lucide-react'
 
 import { Loader } from '@/components/loader'
@@ -23,7 +23,7 @@ import {
 } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useGetDeviceList, useRevokeDevice } from '@/hooks/use-api-query'
-import { Device } from '@/types/user'
+import { Device } from '@/types'
 
 const DeviceItem = ({ device }: { device: Device }) => {
   const { mutate: revokeDevice, isPending } = useRevokeDevice()
