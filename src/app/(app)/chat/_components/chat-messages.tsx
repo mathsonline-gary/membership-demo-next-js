@@ -1,14 +1,20 @@
 import { zodResolver } from '@hookform/resolvers/zod'
+import { formatDistanceToNow } from 'date-fns'
+import { useSearchParams } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Avatar } from '@/components/avatar'
 import { Button } from '@/components/ui/button'
 import { Form, FormControl, FormField, FormItem } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
+import { Skeleton } from '@/components/ui/skeleton'
+import { useGetChat } from '@/hooks/use-api-query/chat'
+import { useAuth } from '@/hooks/use-auth'
 import { cn } from '@/lib/utils'
+import { ChatMessage, User } from '@/types'
 
 const messageFormSchema = z.object({
   message: z.string().min(1, 'Message cannot be empty'),
@@ -17,20 +23,15 @@ const messageFormSchema = z.object({
 type MessageFormValues = z.infer<typeof messageFormSchema>
 
 export function ChatMessages() {
-  const messages = [
-    {
-      id: 1,
-      content: 'Hello, how are you?',
-      sender: 'user',
-      timestamp: new Date(),
-    },
-    {
-      id: 2,
-      content: 'I am fine, thank you!',
-      sender: 'other',
-      timestamp: new Date(),
-    },
-  ]
+  const searchParams = useSearchParams()
+  const chatId = Number(searchParams.get('id'))
+  const { data: chat, isLoading } = useGetChat(chatId)
+  const { user } = useAuth()
+
+  const participants = chat?.participants.filter((participant) => {
+    if (participant.id === user?.id) return false
+    return true
+  })
 
   const form = useForm<MessageFormValues>({
     resolver: zodResolver(messageFormSchema),
@@ -46,39 +47,49 @@ export function ChatMessages() {
 
   return (
     <div className="flex h-full flex-col gap-y-4">
-      <div className="flex items-center gap-2">
-        <div className="bg-primary/10 flex h-10 w-10 items-center justify-center rounded-full">
-          <Avatar>
-            <AvatarImage src="https://github.com/shadcn.png" />
-            <AvatarFallback>CN</AvatarFallback>
-          </Avatar>
+      {participants?.length === 1 ? (
+        <div className="flex items-center gap-2">
+          <Avatar user={participants[0]} className="size-10" />
+          <div>
+            <h2 className="font-semibold">{participants[0]?.full_name}</h2>
+            <p className="text-muted-foreground text-sm">
+              {participants[0]?.email}
+            </p>
+          </div>
         </div>
-        <div>
-          <h2 className="font-semibold">Chat Support</h2>
-          <p className="text-muted-foreground text-sm">test@test.com</p>
+      ) : (
+        <div className="flex items-center -space-x-4">
+          {participants?.map((participant) => (
+            <Avatar
+              key={participant.id}
+              user={participant}
+              className="border-background size-10 border-4"
+            />
+          ))}
         </div>
-      </div>
+      )}
 
       <Separator />
 
       <ScrollArea className="flex-1">
-        <div className="space-y-4">
-          {messages.map((message) => (
-            <div
-              key={message.id}
-              className={cn(
-                'flex w-max max-w-[80%] flex-col gap-2 rounded-lg px-4 py-2',
-                message.sender === 'user'
-                  ? 'bg-primary text-primary-foreground ml-auto'
-                  : 'bg-muted'
-              )}
-            >
-              <p>{message.content}</p>
-              <span className="text-xs opacity-70">
-                {message.timestamp.toLocaleTimeString()}
-              </span>
-            </div>
-          ))}
+        <div className="space-y-8">
+          {isLoading
+            ? Array.from({ length: 4 }).map((_, i) => (
+                <MessageBoxSkeleton key={i} isCurrentUser={i % 2 === 1} />
+              ))
+            : chat?.messages?.map((message) => {
+                const sender = chat.participants.find(
+                  (participant) => participant.id === message.sender_id
+                )
+                return (
+                  <MessageBox
+                    key={message.id}
+                    message={message}
+                    sender={sender}
+                    currentUserId={user?.id}
+                  />
+                )
+              })}
         </div>
       </ScrollArea>
 
@@ -99,6 +110,96 @@ export function ChatMessages() {
             <Button type="submit">Send</Button>
           </form>
         </Form>
+      </div>
+    </div>
+  )
+}
+
+const MessageBoxSkeleton = ({ isCurrentUser }: { isCurrentUser: boolean }) => {
+  return (
+    <div
+      className={cn(
+        'flex w-full items-start gap-4',
+        isCurrentUser ? 'flex-row-reverse' : 'flex-row'
+      )}
+    >
+      {!isCurrentUser && (
+        <div className="bg-muted flex h-10 w-10 items-center justify-center rounded-full">
+          <Skeleton className="h-10 w-10 rounded-full" />
+        </div>
+      )}
+      <div
+        className={cn(
+          'flex flex-col',
+          isCurrentUser ? 'items-end' : 'items-start',
+          'flex-1'
+        )}
+      >
+        <div className="mb-1 flex items-baseline gap-2">
+          {!isCurrentUser && <Skeleton className="h-4 w-24" />}
+          <Skeleton className="h-3 w-16" />
+        </div>
+        <div
+          className={cn(
+            'mt-1 max-w-[80%] rounded-lg px-4 py-2',
+            isCurrentUser ? 'bg-primary/60 ml-auto' : 'bg-muted'
+          )}
+        >
+          <Skeleton className="mb-2 h-4 w-40" />
+          <Skeleton className="h-4 w-32" />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+const MessageBox = ({
+  message,
+  sender,
+  currentUserId,
+}: {
+  message: ChatMessage
+  sender?: User
+  currentUserId?: number
+}) => {
+  const isCurrentUser = message.sender_id === currentUserId
+
+  if (!sender) return null
+
+  return (
+    <div
+      className={cn(
+        'flex w-full items-start gap-4',
+        isCurrentUser ? 'flex-row-reverse' : 'flex-row'
+      )}
+    >
+      {!isCurrentUser && <Avatar user={sender} />}
+      <div
+        className={cn(
+          'flex flex-col',
+          isCurrentUser ? 'items-end' : 'items-start',
+          'flex-1'
+        )}
+      >
+        <div className="flex items-baseline gap-2">
+          {!isCurrentUser && (
+            <span className="text-sm font-medium">{sender.full_name}</span>
+          )}
+          <span className="text-xs opacity-70">
+            {formatDistanceToNow(new Date(message.created_at))}
+          </span>
+        </div>
+
+        <div
+          className={cn(
+            'mt-1 max-w-[80%] rounded-lg px-4 py-2 break-words',
+            isCurrentUser
+              ? 'bg-primary text-primary-foreground'
+              : 'bg-muted text-foreground'
+          )}
+        >
+          <p>{message.content}</p>
+        </div>
       </div>
     </div>
   )

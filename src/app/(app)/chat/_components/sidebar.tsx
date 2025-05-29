@@ -4,14 +4,16 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Skeleton } from '@/components/ui/skeleton'
-import { useLastChats } from '@/hooks/use-api-query'
+import { useGetChats } from '@/hooks/use-api-query/chat'
+import { useAuth } from '@/hooks/use-auth'
 import { cn } from '@/lib/utils'
 
 export function Sidebar() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const selectedUserId = searchParams.get('id')
-  const { data: lastChats, isLoading } = useLastChats()
+  const selectedChatId = searchParams.get('id')
+  const { data: chats, isLoading } = useGetChats()
+  const { user } = useAuth()
 
   const onUserSelect = (userId: number) => {
     const params = new URLSearchParams(searchParams)
@@ -22,61 +24,77 @@ export function Sidebar() {
   return (
     <div className="w-80 px-4">
       <ScrollArea>
-        <div className="space-y-1">
-          {isLoading ? (
-            <ReceiverSkeleton />
-          ) : (
-            lastChats?.map((chat) => (
-              <button
-                key={chat.id}
-                className={cn(
-                  'hover:bg-muted flex w-full items-center gap-2 rounded-lg p-2 text-left',
-                  selectedUserId === chat.receiver_id.toString() && 'bg-muted'
-                )}
-                onClick={() => onUserSelect(chat.id)}
-              >
-                <Avatar>
-                  <AvatarImage
-                    src={chat.receiver?.avatar ?? ''}
-                    alt={
-                      chat.receiver?.first_name + ' ' + chat.receiver?.last_name
-                    }
-                  />
-                  <AvatarFallback className="rounded-lg">
-                    {chat.receiver?.first_name.charAt(0)}
-                    {chat.receiver?.last_name.charAt(0)}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center justify-between">
-                    <p className="truncate text-sm font-medium">
-                      {chat.receiver?.first_name +
+        <ul className="space-y-1">
+          {isLoading
+            ? Array.from({ length: 5 }).map((_, index) => (
+                <li key={index}>
+                  <ItemSkeleton />
+                </li>
+              ))
+            : chats?.map((chat) => (
+                <li
+                  key={chat.id}
+                  className={cn(
+                    'hover:bg-muted flex w-full items-center gap-2 rounded-lg p-2 text-left',
+                    selectedChatId === chat.id.toString() && 'bg-muted'
+                  )}
+                  onClick={() => onUserSelect(chat.id)}
+                >
+                  <Avatar>
+                    <AvatarImage
+                      src={chat.participants[0].avatar ?? ''}
+                      alt={
+                        chat.participants[0].first_name +
                         ' ' +
-                        chat.receiver?.last_name}
-                    </p>
-                    <p className="text-muted-foreground text-xs">
-                      {formatDistanceToNow(new Date(chat.created_at))}
+                        chat.participants[0].last_name
+                      }
+                    />
+                    <AvatarFallback className="rounded-lg">
+                      {chat.participants
+                        .find((participant) => participant.id !== user?.id)
+                        ?.first_name.charAt(0)}
+                      {chat.participants
+                        .find((participant) => participant.id !== user?.id)
+                        ?.last_name.charAt(0)}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1">
+                    <div className="flex items-center justify-between">
+                      <p className="text-sm font-medium">
+                        {
+                          chat.participants.find(
+                            (participant) => participant.id !== user?.id
+                          )?.full_name
+                        }
+                      </p>
+                      <p className="text-muted-foreground text-xs">
+                        {formatDistanceToNow(
+                          new Date(chat.last_message_sent_at)
+                        )}
+                      </p>
+                    </div>
+                    <p className="text-muted-foreground line-clamp-1 text-xs">
+                      {chat.last_message.content}
                     </p>
                   </div>
-                  <p className="text-muted-foreground truncate text-xs">
-                    {chat.message}
-                  </p>
-                </div>
-              </button>
-            ))
-          )}
-        </div>
+                </li>
+              ))}
+        </ul>
       </ScrollArea>
     </div>
   )
 }
 
-const ReceiverSkeleton = () => {
+const ItemSkeleton = () => {
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex w-full items-center gap-2 rounded-lg p-2">
       <Skeleton className="h-10 w-10 rounded-full" />
-      <div className="flex-1">
-        <Skeleton className="h-4 w-18" />
+      <div className="min-w-0 flex-1">
+        <div className="flex items-center justify-between">
+          <Skeleton className="h-4 w-24" />
+          <Skeleton className="h-3 w-16" />
+        </div>
+        <Skeleton className="mt-1 h-3 w-32" />
       </div>
     </div>
   )

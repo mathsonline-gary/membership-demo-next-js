@@ -7,23 +7,32 @@ import {
 
 import { useAuth } from '@/hooks/use-auth'
 import { api } from '@/lib/api'
-import { ChatMessage } from '@/types/chat'
+import { Chat, ChatMessage } from '@/types/chat'
 
-export const useLastChats = () => {
+export const useGetChats = () => {
   const { user } = useAuth()
   return useQuery({
-    queryKey: ['last-chats'],
-    queryFn: () => api.chat.index(user!.id, null, true),
+    queryKey: ['chats'],
+    queryFn: () => api.chat.index(user!.id),
+    enabled: !!user,
     placeholderData: keepPreviousData,
   })
 }
 
-export const useChatMessages = (receiverId: number) => {
-  const { user } = useAuth()
+export const useGetChat = (chatId: number) => {
+  const queryClient = useQueryClient()
 
-  return useQuery({
-    queryKey: ['chats', receiverId],
-    queryFn: () => api.chat.index(user!.id, receiverId),
+  return useQuery<Chat>({
+    queryKey: ['chats', chatId],
+    queryFn: () => api.chat.show(chatId),
+    select: (data: Chat) => {
+      queryClient.setQueryData<Chat[]>(['chats'], (oldData) => {
+        if (!oldData) return [data]
+        return oldData.map((chat) => (chat.id === data.id ? data : chat))
+      })
+      return data
+    },
+    placeholderData: keepPreviousData,
   })
 }
 
