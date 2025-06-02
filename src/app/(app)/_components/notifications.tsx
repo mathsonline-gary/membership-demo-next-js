@@ -210,7 +210,7 @@ function TeamMemberInvitedNotification({
         </AvatarFallback>
       </Avatar>
       <p>
-        {notification.data.invitee_name as string} invited you to join{' '}
+        {notification.data.inviter_name as string} invited you to join{' '}
         {notification.data.team_name as string}
       </p>
     </div>

@@ -12,12 +12,12 @@ export function MainContainer({
   console.log('page: ', title)
 
   return (
-    <>
+    <div className="flex h-full min-h-0 flex-col">
       {breadcrumbItems && <Breadcrumb items={breadcrumbItems} />}
-      <section className="relative flex flex-1 flex-col space-y-6 px-4 py-2">
+      <div className="relative flex flex-1 flex-col space-y-6 px-4 py-2">
         <h1 className="text-3xl font-bold">{title}</h1>
-        {children}
-      </section>
-    </>
+        <div className="h-full min-h-0 flex-1 shrink">{children}</div>
+      </div>
+    </div>
   )
 }

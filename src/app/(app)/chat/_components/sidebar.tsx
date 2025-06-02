@@ -22,66 +22,62 @@ export function Sidebar() {
   }
 
   return (
-    <div className="w-80 px-4">
-      <ScrollArea>
-        <ul className="space-y-1">
-          {isLoading
-            ? Array.from({ length: 5 }).map((_, index) => (
-                <li key={index}>
-                  <ItemSkeleton />
-                </li>
-              ))
-            : chats?.map((chat) => (
-                <li
-                  key={chat.id}
-                  className={cn(
-                    'hover:bg-muted flex w-full items-center gap-2 rounded-lg p-2 text-left',
-                    selectedChatId === chat.id.toString() && 'bg-muted'
-                  )}
-                  onClick={() => onUserSelect(chat.id)}
-                >
-                  <Avatar>
-                    <AvatarImage
-                      src={chat.participants[0].avatar ?? ''}
-                      alt={
-                        chat.participants[0].first_name +
-                        ' ' +
-                        chat.participants[0].last_name
+    <ScrollArea>
+      <ul className="space-y-1">
+        {isLoading
+          ? Array.from({ length: 5 }).map((_, index) => (
+              <li key={index}>
+                <ItemSkeleton />
+              </li>
+            ))
+          : chats?.map((chat) => (
+              <li
+                key={chat.id}
+                className={cn(
+                  'hover:bg-muted flex w-full items-center gap-2 rounded-lg p-2 text-left',
+                  selectedChatId === chat.id.toString() && 'bg-muted'
+                )}
+                onClick={() => onUserSelect(chat.id)}
+              >
+                <Avatar>
+                  <AvatarImage
+                    src={chat.participants[0].avatar ?? ''}
+                    alt={
+                      chat.participants[0].first_name +
+                      ' ' +
+                      chat.participants[0].last_name
+                    }
+                  />
+                  <AvatarFallback className="rounded-lg">
+                    {chat.participants
+                      .find((participant) => participant.id !== user?.id)
+                      ?.first_name.charAt(0)}
+                    {chat.participants
+                      .find((participant) => participant.id !== user?.id)
+                      ?.last_name.charAt(0)}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex-1">
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm font-medium">
+                      {
+                        chat.participants.find(
+                          (participant) => participant.id !== user?.id
+                        )?.full_name
                       }
-                    />
-                    <AvatarFallback className="rounded-lg">
-                      {chat.participants
-                        .find((participant) => participant.id !== user?.id)
-                        ?.first_name.charAt(0)}
-                      {chat.participants
-                        .find((participant) => participant.id !== user?.id)
-                        ?.last_name.charAt(0)}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between">
-                      <p className="text-sm font-medium">
-                        {
-                          chat.participants.find(
-                            (participant) => participant.id !== user?.id
-                          )?.full_name
-                        }
-                      </p>
-                      <p className="text-muted-foreground text-xs">
-                        {formatDistanceToNow(
-                          new Date(chat.last_message_sent_at)
-                        )}
-                      </p>
-                    </div>
-                    <p className="text-muted-foreground line-clamp-1 text-xs">
-                      {chat.last_message.content}
+                    </p>
+                    <p className="text-muted-foreground text-xs">
+                      {formatDistanceToNow(new Date(chat.last_message_sent_at))}
                     </p>
                   </div>
-                </li>
-              ))}
-        </ul>
-      </ScrollArea>
-    </div>
+                  <p className="text-muted-foreground line-clamp-1 text-xs">
+                    {chat.last_message.content}
+                  </p>
+                </div>
+              </li>
+            ))}
+      </ul>
+    </ScrollArea>
   )
 }
 

@@ -17,5 +17,4 @@ export type ChatMessage = {
   content: string
   created_at: string
   updated_at: string
-  sender?: User
 }

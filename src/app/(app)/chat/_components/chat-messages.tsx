@@ -5,13 +5,14 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
 import { Avatar } from '@/components/avatar'
+import { Loader } from '@/components/loader'
 import { Button } from '@/components/ui/button'
 import { Form, FormControl, FormField, FormItem } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
 import { Skeleton } from '@/components/ui/skeleton'
-import { useGetChat } from '@/hooks/use-api-query/chat'
+import { useGetChat, useSendChatMessage } from '@/hooks/use-api-query/chat'
 import { useAuth } from '@/hooks/use-auth'
 import { cn } from '@/lib/utils'
 import { ChatMessage, User } from '@/types'
@@ -27,6 +28,7 @@ export function ChatMessages() {
   const chatId = Number(searchParams.get('id'))
   const { data: chat, isFetching } = useGetChat(chatId)
   const { user } = useAuth()
+  const { mutate: sendMessage, isPending } = useSendChatMessage(chatId)
 
   const participants = chat?.participants.filter((participant) => {
     if (participant.id === user?.id) return false
@@ -41,7 +43,7 @@ export function ChatMessages() {
   })
 
   function onSubmit(data: MessageFormValues) {
-    console.log('message: ', data.message)
+    sendMessage(data.message)
     form.reset()
   }
 
@@ -107,7 +109,9 @@ export function ChatMessages() {
                 </FormItem>
               )}
             />
-            <Button type="submit">Send</Button>
+            <Button type="submit" disabled={isPending}>
+              {isPending ? <Loader /> : 'Send'}
+            </Button>
           </form>
         </Form>
       </div>

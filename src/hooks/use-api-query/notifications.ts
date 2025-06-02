@@ -85,7 +85,7 @@ export function useNotificationEcho({
 
     try {
       hasSetupRef.current = true
-      const channel = echo.private(`App.Models.User.${user.id}`)
+      const channel = echo.private(`user.${user.id}`)
 
       channel.notification((notification: TeamMemberInvitationNotification) => {
         const notificationData: Notification = {
