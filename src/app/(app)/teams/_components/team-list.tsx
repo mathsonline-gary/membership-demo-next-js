@@ -158,7 +158,10 @@ function TeamActions({ team }: TeamActionsProps) {
         open={dialog === 'edit'}
         onOpenChange={(open) => !open && setDialog(null)}
       >
-        <EditTeamDialogContent team={team} />
+        <EditTeamDialogContent
+          team={team}
+          closeDialog={() => setDialog(null)}
+        />
       </Dialog>
       <Dialog
         open={dialog === 'members'}

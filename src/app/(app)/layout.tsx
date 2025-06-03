@@ -43,7 +43,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
               </div>
             </div>
           </header>
-          <main className="flex flex-1 flex-col">{children}</main>
+          <main className="flex flex-1 flex-col px-4 py-2">{children}</main>
         </SidebarInset>
       </SidebarProvider>
     </AuthProvider>

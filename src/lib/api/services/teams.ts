@@ -9,6 +9,7 @@ export const createTeamsService = (client: Client) => ({
       params: {
         owner_id: ownerId,
         search: searchQuery,
+        with: ['members', 'owner'],
       },
     })
     return response.data
@@ -19,12 +20,11 @@ export const createTeamsService = (client: Client) => ({
     return response.data
   },
 
-  update: async (id: number, data: { name: string }): Promise<Team> => {
-    const response = await client.put<ApiResponse<Team>>(
-      `/api/teams/${id}`,
-      data
-    )
-    return response.data
+  update: async (
+    id: number,
+    data: { name: string }
+  ): Promise<ApiEmptyResponse> => {
+    await client.put<ApiEmptyResponse>(`/api/teams/${id}`, data)
   },
 
   destroy: async (id: number): Promise<ApiEmptyResponse> => {

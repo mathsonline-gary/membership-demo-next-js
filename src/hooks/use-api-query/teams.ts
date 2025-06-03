@@ -20,21 +20,8 @@ export const useUpdateTeam = () => {
   return useMutation({
     mutationFn: ({ id, name }: { id: number; name: string }) =>
       api.teams.update(id, { name }),
-    onSuccess: ({ id, name }) => {
-      queryClient
-        .getQueryCache()
-        .findAll({ queryKey: ['teams'], exact: false })
-        .forEach((query) => {
-          queryClient.setQueryData<Team[] | undefined>(
-            query.queryKey,
-            (oldTeams) => {
-              if (!oldTeams) return oldTeams
-              return oldTeams.map((team) =>
-                team.id === id ? { ...team, name } : team
-              )
-            }
-          )
-        })
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['teams'], exact: false })
     },
   })
 }

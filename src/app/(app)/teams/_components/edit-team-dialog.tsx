@@ -30,6 +30,7 @@ import { Team } from '@/types'
 
 interface EditTeamDialogContentProps {
   team: Team
+  closeDialog: () => void
 }
 
 const teamSchema = z.object({
@@ -38,7 +39,10 @@ const teamSchema = z.object({
 
 type TeamFormValues = z.infer<typeof teamSchema>
 
-export function EditTeamDialogContent({ team }: EditTeamDialogContentProps) {
+export function EditTeamDialogContent({
+  team,
+  closeDialog,
+}: EditTeamDialogContentProps) {
   const { mutate: updateTeam, isPending: isUpdating } = useUpdateTeam()
 
   const form = useForm<TeamFormValues>({
@@ -57,6 +61,7 @@ export function EditTeamDialogContent({ team }: EditTeamDialogContentProps) {
       {
         onSuccess: () => {
           toast.success('Team updated successfully')
+          closeDialog()
         },
         onError: (error) => {
           if (error instanceof ApiError && error.isUnprocessableEntity()) {
