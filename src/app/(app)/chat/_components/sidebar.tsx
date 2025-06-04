@@ -1,5 +1,5 @@
 import { formatDistanceToNow } from 'date-fns'
-import { useRouter, useSearchParams } from 'next/navigation'
+import Link from 'next/link'
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { ScrollArea } from '@/components/ui/scroll-area'
@@ -8,18 +8,13 @@ import { useGetChats } from '@/hooks/use-api-query/chat'
 import { useAuth } from '@/hooks/use-auth'
 import { cn } from '@/lib/utils'
 
-export function Sidebar() {
-  const router = useRouter()
-  const searchParams = useSearchParams()
-  const selectedChatId = searchParams.get('id')
+interface SidebarProps {
+  activeChatId: string | null
+}
+
+export function Sidebar({ activeChatId }: SidebarProps) {
   const { data: chats, isLoading } = useGetChats()
   const { user } = useAuth()
-
-  const onUserSelect = (userId: number) => {
-    const params = new URLSearchParams(searchParams)
-    params.set('id', userId.toString())
-    router.replace(`/chat?${params.toString()}`)
-  }
 
   return (
     <ScrollArea>
@@ -35,45 +30,51 @@ export function Sidebar() {
                 key={chat.id}
                 className={cn(
                   'hover:bg-muted flex w-full items-center gap-2 rounded-lg p-2 text-left',
-                  selectedChatId === chat.id.toString() && 'bg-muted'
+                  activeChatId === chat.id.toString() && 'bg-muted'
                 )}
-                onClick={() => onUserSelect(chat.id)}
               >
-                <Avatar>
-                  <AvatarImage
-                    src={chat.participants[0].avatar ?? ''}
-                    alt={
-                      chat.participants[0].first_name +
-                      ' ' +
-                      chat.participants[0].last_name
-                    }
-                  />
-                  <AvatarFallback className="rounded-lg">
-                    {chat.participants
-                      .find((participant) => participant.id !== user?.id)
-                      ?.first_name.charAt(0)}
-                    {chat.participants
-                      .find((participant) => participant.id !== user?.id)
-                      ?.last_name.charAt(0)}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="flex-1">
-                  <div className="flex items-center justify-between">
-                    <p className="text-sm font-medium">
-                      {
-                        chat.participants.find(
-                          (participant) => participant.id !== user?.id
-                        )?.full_name
+                <Link
+                  href={`/chat?id=${chat.id}`}
+                  className="flex w-full items-center gap-2"
+                >
+                  <Avatar>
+                    <AvatarImage
+                      src={chat.participants[0].avatar ?? ''}
+                      alt={
+                        chat.participants[0].first_name +
+                        ' ' +
+                        chat.participants[0].last_name
                       }
-                    </p>
-                    <p className="text-muted-foreground text-xs">
-                      {formatDistanceToNow(new Date(chat.last_message_sent_at))}
+                    />
+                    <AvatarFallback className="rounded-lg">
+                      {chat.participants
+                        .find((participant) => participant.id !== user?.id)
+                        ?.first_name.charAt(0)}
+                      {chat.participants
+                        .find((participant) => participant.id !== user?.id)
+                        ?.last_name.charAt(0)}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1">
+                    <div className="flex items-center justify-between">
+                      <p className="text-sm font-medium">
+                        {
+                          chat.participants.find(
+                            (participant) => participant.id !== user?.id
+                          )?.full_name
+                        }
+                      </p>
+                      <p className="text-muted-foreground text-xs">
+                        {formatDistanceToNow(
+                          new Date(chat.last_message_sent_at)
+                        )}
+                      </p>
+                    </div>
+                    <p className="text-muted-foreground line-clamp-1 text-xs">
+                      {chat.last_message.content}
                     </p>
                   </div>
-                  <p className="text-muted-foreground line-clamp-1 text-xs">
-                    {chat.last_message.content}
-                  </p>
-                </div>
+                </Link>
               </li>
             ))}
       </ul>

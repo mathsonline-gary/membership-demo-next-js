@@ -1,6 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { formatDistanceToNow } from 'date-fns'
-import { useSearchParams } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
@@ -23,9 +22,11 @@ const messageFormSchema = z.object({
 
 type MessageFormValues = z.infer<typeof messageFormSchema>
 
-export function ChatMessages() {
-  const searchParams = useSearchParams()
-  const chatId = Number(searchParams.get('id'))
+interface ChatMessagesProps {
+  chatId: number
+}
+
+export function ChatMessages({ chatId }: ChatMessagesProps) {
   const { data: chat, isFetching } = useGetChat(chatId)
   const { user } = useAuth()
   const { mutate: sendMessage, isPending } = useSendChatMessage(chatId)

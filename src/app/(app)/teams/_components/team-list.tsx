@@ -1,7 +1,6 @@
 'use client'
 
 import { MoreHorizontal, Users } from 'lucide-react'
-import { useSearchParams } from 'next/navigation'
 import { useState } from 'react'
 
 import { Badge } from '@/components/ui/badge'
@@ -37,10 +36,7 @@ import { DeleteTeamDialogContent } from './delete-team-dialog'
 import { EditTeamDialogContent } from './edit-team-dialog'
 import { ManageMembersDialogContent } from './manage-members-dialog'
 
-export function TeamList() {
-  const searchParams = useSearchParams()
-  const query = searchParams.get('query') || ''
-
+export function TeamList({ query }: { query: string }) {
   const { data: teams, isLoading, isError } = useGetTeamList(query)
   const isMobile = useIsMobile()
   const isTablet = useIsTablet()
