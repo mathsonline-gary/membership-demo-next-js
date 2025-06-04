@@ -1,9 +1,7 @@
-'use client'
-
 import { zodResolver } from '@hookform/resolvers/zod'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
-import { useState } from 'react'
+import { Suspense, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import * as z from 'zod'
 
@@ -33,7 +31,8 @@ const formSchema = z.object({
 
 type LoginFormValues = z.infer<typeof formSchema>
 
-export function LoginForm() {
+// Create a wrapper component that uses useSearchParams
+function LoginFormContent() {
   const searchParams = useSearchParams()
   const { login } = useAuth()
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
@@ -139,5 +138,13 @@ export function LoginForm() {
         </div>
       </form>
     </Form>
+  )
+}
+
+export function LoginForm() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <LoginFormContent />
+    </Suspense>
   )
 }

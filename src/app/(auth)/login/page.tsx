@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
+import { Suspense } from 'react'
 
 import { OAuthButton } from '@/app/(auth)/oauth-button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -9,7 +10,8 @@ import { useAuth } from '@/hooks/use-auth'
 
 import { LoginForm } from './login-form'
 
-export default function Page() {
+// Create a wrapper component that uses useSearchParams
+function LoginPageContent() {
   const searchParams = useSearchParams()
   useAuth({
     middleware: 'guest',
@@ -53,5 +55,13 @@ export default function Page() {
         <Link href="#">Privacy Policy</Link>.
       </div>
     </>
+  )
+}
+
+export default function Page() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <LoginPageContent />
+    </Suspense>
   )
 }
