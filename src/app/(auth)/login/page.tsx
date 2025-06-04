@@ -2,21 +2,15 @@
 
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
-import { Suspense } from 'react'
 
 import { OAuthButton } from '@/app/(auth)/oauth-button'
 import { Card, CardContent } from '@/components/ui/card'
-import { useAuth } from '@/hooks/use-auth'
 
 import { LoginForm } from './login-form'
 
-// Create a wrapper component that uses useSearchParams
-function LoginPageContent() {
+export default function Page() {
   const searchParams = useSearchParams()
-  useAuth({
-    middleware: 'guest',
-    redirectIfAuthenticated: searchParams.get('redirect') ?? '/dashboard',
-  })
+  const email = searchParams.get('email') ?? ''
 
   return (
     <>
@@ -28,11 +22,12 @@ function LoginPageContent() {
               Login and start your maths journey
             </p>
           </div>
-          <LoginForm />
+
+          <LoginForm email={email} />
 
           <div>
             <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
-              <span className="bg-background text-muted-foreground relative z-10 px-2">
+              <span className="bg-card text-muted-foreground relative z-10 px-2">
                 Or continue with
               </span>
             </div>
@@ -55,13 +50,5 @@ function LoginPageContent() {
         <Link href="#">Privacy Policy</Link>.
       </div>
     </>
-  )
-}
-
-export default function Page() {
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <LoginPageContent />
-    </Suspense>
   )
 }
