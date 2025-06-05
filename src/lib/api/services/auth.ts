@@ -1,4 +1,4 @@
-import { AuthUser } from '@/types'
+import { AccessToken, AuthUser } from '@/types'
 import {
   ApiEmptyResponse,
   ApiResponse,
@@ -21,15 +21,19 @@ export const createAuthService = (client: Client) => ({
     })
   },
 
-  login: async (data: LoginRequest): Promise<ApiEmptyResponse> => {
-    await client.post<ApiEmptyResponse>('/auth/login', {
-      ...data,
-      role: 'member',
-    })
+  login: async (data: LoginRequest): Promise<AccessToken> => {
+    const response = await client.post<ApiResponse<AccessToken>>(
+      '/api/auth/login',
+      {
+        ...data,
+        role: 'member',
+      }
+    )
+    return response.data
   },
 
   logout: async (): Promise<ApiEmptyResponse> => {
-    await client.post<ApiEmptyResponse>('/auth/logout')
+    await client.post<ApiEmptyResponse>('/api/auth/logout')
   },
 
   user: async (): Promise<AuthUser> => {

@@ -1,6 +1,7 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useRouter } from 'next/navigation'
 import * as React from 'react'
 import { useForm } from 'react-hook-form'
 import * as z from 'zod'
@@ -17,6 +18,7 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { useAuth } from '@/hooks/use-auth'
+
 const formSchema = z
   .object({
     email: z.string().email({
@@ -44,6 +46,7 @@ export function RegisterForm() {
   const [isSubmitting, setIsSubmitting] = React.useState(false)
   const [error, setError] = React.useState<string | null>(null)
   const { register } = useAuth()
+  const router = useRouter()
 
   const form = useForm<RegisterFormValues>({
     resolver: zodResolver(formSchema),
@@ -74,6 +77,7 @@ export function RegisterForm() {
       })
     } finally {
       setIsSubmitting(false)
+      router.push('/verify-email')
     }
   }
 

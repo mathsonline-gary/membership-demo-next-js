@@ -64,10 +64,8 @@ export const useAuth = ({
 
   const register = async ({ setError, ...props }: RegisterProps) => {
     try {
-      await api.auth.csrf()
       setError(null, {})
       await api.auth.register(props)
-      await mutate()
     } catch (error) {
       if (error instanceof ApiError && error.isUnprocessableEntity()) {
         setError(error.message, error.getErrors())
@@ -79,9 +77,9 @@ export const useAuth = ({
 
   const login = async ({ setError, ...props }: LoginProps) => {
     try {
-      await api.auth.csrf()
       setError(null, {})
-      await api.auth.login({ ...props })
+      const { token } = await api.auth.login({ ...props })
+      localStorage.setItem('access_token', token)
       await mutate()
     } catch (error) {
       if (error instanceof ApiError && error.isUnprocessableEntity()) {
@@ -95,7 +93,6 @@ export const useAuth = ({
 
   const forgotPassword = async ({ setError, email }: ForgotPasswordProps) => {
     try {
-      await api.auth.csrf()
       setError(null, {})
       await api.auth.forgotPassword({ email })
     } catch (error) {
@@ -118,7 +115,6 @@ export const useAuth = ({
     }
 
     try {
-      await api.auth.csrf()
       setError(null, {})
       await api.auth.resetPassword({
         token,
@@ -148,6 +144,7 @@ export const useAuth = ({
     if (!error) {
       try {
         await api.auth.logout()
+        localStorage.removeItem('access_token')
         await mutate()
 
         // clear all queries

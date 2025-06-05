@@ -9,18 +9,34 @@ import { ApiErrorResponse } from '@/types/api'
 
 import { ApiError } from './error'
 
-export const createClient = (baseURL: string) => {
+interface ClientOptions {
+  baseURL: string
+  authDriver: 'session' | 'token'
+}
+
+export const createClient = ({ baseURL, authDriver }: ClientOptions) => {
   const client: AxiosInstance = axios.create({
     baseURL,
     headers: {
       Accept: 'application/json',
       'X-Requested-With': 'XMLHttpRequest',
     },
-    withCredentials: true,
-    withXSRFToken: true,
+    withCredentials: authDriver === 'session',
+    withXSRFToken: authDriver === 'session',
   })
 
   const setupInterceptors = () => {
+    client.interceptors.request.use((config) => {
+      if (authDriver === 'token') {
+        const token = localStorage.getItem('access_token')
+        if (token) {
+          config.headers.Authorization = `Bearer ${token}`
+        }
+      }
+
+      return config
+    })
+
     client.interceptors.response.use(
       (response) => response,
       (error: AxiosError<ApiErrorResponse>) => {

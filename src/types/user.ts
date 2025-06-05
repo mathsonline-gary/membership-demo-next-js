@@ -3,6 +3,10 @@ export enum UserRole {
   MEMBER = 'member',
 }
 
+export interface AccessToken {
+  token: string
+}
+
 export interface User {
   id: number
   first_name: string

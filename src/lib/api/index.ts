@@ -22,5 +22,9 @@ const createApi = (client: Client) => {
   }
 }
 
-export const api = createApi(createClient(BASE_URL))
-export const echo = createEcho(createClient(BASE_URL))
+export const api = createApi(
+  createClient({ baseURL: BASE_URL, authDriver: 'token' })
+)
+export const echo = createEcho(
+  createClient({ baseURL: BASE_URL, authDriver: 'token' })
+)
