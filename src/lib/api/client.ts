@@ -20,6 +20,7 @@ export const createClient = ({ baseURL, authDriver }: ClientOptions) => {
     headers: {
       Accept: 'application/json',
       'X-Requested-With': 'XMLHttpRequest',
+      'ngrok-skip-browser-warning': '69420',
     },
     withCredentials: authDriver === 'session',
     withXSRFToken: authDriver === 'session',
