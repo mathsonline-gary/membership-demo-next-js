@@ -163,12 +163,12 @@ export function ManageMembersDialogContent({
                         </span>
                         <Badge
                           variant={
-                            member.pivot.status === 'pending'
+                            member.status === 'pending'
                               ? 'secondary'
                               : 'default'
                           }
                         >
-                          {member.pivot.status}
+                          {member.status}
                         </Badge>
                       </div>
                       <span className="text-muted-foreground text-xs">

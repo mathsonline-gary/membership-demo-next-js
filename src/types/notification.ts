@@ -1,12 +1,12 @@
-interface BaseNotification {
+import { Timestamps } from './common'
+
+interface BaseNotification extends Timestamps {
   id: string
   type: string
 }
 export interface Notification extends BaseNotification {
   data: Record<string, unknown>
   read_at: string | null
-  created_at: string
-  updated_at: string
 }
 
 export interface TeamMemberInvitationNotification extends BaseNotification {

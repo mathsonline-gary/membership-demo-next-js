@@ -1,10 +1,10 @@
+import { useQueryClient } from '@tanstack/react-query'
 import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import * as React from 'react'
 import useSWR from 'swr'
 
 import { api } from '@/lib/api'
 import { ApiError } from '@/lib/api/error'
-import { queryClient } from '@/providers/query-client-provider'
 import {
   ForgotPasswordRequest,
   LoginRequest,
@@ -38,7 +38,7 @@ export const useAuth = ({
   const router = useRouter()
   const params = useParams()
   const searchParams = useSearchParams()
-
+  const queryClient = useQueryClient()
   const {
     data: user,
     error,
@@ -147,7 +147,7 @@ export const useAuth = ({
         localStorage.removeItem('access_token')
         await mutate()
 
-        // clear all queries
+        // clear all queries using the hook
         queryClient.clear()
       } catch (error) {
         if (!(error instanceof ApiError && error.isUnauthorized())) {
@@ -156,7 +156,7 @@ export const useAuth = ({
       }
     }
     window.location.href = '/login'
-  }, [error, mutate])
+  }, [error, mutate, queryClient])
 
   React.useEffect(() => {
     if (middleware === 'guest' && redirectIfAuthenticated && user)

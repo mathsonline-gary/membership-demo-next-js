@@ -1,3 +1,5 @@
+import { Timestamps } from './common'
+
 export enum UserRole {
   ADMIN = 'admin',
   MEMBER = 'member',
@@ -14,44 +16,30 @@ export interface User {
   full_name: string
   email: string
   avatar: string | null
-  created_at: string
-  updated_at: string
   role: UserRole
 }
 
-export interface AuthUser extends User {
+export interface AuthUser extends User, Timestamps {
   email_verified_at: string | null
 }
 
 export type Profile = AuthUser
 
-export interface Admin extends User {
-  role: UserRole.ADMIN
+export interface TeamMember extends User {
+  status: string
+  invited_at: string
+  joined_at: string | null
 }
 
-export interface Member extends User {
-  role: UserRole.MEMBER
-}
-
-export interface TeamMember extends Member {
-  pivot: {
-    status: string
-    created_at: string
-    updated_at: string
-  }
-}
-
-export type Team = {
+export interface Team extends Timestamps {
   id: number
   name: string
   owner_id: number
-  owner: Member
+  owner: User
   members: TeamMember[]
-  created_at: string
-  updated_at: string
 }
 
-export type Device = {
+export interface Device {
   uuid: string
   user_id: number
   ip_address: string
