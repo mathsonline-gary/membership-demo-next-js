@@ -1,7 +1,7 @@
 ---
 description: 
-globs: 
-alwaysApply: true
+globs: src/**/*.ts,src/**/*.tsx
+alwaysApply: false
 ---
 ---
 description: Guidelines for structuring API clients and implementing data fetching using Axios and React Query

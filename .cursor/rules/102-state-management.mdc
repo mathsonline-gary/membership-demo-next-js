@@ -1,7 +1,7 @@
 ---
 description: 
-globs: 
-alwaysApply: true
+globs: src/**/*.ts,src/**/*.tsx
+alwaysApply: false
 ---
 ---
 description: Guidelines for managing local, global, and server state using Zustand and React Query

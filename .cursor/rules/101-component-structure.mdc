@@ -1,7 +1,7 @@
 ---
 description: 
-globs: 
-alwaysApply: true
+globs: src/components/**/*.tsx,src/components/**/*.ts
+alwaysApply: false
 ---
 ---
 description: Guidelines for organizing, structuring, and writing React components

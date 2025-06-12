@@ -1,7 +1,7 @@
 ---
 description: 
-globs: 
-alwaysApply: true
+globs: src/**/*.ts,src/**/*.tsx
+alwaysApply: false
 ---
 ---
 description: Guidelines for managing forms with React Hook Form and Zod, including accessibility, validation, and error handling best practices

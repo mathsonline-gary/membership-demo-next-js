@@ -1,7 +1,7 @@
 ---
 description: 
-globs: 
-alwaysApply: true
+globs: src/**/*.tsx,src/**/*.ts
+alwaysApply: false
 ---
 ---
 description: Guidelines for TypeScript and ESLint

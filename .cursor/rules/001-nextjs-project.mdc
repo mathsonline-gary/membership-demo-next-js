@@ -28,16 +28,17 @@ src/
 ```
 
 ## Key Technologies
-- [Next.js 15.3.1](https://nextjs.org/docs/app) - React framework
-- [React 19](https://react.dev/) - UI library
-- [TypeScript](https://www.typescriptlang.org/docs/) - Type safety
-- [Tailwind CSS](https://tailwindcss.com/docs) - Utility-first CSS
-- [Shadcn/ui](https://ui.shadcn.com/docs/components/accordion) - Unstyled, accessible components
-- [Zustand](https://docs.pmnd.rs/zustand/getting-started/introduction) - State management
-- [React Query](https://tanstack.com/query/latest/docs/react/overview) - Data fetching
-- [React Hook Form](https://react-hook-form.com/docs) - Form handling
-- [Zod](https://zod.dev/) - Schema validation
-- [Axios](https://axios-http.com/docs/intro) - HTTP client
+- Next v15 - React framework
+- React v19 - UI library
+- Typescript - Type safety
+- Tailwind CSS v4 - Utility-first CSS
+- shadcn/ui - Unstyled, accessible components
+- Zustand - State management
+- Tanstack Query v5 - Data fetching
+- React Hook Form - Form handling
+- Zod - Schema validation
+- Axios - HTTP client
+- pnpm - Package management
 
 ## Development Guidelines
 1. **TypeScript & ESLint**
@@ -66,6 +67,7 @@ src/
 - Implement proper testing
 - Use proper environment variables
 - Follow security best practices
+- Always use **pnpm** to manage packages
 
 ## Development Workflow
 1. Create feature branch
