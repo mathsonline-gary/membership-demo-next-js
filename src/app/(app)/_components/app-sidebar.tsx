@@ -97,6 +97,10 @@ const MENU_2_ITEMS: AppSidebarMenuItem[] = [
     icon: BookOpen,
     items: [
       {
+        title: 'README',
+        url: '/documentation/read-me',
+      },
+      {
         title: 'Get Started',
         url: '/documentation/get-started',
       },
