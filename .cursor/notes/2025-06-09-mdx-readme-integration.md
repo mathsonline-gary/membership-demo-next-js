@@ -2,7 +2,7 @@
 
 ## Conversation Metadata
 
-- **Date**: 2024-06-09
+- **Date**: 2025-06-09
 - **Topic/Context**: Integrating and styling README.md as MDX in Next.js documentation
 - **Files Involved**:
   - src/app/(app)/documentation/read-me/page.tsx

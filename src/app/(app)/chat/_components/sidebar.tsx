@@ -18,7 +18,7 @@ export function Sidebar({ activeChatId }: SidebarProps) {
 
   return (
     <ScrollArea>
-      <ul className="space-y-1">
+      <ul className="w-80 space-y-1">
         {isLoading
           ? Array.from({ length: 5 }).map((_, index) => (
               <li key={index}>
