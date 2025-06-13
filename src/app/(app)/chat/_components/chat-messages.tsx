@@ -74,7 +74,7 @@ export function ChatMessages({ chatId }: ChatMessagesProps) {
 
       <Separator />
 
-      <ScrollArea className="flex-1">
+      <ScrollArea className="min-h-0 flex-1">
         <div className="space-y-8">
           {isFetching
             ? Array.from({ length: 4 }).map((_, i) => (

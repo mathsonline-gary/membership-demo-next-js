@@ -22,13 +22,13 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     <AuthProvider>
       <SidebarProvider defaultOpen={true}>
         <AppSidebar />
-        <SidebarInset>
-          <header className="bg-background sticky inset-x-0 top-0 isolate z-10 flex shrink-0 items-center gap-2 border-b">
+        <SidebarInset className="max-h-svh">
+          <header className="bg-background sticky top-0 z-10 flex shrink-0 items-center gap-2 border-b">
             <div className="flex h-14 w-full items-center gap-2 px-4">
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <SidebarTrigger className="-ml-1.5" />
+                    <SidebarTrigger className="justify-start" />
                   </TooltipTrigger>
                   <TooltipContent>Show/Hide Sidebar</TooltipContent>
                 </Tooltip>
@@ -43,7 +43,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
               </div>
             </div>
           </header>
-          <main className="flex flex-1 flex-col px-4 py-2">{children}</main>
+          <div className="flex min-h-0 flex-1 flex-col px-4 py-2">
+            {children}
+          </div>
         </SidebarInset>
       </SidebarProvider>
     </AuthProvider>

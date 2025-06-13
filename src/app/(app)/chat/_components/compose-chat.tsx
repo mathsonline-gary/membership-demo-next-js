@@ -111,7 +111,7 @@ export function ComposeChat() {
 
         <Separator />
 
-        <div className="flex flex-1 flex-col items-center justify-center">
+        <div className="flex min-h-0 flex-1 flex-col items-center justify-center overflow-y-auto">
           <Image
             src="https://pub-c5e31b5cdafb419fb247a8ac2e78df7a.r2.dev/public/assets/icons/empty/ic-chat-active.svg"
             alt="Chat placeholder"

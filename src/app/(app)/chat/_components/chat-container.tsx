@@ -7,7 +7,7 @@ interface ChatContainerProps {
 
 export function ChatContainer({ chatId }: ChatContainerProps) {
   return (
-    <div className="flex-1 px-4">
+    <div className="flex flex-1 flex-col px-4">
       {chatId ? <ChatMessages chatId={Number(chatId)} /> : <ComposeChat />}
     </div>
   )
